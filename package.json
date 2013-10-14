@@ -1,0 +1,34 @@
+{
+  "name": "spirit",
+  "title": "Spirit",
+  "version": "0.1.0",
+  "author": {
+    "name": "Patrick Brouwer",
+    "email": "patrick@inlet.nl",
+    "url": "http://inlet.nl"
+  },
+  "description": "Powerful library for timed animation. Create an animation timeline of your HTML DOM elements in a snap!",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/inlet/spirit.js"
+  },
+  "engines": {
+    "node": "0.8.x"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "~0.4.0",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-uglify": "~0.1.2",
+    "grunt-contrib-watch": "~0.3.1",
+    "grunt-contrib-jasmine": "~0.5.2",
+    "grunt-contrib-jshint": "~0.6.0",
+    "grunt-bump": "~0.0.11",
+    "matchdep": "~0.1.2",
+    "grunt-notify": "~0.2.13",
+    "grunt-contrib-clean": "~0.5.0"
+  },
+  "scripts": {
+    "test": "grunt test"
+  }
+}

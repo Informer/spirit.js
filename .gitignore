@@ -1,0 +1,6 @@
+.idea
+.grunt
+_SpecRunner.html
+*.iml
+node_modules
+public/js/vendors/

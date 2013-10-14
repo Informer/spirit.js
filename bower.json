@@ -1,0 +1,21 @@
+{
+	"name": "spirit",
+	"version": "0.1.0",
+	"description": "Powerful library for timed animation. Create an animation timeline of your HTML DOM elements in a snap!",
+	"keywords": [
+		"spirit"
+	],
+	"homepage": "https://github.com/inlet/spirit.js",
+	"authors": [
+		"Patrick Brouwer"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/inlet/spirit.js.git"
+	},
+	"main": "spirit.js",
+	"dependencies": {
+		"jquery": "~2.0.3",
+		"greensock-js": "~1.10.2"
+	}
+}
