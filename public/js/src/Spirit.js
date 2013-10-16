@@ -11,12 +11,18 @@
 
 
 	/**
-	 * Timeline
+	 *
+	 * @param $container {HTMLElement} DOM element holding the animateable items
+	 * @param options {{}} custom configuration
 	 * @constructor
 	 */
-	ns.Timeline = function() {
+	ns.Timeline = function($container, options) {
+		this.$container = $($container);
+		_.extend(this._options, options || {});
+
 		this.initialize();
 	};
+
 
 	ns.Timeline.prototype = {
 
@@ -24,6 +30,7 @@
 		/**
 		 * @private
 		 */
+		_options: {},
 		_debug: false,
 		_timeline: null,
 
@@ -31,6 +38,7 @@
 		 * @public
 		 */
 		preConstructTimeline: null,
+		$container: null,
 
 
 		/**
@@ -58,6 +66,17 @@
 			return this._debug;
 		},
 
+
+		/**
+		 * Update timeline
+		 * @param frame {Number} pixels
+		 * @returns {*}
+		 */
+		update: function(frame){
+			return frame;
+		},
+
+
 		/**
 		 * Extract JSON
 		 * @returns {{}}
@@ -78,7 +97,6 @@
 		 */
 		dispose: function(){
 		}
-
 	};
 
 	/**
