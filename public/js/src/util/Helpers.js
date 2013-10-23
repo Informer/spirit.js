@@ -83,6 +83,25 @@
 	};
 
 
+	/**
+	 * Borrowed from underscorejs
+	 * Validate param on function type
+	 * @param fn {*}
+	 * @return {boolean}
+	 */
+	if (typeof (/./) !== 'function') {
+		ns.isFunction = function(obj) {
+			return typeof obj === 'function';
+		};
+	}
+
+
+	/**
+	 * Borrowed from Backbone.extend
+	 * @param protoProps {{}}
+	 * @param staticProps {{}}
+	 * @returns {{}}
+	 */
 	ns.extendObject = function(protoProps, staticProps) {
 		var parent = this;
 		var child;
@@ -90,12 +109,12 @@
 		if (protoProps && ns.has(protoProps, 'constructor')) {
 			child = protoProps.constructor;
 		} else {
-			child = function(){ return parent.apply(this, arguments); };
+			child = function() { return parent.apply(this, arguments); };
 		}
 
 		ns.extend(child, parent, staticProps);
 
-		var Surrogate = function(){ this.constructor = child; };
+		var Surrogate = function() { this.constructor = child; };
 		Surrogate.prototype = parent.prototype;
 		child.prototype = new Surrogate();
 
@@ -109,6 +128,55 @@
 		return child;
 	};
 
+	/**
+	 * Borrowed from underscorejs
+	 * Create a function bound to a given object (assigning this, and arguments, optionally)
+	 * @param fn {*}
+	 * @param context {{}} scope
+	 * @return {{}}
+	 */
+	var nativeBind = Function.prototype.bind, slice = Array.prototype.slice, ctor = function() {};
+	ns.bind = function(func, context) {
+		/* jshint -W055 */
+		/* jshint -W093 */
+		var args, bound;
+		if (nativeBind && func.bind === nativeBind) {
+			return nativeBind.apply(func, slice.call(arguments, 1));
+		}
+		if (!ns.isFunction(func)) {
+			throw new TypeError();
+		}
+		args = slice.call(arguments, 2);
+		return bound = function() {
+			if (!(this instanceof bound)) {
+				return func.apply(context, args.concat(slice.call(arguments)));
+			}
+			ctor.prototype = func.prototype;
+			var self = new ctor();
+			ctor.prototype = null;
+			var result = func.apply(self, args.concat(slice.call(arguments)));
+			if (Object(result) === result) {
+				return result;
+			}
+			return self;
+		};
+	};
+
+	/**
+	 * Borrowed from underscorejs
+	 * Bind all of an object's methods to that object.
+	 * Useful for ensuring that all callbacks defined on an object belong to it.
+	 * @param obj {*}
+	 * @return {{}}
+	 */
+	ns.bindAll = function(obj) {
+		var funcs = slice.call(arguments, 1);
+		if (funcs.length === 0) {
+			throw new Error('bindAll must be passed function names');
+		}
+		ns.each(funcs, function(f) { obj[f] = ns.bind(obj[f], obj); });
+		return obj;
+	};
 
 
 })(use('spirit._helpers'));

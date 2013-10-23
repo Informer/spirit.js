@@ -33,6 +33,7 @@
 		_options: {},
 		_debug: false,
 		_timeline: null,
+		_tweenEngine: null,
 
 		/**
 		 * @public
@@ -45,13 +46,25 @@
 		 * Constructor
 		 * @private
 		 */
-		_construct: function(){
+		_construct: function() {
+
+			// setup tween engines
+			this._tweenEngine = {
+				tween: _.isFunction(window.TweenMax) ? window.TweenMax : window.TweenLite,
+				timeline: _.isFunction(window.TimelineMax) ? window.TimelineMax : window.TimelineLite
+			};
+
+			if (!this._tweenEngine.tween || !this._tweenEngine.timeline) {
+				throw 'Spirit: no Tween[Lite/Max] or Timeline[Lite/Max] found. ' +
+					'Both are required in order to use Spirit';
+			}
+
 			this.initialize();
 		},
 
 		/**
 		 * Initialize
-		 * Invoked by constructor
+		 * Invoked by constructor, can be overriden for your needs
 		 * @public
 		 */
 		initialize: function() {},
@@ -60,7 +73,7 @@
 		 * Turn debug on/off
 		 * @param {boolean} debuggable
 		 */
-		debug: function(debuggable){
+		debug: function(debuggable) {
 			this._debug = debuggable;
 			// debug logic
 		},
@@ -69,7 +82,7 @@
 		 * Get debug modus
 		 * @returns {boolean}
 		 */
-		isDebug: function(){
+		isDebug: function() {
 			return this._debug;
 		},
 
@@ -79,7 +92,7 @@
 		 * @param frame {Number} pixels
 		 * @returns {*}
 		 */
-		update: function(frame){
+		update: function(frame) {
 			return frame;
 		},
 
@@ -88,7 +101,7 @@
 		 * Extract JSON
 		 * @returns {{}}
 		 */
-		toJSON: function(){
+		toJSON: function() {
 			return {};
 		},
 
@@ -102,7 +115,7 @@
 		/**
 		 * Kill THE SPIRIT
 		 */
-		dispose: function(){
+		dispose: function() {
 		}
 	};
 
@@ -111,12 +124,11 @@
 	 */
 	_.extend(ns.Timeline.prototype, {
 
-		on: function(){},
-		off: function(){},
-		trigger: function(){}
+		on: function() {},
+		off: function() {},
+		trigger: function() {}
 
 	});
-
 
 
 })(use('spirit'));

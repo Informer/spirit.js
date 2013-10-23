@@ -24,6 +24,8 @@
 		"$": false,
 		"TweenLite": false,
 		"TimelineLite": false,
+		"TweenMax": false,
+		"TimelineMax": false,
 		"use": false,
 		"spirit": false,
 		"after": false,
