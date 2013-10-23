@@ -7,7 +7,7 @@
 	 * Get helpers
 	 * @type {*}
 	 */
-	var _ = use('spirit.helpers');
+	var _ = use('spirit._helpers');
 
 
 	/**
@@ -16,14 +16,14 @@
 	 * @param options {{}} custom configuration
 	 * @constructor
 	 */
-	ns.Timeline = function($container, options) {
-		this.$container = $($container);
+	ns.Timeline = function($el, options) {
+		this.$el = $($el);
 		_.extend(this._options, options || {});
 
-		this.initialize();
+		this._construct();
 	};
 
-
+	ns.Timeline.extend = _.extendObject;
 	ns.Timeline.prototype = {
 
 
@@ -42,12 +42,19 @@
 
 
 		/**
-		 * Initialize Timeline..
-		 * Invoked by constructor
+		 * Constructor
+		 * @private
 		 */
-		initialize: function() {
-			// code
+		_construct: function(){
+			this.initialize();
 		},
+
+		/**
+		 * Initialize
+		 * Invoked by constructor
+		 * @public
+		 */
+		initialize: function() {},
 
 		/**
 		 * Turn debug on/off
