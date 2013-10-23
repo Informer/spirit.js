@@ -1,10 +1,9 @@
 'use strict';
 
-
 module.exports = function(grunt) {
+
 	require('time-grunt')(grunt);
 	require('load-grunt-tasks')(grunt);
-
 
 	/*
 	 ------------
@@ -40,14 +39,6 @@ module.exports = function(grunt) {
 				],
 				dest: '<%= pkg.name %>.js'
 			}
-		},
-
-
-		clean: {
-			spec: [
-				'_SpecRunner.html',
-				'.grunt'
-			]
 		},
 
 
@@ -108,7 +99,27 @@ module.exports = function(grunt) {
 				pushTo: 'origin master',
 				gitDescribeOptions: '--tags --always --abbrev=1 --dirty=-d' // options to use with '$ git describe'
 			}
+		},
+
+
+		karma: {
+			options: {
+				configFile: 'karma.conf.js',
+				runnerPort: 9999,
+				singleRun: true
+			},
+			all: {
+				browsers: ['PhantomJS', 'Chrome', 'ChromeCanary', 'Firefox']
+			},
+			watch: {
+				singleRun: false
+			},
+			continuous: {
+				singleRun: true,
+				browsers: ['PhantomJS']
+			}
 		}
+
 	});
 
 
@@ -123,20 +134,19 @@ module.exports = function(grunt) {
 		'uglify'
 	]);
 
-	grunt.registerTask('test', 'Testing specs headless', [
-		// test
-	]);
-
 	grunt.registerTask('default', [
 		'jshint',
 		'test',
 		'build'
 	]);
 
+	grunt.registerTask('test', ['karma:all']);
+	grunt.registerTask('test:ci', ['karma:continuous']);
+
 	grunt.registerTask('release', ['default', 'bump-commit']);
-	grunt.registerTask('release:patch', ['bump-only:patch','release']);
-	grunt.registerTask('release:minor', ['bump-only:minor','release']);
-	grunt.registerTask('release:major', ['bump-only:major','release']);
+	grunt.registerTask('release:patch', ['bump-only:patch', 'release']);
+	grunt.registerTask('release:minor', ['bump-only:minor', 'release']);
+	grunt.registerTask('release:major', ['bump-only:major', 'release']);
 
 
 };
