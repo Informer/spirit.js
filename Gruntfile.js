@@ -61,7 +61,7 @@ module.exports = function(grunt) {
 			},
 			test: {
 				files: ['test/*Spec.js'],
-				tasks: ['jshint:spec', 'test', 'notify:success']
+				tasks: ['jshint:spec', 'test:ci', 'notify:success']
 			}
 		},
 
