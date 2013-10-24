@@ -45,8 +45,7 @@ $(function() {
 	var Timeline = spirit.Timeline.extend({
 		jsonData: jsonData,
 		initialize: function() {
-			console.log('Timeline -> initialize', this.options);
-			
+			this._super();
 		}
 	});
 
@@ -76,6 +75,15 @@ $(function() {
 		 */
 		forceDebug: true
 
+	});
+
+
+	// setup slider
+	var sliderOptions = {formater: function(value) { return 'Frame: ' + value; }};
+	$('#slider').slider(sliderOptions).on('slide', function(evt) {
+
+		// on slide, update timeline
+		tl.update(evt.value);
 	});
 
 });
