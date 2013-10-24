@@ -22,7 +22,7 @@ describe('Spirit', function() {
 		var timeline;
 
 		beforeEach(function(){
-			timeline = new spirit.Timeline();
+			timeline = new spirit.Timeline($('<div />'));
 		});
 
 		it ('should be an instance of Spirit', function(){
