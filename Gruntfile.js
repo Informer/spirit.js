@@ -35,7 +35,8 @@ module.exports = function(grunt) {
 				src: [
 					'<%= path.src %>/util/Globals.js',
 					'<%= path.src %>/util/*.js',
-					'<%= path.src %>/*.js'
+					'<%= path.src %>/*.js',
+					'<%= path.src %>/extensions/*.js'
 				],
 				dest: '<%= pkg.name %>.js'
 			}
