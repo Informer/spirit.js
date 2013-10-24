@@ -20,6 +20,20 @@
 		}
 	};
 
+	/**
+	 * Default options
+	 * @returns {{tweenEngine: {tween: *, timeline: *}, childSelector: string}}
+	 */
+	var defaultOptions = function(){
+		return {
+			tweenEngine: {
+				tween:    _.isFunction(window.TweenMax)    ? window.TweenMax    : window.TweenLite,
+				timeline: _.isFunction(window.TimelineMax) ? window.TimelineMax : window.TimelineLite
+			},
+			childSelector: '*'
+		};
+	};
+
 
 	/**
 	 *
@@ -34,16 +48,8 @@
 		}
 		this.$el = $($($el).get(0));
 
-		// define options
-		_.extend(this.options, {
-			tweenEngine: {
-				tween:    _.isFunction(window.TweenMax)    ? window.TweenMax    : window.TweenLite,
-				timeline: _.isFunction(window.TimelineMax) ? window.TimelineMax : window.TimelineLite
-			},
-			childSelector: '*'
-		}, options || {});
-
-		this._validateOptions();
+		// setup options
+		this._validateOptions(_.extend(this.options, defaultOptions(), options || {}));
 
 		// construct Spirit
 		this._construct();
@@ -52,10 +58,19 @@
 	ns.Timeline.extend = _.extendObject;
 	ns.Timeline.prototype = {
 
+
+		/**
+		 * @private
+		 * store created models here!
+		 */
+		_elements: {},
+
+
 		/**
 		 * @public
 		 */
 		$el: null,
+		$elements: null,
 		options: {},
 		timeline: null,
 
@@ -66,8 +81,10 @@
 		 */
 		_construct: function() {
 			this._debug = !!(this.options.forceDebug);
-
 			log.call(this, "Spirit constructed");
+
+			// cache children
+			this.$elements = this.$el.find(this.options.childSelector);
 
 			this.initialize();
 
@@ -90,7 +107,7 @@
 		 * @public
 		 */
 		initialize: function() {
-			log.call(this, "initialize");
+			log.call(this, "initialized with options: ", this.options);
 		},
 
 		/**
@@ -119,6 +136,7 @@
 		 * @returns {*}
 		 */
 		update: function(frame) {
+			log.call(this, 'update:', frame);
 			return frame;
 		},
 
@@ -136,8 +154,7 @@
 		 */
 		parseJSON: function(json) {
 			// parse json here
-			console.log('Timeline -> parseJSON', json);
-
+			log.call(this, 'parseJSON', json);
 		},
 
 		/**
@@ -165,20 +182,14 @@
 	});
 
 
-
-
 	/**
-	 * Extend Event Dispatcher
+	 * Extend with events
 	 */
 	_.extend(ns.Timeline.prototype, {
-
 		on: function() {},
 		off: function() {},
 		trigger: function() {}
-
 	});
 
 
 })(use('spirit'));
-
-
