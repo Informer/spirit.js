@@ -1,0 +1,6 @@
+.rect {
+	width: 300px;
+	height: 300px;
+	display: block;
+	background: red;
+}
