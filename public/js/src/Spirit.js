@@ -60,6 +60,10 @@
 			}
 
 			this.initialize();
+
+			if (this.jsonData) {
+				this.parseJSON(this.jsonData);
+			}
 		},
 
 		/**
@@ -108,8 +112,10 @@
 		/**
 		 * Parse JSON
 		 */
-		parseJSON: function() {
+		parseJSON: function(json) {
 			// parse json here
+			console.log('Timeline -> parseJSON', json);
+			
 		},
 
 		/**
