@@ -6,6 +6,11 @@
 $(function() {
 	'use strict';
 
+
+	/**
+	 * JSON FIXTURE
+	 * @type {{}}
+	 */
 	var jsonData = {
 		"elements": [
 			{
@@ -33,17 +38,37 @@ $(function() {
 	};
 
 
+	/**
+	 * Extending Spirit
+	 * @type {{}}
+	 */
 	var Timeline = spirit.Timeline.extend({
-
 		jsonData: jsonData,
-
 		initialize: function() {
-			console.log('initialized timeline');
+			console.log('Timeline -> initialize', this.options);
+			
 		}
 	});
 
 
-	var tl = new Timeline($('#container'));
+	var tl = new Timeline($('#container'), {
+
+		/**
+		 * Force tweening engine
+		 * @optional
+		 */
+		tweenEngine: {
+			tween: window.TweenLite,
+			timeline: window.TimelineLite
+		},
+
+		/**
+		 * Define child selector
+		 * @optional By default all items are animatable
+		 */
+		childSelector: '[data-animatable]'
+
+	});
 
 });
 

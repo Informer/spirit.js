@@ -202,6 +202,68 @@
 		return obj;
 	};
 
+	/**
+	 * Borrowed from underscorejs
+	 * @param value
+	 * @returns {*}
+	 */
+	ns.identity = function(value) {
+		return value;
+	};
+
+	/**
+	 * Borrowed from underscorejs
+	 * Determine whether all of the elements match a truth test.
+	 * @type {Function}
+	 * @param obj {Array} list
+	 * @param iterator {*} iterator
+	 * @param context {scope}
+	 * @return {boolean}
+	 */
+	ns.every = ns.all = function(obj, iterator, context) {
+		/* jshint -W030 */
+		/* jshint -W116 */
+		iterator || (iterator = ns.identity);
+		var result = true;
+		if (obj == null) {
+			return result;
+		}
+		if (Array.prototype.every && obj.every === Array.prototype.every) {
+			return obj.every(iterator, context);
+		}
+		ns.each(obj, function(value, index, list) {
+			if (!(result = result && iterator.call(context, value, index, list))) {
+				return {};
+			}
+		});
+		return !!result;
+	};
+
+	/**
+	 * Borrowed from underscorejs
+	 * Determine if at least one element in the object matches a truth test.
+	 * @type {Function}
+	 * @param obj {Array} list
+	 * @param iterator {*} iterator
+	 * @param context {scope}
+	 * @return {boolean}
+	 */
+	ns.any = ns.some = function(obj, iterator, context) {
+		/* jshint -W030 */
+		/* jshint -W116 */
+		iterator || (iterator = ns.identity);
+		var result = false;
+		if (obj == null) return result;
+		if (Array.prototype.some && obj.some === Array.prototype.some) {
+			return obj.some(iterator, context);
+		}
+		ns.each(obj, function(value, index, list) {
+			if (result || (result = iterator.call(context, value, index, list))) {
+				return {};
+			}
+		});
+		return !!result;
+	};
 
 })(use('spirit._helpers'));;(function(ns) {
 
@@ -217,14 +279,29 @@
 
 	/**
 	 *
-	 * @param $container {HTMLElement} DOM element holding the animateable items
+	 * @param $el {HTMLElement} DOM element containing the animateable children
 	 * @param options {{}} custom configuration
 	 * @constructor
 	 */
 	ns.Timeline = function($el, options) {
-		this.$el = $($el);
-		_.extend(this._options, options || {});
+		// validate and determine $el
+		if (arguments.length === 0 || !(_.some([Array, HTMLElement, $], function(type) { return $el instanceof type; }))) {
+			throw 'Spirit: no container element found! Make sure you provide a container element';
+		}
+		this.$el = $($($el).get(0));
 
+		// define options
+		_.extend(this.options, {
+			tweenEngine: {
+				tween: _.isFunction(window.TweenMax) ? window.TweenMax : window.TweenLite,
+				timeline: _.isFunction(window.TimelineMax) ? window.TimelineMax : window.TimelineLite
+			},
+			childSelector: '*'
+		}, options || {});
+
+		this._validateOptions();
+
+		// construct Spirit
 		this._construct();
 	};
 
@@ -235,16 +312,15 @@
 		/**
 		 * @private
 		 */
-		_options: {},
 		_debug: false,
-		_timeline: null,
-		_tweenEngine: null,
+
 
 		/**
 		 * @public
 		 */
-		preConstructTimeline: null,
 		$container: null,
+		options: {},
+		timeline: null,
 
 
 		/**
@@ -252,18 +328,6 @@
 		 * @private
 		 */
 		_construct: function() {
-
-			// setup tween engines
-			this._tweenEngine = {
-				tween: _.isFunction(window.TweenMax) ? window.TweenMax : window.TweenLite,
-				timeline: _.isFunction(window.TimelineMax) ? window.TimelineMax : window.TimelineLite
-			};
-
-			if (!this._tweenEngine.tween || !this._tweenEngine.timeline) {
-				throw 'Spirit: no Tween[Lite/Max] or Timeline[Lite/Max] found. ' +
-					'Both are required in order to use Spirit';
-			}
-
 			this.initialize();
 
 			if (this.jsonData) {
@@ -271,12 +335,30 @@
 			}
 		},
 
+		_validateOptions: function() {
+			// validate tweenengine
+			if (!_.isFunction(this.options.tweenEngine.tween) || !_.isFunction(this.options.tweenEngine.timeline)) {
+				throw 'Spirit: no Tween[Lite/Max] or Timeline[Lite/Max] found. ' +
+					'Both are required in order to use Spirit';
+			}
+		},
+
 		/**
 		 * Initialize
-		 * Invoked by constructor, can be overriden for your needs
+		 * Invoked by constructor, can be overridden for your needs
 		 * @public
 		 */
 		initialize: function() {},
+
+		/**
+		 * Preconstruct timeline
+		 * Can be overridden to apply custom candy before the timeline gets constructed
+		 * @param timeline
+		 */
+		preConstructTimeline: function(timeline){
+			return timeline;
+		},
+
 
 		/**
 		 * Turn debug on/off
@@ -320,18 +402,18 @@
 		parseJSON: function(json) {
 			// parse json here
 			console.log('Timeline -> parseJSON', json);
-			
+
 		},
 
 		/**
 		 * Kill THE SPIRIT
 		 */
-		dispose: function() {
+		kill: function() {
 		}
 	};
 
 	/**
-	 * Extend Events
+	 * Extend Event Dispatcher
 	 */
 	_.extend(ns.Timeline.prototype, {
 

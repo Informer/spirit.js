@@ -178,5 +178,67 @@
 		return obj;
 	};
 
+	/**
+	 * Borrowed from underscorejs
+	 * @param value
+	 * @returns {*}
+	 */
+	ns.identity = function(value) {
+		return value;
+	};
+
+	/**
+	 * Borrowed from underscorejs
+	 * Determine whether all of the elements match a truth test.
+	 * @type {Function}
+	 * @param obj {Array} list
+	 * @param iterator {*} iterator
+	 * @param context {scope}
+	 * @return {boolean}
+	 */
+	ns.every = ns.all = function(obj, iterator, context) {
+		/* jshint -W030 */
+		/* jshint -W116 */
+		iterator || (iterator = ns.identity);
+		var result = true;
+		if (obj == null) {
+			return result;
+		}
+		if (Array.prototype.every && obj.every === Array.prototype.every) {
+			return obj.every(iterator, context);
+		}
+		ns.each(obj, function(value, index, list) {
+			if (!(result = result && iterator.call(context, value, index, list))) {
+				return {};
+			}
+		});
+		return !!result;
+	};
+
+	/**
+	 * Borrowed from underscorejs
+	 * Determine if at least one element in the object matches a truth test.
+	 * @type {Function}
+	 * @param obj {Array} list
+	 * @param iterator {*} iterator
+	 * @param context {scope}
+	 * @return {boolean}
+	 */
+	ns.any = ns.some = function(obj, iterator, context) {
+		/* jshint -W030 */
+		/* jshint -W116 */
+		iterator || (iterator = ns.identity);
+		var result = false;
+		if (obj == null) return result;
+		if (Array.prototype.some && obj.some === Array.prototype.some) {
+			return obj.some(iterator, context);
+		}
+		ns.each(obj, function(value, index, list) {
+			if (result || (result = iterator.call(context, value, index, list))) {
+				return {};
+			}
+		});
+		return !!result;
+	};
 
 })(use('spirit._helpers'));

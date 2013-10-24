@@ -12,14 +12,29 @@
 
 	/**
 	 *
-	 * @param $container {HTMLElement} DOM element holding the animateable items
+	 * @param $el {HTMLElement} DOM element containing the animateable children
 	 * @param options {{}} custom configuration
 	 * @constructor
 	 */
 	ns.Timeline = function($el, options) {
-		this.$el = $($el);
-		_.extend(this._options, options || {});
+		// validate and determine $el
+		if (arguments.length === 0 || !(_.some([Array, HTMLElement, $], function(type) { return $el instanceof type; }))) {
+			throw 'Spirit: no container element found! Make sure you provide a container element';
+		}
+		this.$el = $($($el).get(0));
 
+		// define options
+		_.extend(this.options, {
+			tweenEngine: {
+				tween: _.isFunction(window.TweenMax) ? window.TweenMax : window.TweenLite,
+				timeline: _.isFunction(window.TimelineMax) ? window.TimelineMax : window.TimelineLite
+			},
+			childSelector: '*'
+		}, options || {});
+
+		this._validateOptions();
+
+		// construct Spirit
 		this._construct();
 	};
 
@@ -30,16 +45,15 @@
 		/**
 		 * @private
 		 */
-		_options: {},
 		_debug: false,
-		_timeline: null,
-		_tweenEngine: null,
+
 
 		/**
 		 * @public
 		 */
-		preConstructTimeline: null,
 		$container: null,
+		options: {},
+		timeline: null,
 
 
 		/**
@@ -47,18 +61,6 @@
 		 * @private
 		 */
 		_construct: function() {
-
-			// setup tween engines
-			this._tweenEngine = {
-				tween: _.isFunction(window.TweenMax) ? window.TweenMax : window.TweenLite,
-				timeline: _.isFunction(window.TimelineMax) ? window.TimelineMax : window.TimelineLite
-			};
-
-			if (!this._tweenEngine.tween || !this._tweenEngine.timeline) {
-				throw 'Spirit: no Tween[Lite/Max] or Timeline[Lite/Max] found. ' +
-					'Both are required in order to use Spirit';
-			}
-
 			this.initialize();
 
 			if (this.jsonData) {
@@ -66,12 +68,30 @@
 			}
 		},
 
+		_validateOptions: function() {
+			// validate tweenengine
+			if (!_.isFunction(this.options.tweenEngine.tween) || !_.isFunction(this.options.tweenEngine.timeline)) {
+				throw 'Spirit: no Tween[Lite/Max] or Timeline[Lite/Max] found. ' +
+					'Both are required in order to use Spirit';
+			}
+		},
+
 		/**
 		 * Initialize
-		 * Invoked by constructor, can be overriden for your needs
+		 * Invoked by constructor, can be overridden for your needs
 		 * @public
 		 */
 		initialize: function() {},
+
+		/**
+		 * Preconstruct timeline
+		 * Can be overridden to apply custom candy before the timeline gets constructed
+		 * @param timeline
+		 */
+		preConstructTimeline: function(timeline){
+			return timeline;
+		},
+
 
 		/**
 		 * Turn debug on/off
@@ -115,18 +135,18 @@
 		parseJSON: function(json) {
 			// parse json here
 			console.log('Timeline -> parseJSON', json);
-			
+
 		},
 
 		/**
 		 * Kill THE SPIRIT
 		 */
-		dispose: function() {
+		kill: function() {
 		}
 	};
 
 	/**
-	 * Extend Events
+	 * Extend Event Dispatcher
 	 */
 	_.extend(ns.Timeline.prototype, {
 
