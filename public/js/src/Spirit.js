@@ -4,10 +4,21 @@
 
 
 	/**
-	 * Get helpers
+	 * Helpers
 	 * @type {*}
 	 */
 	var _ = use('spirit._helpers');
+
+	/**
+	 * Logger
+	 */
+	var log = function() {
+		if (this._debug && window.console && _.isFunction(window.console.log)) {
+			var args = [].slice.call(arguments);
+			args.unshift('Spirit: ->');
+			console.log.apply(console, args);
+		}
+	};
 
 
 	/**
@@ -26,7 +37,7 @@
 		// define options
 		_.extend(this.options, {
 			tweenEngine: {
-				tween: _.isFunction(window.TweenMax) ? window.TweenMax : window.TweenLite,
+				tween:    _.isFunction(window.TweenMax)    ? window.TweenMax    : window.TweenLite,
 				timeline: _.isFunction(window.TimelineMax) ? window.TimelineMax : window.TimelineLite
 			},
 			childSelector: '*'
@@ -41,17 +52,10 @@
 	ns.Timeline.extend = _.extendObject;
 	ns.Timeline.prototype = {
 
-
-		/**
-		 * @private
-		 */
-		_debug: false,
-
-
 		/**
 		 * @public
 		 */
-		$container: null,
+		$el: null,
 		options: {},
 		timeline: null,
 
@@ -61,6 +65,10 @@
 		 * @private
 		 */
 		_construct: function() {
+			this._debug = !!(this.options.forceDebug);
+
+			log.call(this, "Spirit constructed");
+
 			this.initialize();
 
 			if (this.jsonData) {
@@ -81,34 +89,28 @@
 		 * Invoked by constructor, can be overridden for your needs
 		 * @public
 		 */
-		initialize: function() {},
+		initialize: function() {
+			log.call(this, "initialize");
+		},
 
 		/**
 		 * Preconstruct timeline
 		 * Can be overridden to apply custom candy before the timeline gets constructed
 		 * @param timeline
 		 */
-		preConstructTimeline: function(timeline){
+		preConstructTimeline: function(timeline) {
+			log.call(this, "preconstruct Timeline");
 			return timeline;
 		},
 
-
 		/**
-		 * Turn debug on/off
-		 * @param {boolean} debuggable
+		 * Construct the main timeline
 		 */
-		debug: function(debuggable) {
-			this._debug = debuggable;
-			// debug logic
+		constructTimeline: function() {
 		},
 
-		/**
-		 * Get debug modus
-		 * @returns {boolean}
-		 */
-		isDebug: function() {
-			return this._debug;
-		},
+
+
 
 
 		/**
@@ -144,6 +146,26 @@
 		kill: function() {
 		}
 	};
+
+
+	/**
+	 * Extend with debugging sugar
+	 */
+	_.extend(ns.Timeline.prototype, {
+
+		_debug: false,
+
+		forceDebug: function(debuggable) {
+			this._debug = debuggable;
+		},
+
+		isDebug: function() {
+			return this._debug;
+		}
+	});
+
+
+
 
 	/**
 	 * Extend Event Dispatcher

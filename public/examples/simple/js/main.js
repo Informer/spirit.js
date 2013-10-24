@@ -66,7 +66,15 @@ $(function() {
 		 * Define child selector
 		 * @optional By default all items are animatable
 		 */
-		childSelector: '[data-animatable]'
+		childSelector: '[data-animatable]',
+
+		/**
+		 * Let's force debug
+		 * @optional
+		 * Normally you won't need this. Spirit gets into debug mode automatically if debug JS is found
+		 * This will force debugging!
+		 */
+		forceDebug: true
 
 	});
 
