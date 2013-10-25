@@ -58,11 +58,11 @@ module.exports = function(grunt) {
 		watch: {
 			src: {
 				files: ['<%= path.src %>/**/*.js', '<%= path.src %>/*.js'],
-				tasks: ['concat:dist', 'jshint:src', 'notify:success']
+				tasks: ['concat:dist', 'jshint:src']
 			},
 			test: {
 				files: ['test/*Spec.js'],
-				tasks: ['jshint:spec', 'test:ci', 'notify:success']
+				tasks: ['jshint:spec', 'test:ci']
 			}
 		},
 
