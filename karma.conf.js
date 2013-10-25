@@ -27,7 +27,11 @@ module.exports = function(config) {
 			'public/js/src/*.js',
 
 			// specs
-			'test/*Spec.js'
+			'test/helpers/*.js',
+			'test/*Spec.js',
+
+			// fixtures
+			{ pattern: 'test/fixtures/*.json', watched: false, served: true, included: false}
 		],
 
 
