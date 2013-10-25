@@ -9,6 +9,13 @@
 var _ = use('spirit._helpers');
 _.extend(_, use('jasmine._helpers'));
 
+/**
+ * Fixtures for testing purposes
+ */
+var fixtures = {
+	oneElementTwoParams: _.loadFixture('single_element_2_params.json')
+};
+
 
 describe('Spirit Instantiate', function() {
 
@@ -27,7 +34,7 @@ describe('Spirit Instantiate', function() {
 	});
 
 
-	describe('Instantiate spirit.Timeline', function() {
+	describe('Instantiate spirit.Timeline directly', function() {
 
 		var timeline;
 
@@ -37,6 +44,13 @@ describe('Spirit Instantiate', function() {
 
 		it('should be an instance of Spirit', function() {
 			expect(timeline instanceof spirit.Timeline).toBeTruthy();
+		});
+
+		it ('should have jsonData', function(){
+			var fixture = fixtures.oneElementTwoParams;
+			timeline.parseJSON(fixture);
+
+			expect(timeline._json).toEqual(fixture);
 		});
 
 	});
@@ -61,17 +75,14 @@ describe('Spirit Instantiate', function() {
 			expect(instance instanceof spirit.Timeline).toBeTruthy();
 		});
 
-
 		it('should have jsonData', function() {
-			var fixture = _.loadFixture('single_element_2_params.json');
+			var fixture = fixtures.oneElementTwoParams;
 
 			Timeline = Timeline.extend({ jsonData: fixture });
 
 			var instance = new Timeline($('<div />'));
 			expect(instance._json).toEqual(fixture);
 		});
-
-
 	});
 
 
