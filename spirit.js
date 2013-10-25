@@ -265,6 +265,22 @@
 		return !!result;
 	};
 
+	/**
+	 * Borrowed from underscorejs
+	 * Return a sorted list of the function names available on the object.
+	 * @param obj
+	 * @returns {Array} sorted array
+	 */
+	ns.functions = function(obj) {
+		var names = [];
+		for (var key in obj) {
+			if (ns.isFunction(obj[key])) {
+				names.push(key);
+			}
+		}
+		return names.sort();
+	};
+
 })(use('spirit._helpers'));;(function(ns) {
 
 	'use strict';
@@ -325,12 +341,11 @@
 	ns.Timeline.extend = _.extendObject;
 	ns.Timeline.prototype = {
 
-
 		/**
 		 * @private
-		 * store created models here!
 		 */
-		_elements: {},
+		_json: {},
+
 
 
 		/**
@@ -404,6 +419,8 @@
 		 */
 		update: function(frame) {
 			log.call(this, 'update:', frame);
+
+			// do timeline update logic
 			return frame;
 		},
 
@@ -420,6 +437,7 @@
 		 * Parse JSON
 		 */
 		parseJSON: function(json) {
+			this._json = json;
 			// parse json here
 			log.call(this, 'parseJSON', json);
 		},

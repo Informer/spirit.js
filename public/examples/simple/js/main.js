@@ -77,6 +77,8 @@ $(function() {
 
 	});
 
+	window.tl = tl;
+
 
 	// setup slider
 	var sliderOptions = {formater: function(value) { return 'Frame: ' + value; }};

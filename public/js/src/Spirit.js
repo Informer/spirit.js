@@ -58,12 +58,11 @@
 	ns.Timeline.extend = _.extendObject;
 	ns.Timeline.prototype = {
 
-
 		/**
 		 * @private
-		 * store created models here!
 		 */
-		_elements: {},
+		_json: {},
+
 
 
 		/**
@@ -137,6 +136,8 @@
 		 */
 		update: function(frame) {
 			log.call(this, 'update:', frame);
+
+			// do timeline update logic
 			return frame;
 		},
 
@@ -153,6 +154,7 @@
 		 * Parse JSON
 		 */
 		parseJSON: function(json) {
+			this._json = json;
 			// parse json here
 			log.call(this, 'parseJSON', json);
 		},
