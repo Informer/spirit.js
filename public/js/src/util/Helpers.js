@@ -241,4 +241,20 @@
 		return !!result;
 	};
 
+	/**
+	 * Borrowed from underscorejs
+	 * Return a sorted list of the function names available on the object.
+	 * @param obj
+	 * @returns {Array} sorted array
+	 */
+	ns.functions = function(obj) {
+		var names = [];
+		for (var key in obj) {
+			if (ns.isFunction(obj[key])) {
+				names.push(key);
+			}
+		}
+		return names.sort();
+	};
+
 })(use('spirit._helpers'));
