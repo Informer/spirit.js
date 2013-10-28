@@ -18,4 +18,4 @@
 	});
 
 
-})(use('spirit.models'));
+})(use('spirit.model'));

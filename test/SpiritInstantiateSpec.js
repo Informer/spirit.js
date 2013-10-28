@@ -50,7 +50,7 @@ describe('Spirit Instantiate', function() {
 			var fixture = fixtures.oneElementTwoParams;
 			timeline.parseJSON(fixture);
 
-			expect(timeline._json).toEqual(fixture);
+			expect(timeline._json).toBe(fixture);
 		});
 
 		describe('And have an invalid container element', function() {
@@ -101,7 +101,20 @@ describe('Spirit Instantiate', function() {
 			Timeline = Timeline.extend({ jsonData: fixture });
 
 			var instance = new Timeline($('<div />'));
-			expect(instance._json).toEqual(fixture);
+			expect(instance._json).toBe(fixture);
+		});
+
+		it('should call super on initialize', function() {
+			Timeline = Timeline.extend({
+				initialize: function() {
+					this._super();
+				}
+			});
+
+			spyOn(Timeline.prototype, 'initialize');
+
+			var instance = new Timeline($('<div />'));
+			expect(instance.initialize).toHaveBeenCalled();
 		});
 
 	});
@@ -127,8 +140,8 @@ describe('Spirit Instantiate', function() {
 
 			it('should have default TweenLite/TimelineLite', function() {
 				var tl = new spirit.Timeline($('<div />'));
-				expect(tl.options.tweenEngine.tween).toEqual(window.TweenLite);
-				expect(tl.options.tweenEngine.timeline).toEqual(window.TimelineLite);
+				expect(tl.options.tweenEngine.tween).toBe(window.TweenLite);
+				expect(tl.options.tweenEngine.timeline).toBe(window.TimelineLite);
 			});
 
 			it('should have custom tweening engines', function() {
@@ -142,8 +155,8 @@ describe('Spirit Instantiate', function() {
 					}
 				});
 
-				expect(tl.options.tweenEngine.tween).toEqual(tweenFn);
-				expect(tl.options.tweenEngine.timeline).toEqual(timelineFn);
+				expect(tl.options.tweenEngine.tween).toBe(tweenFn);
+				expect(tl.options.tweenEngine.timeline).toBe(timelineFn);
 			});
 
 		});
@@ -178,7 +191,6 @@ describe('Spirit Instantiate', function() {
 			});
 
 		});
-
 
 	});
 

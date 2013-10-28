@@ -27,6 +27,9 @@
 	'use strict';
 
 
+	var ctor = function() {};
+
+
 	/**
 	 * Borrowed from underscorejs.
 	 * Has prop?
@@ -152,6 +155,89 @@
 		return child;
 	};
 
+
+	/**
+	 * extendObjectWithSuper
+	 * Borrowed from https://github.com/lukasolson/Backbone-Super
+	 * Now we can use this._super() everywhere we extend Spirit
+	 * @param parent
+	 * @param protoProps
+	 * @param staticProps
+	 * @returns {*}
+	 */
+	var inherits = function(parent, protoProps, staticProps) {
+		/* jshint -W030 */
+		/* jshint -W055 */
+		/* jshint -W116 */
+		/* jshint -W083 */
+		/* jshint -W106 */
+		var child,
+			_super = parent.prototype,
+			fnTest = /xyz/.test(function(xyz) {xyz;}) ? /\b_super\b/ : /.*/;
+
+		if (protoProps && protoProps.hasOwnProperty('constructor')) {
+			child = protoProps.constructor;
+		} else {
+			child = function() { parent.apply(this, arguments); };
+		}
+
+		// Inherit class (static) properties from parent.
+		ns.extend(child, parent);
+
+		// Set the prototype chain to inherit from `parent`, without calling
+		// `parent`'s constructor function.
+		ctor.prototype = parent.prototype;
+		child.prototype = new ctor();
+
+		// Add prototype properties (instance properties) to the subclass,
+		// if supplied.
+		if (protoProps) {
+			ns.extend(child.prototype, protoProps);
+
+			// Copy the properties over onto the new prototype
+			for (var name in protoProps) {
+				// Check if we're overwriting an existing function
+				if (typeof protoProps[name] == "function" && typeof _super[name] == "function" && fnTest.test(protoProps[name])) {
+					child.prototype[name] = (function(name, fn) {
+						return function() {
+							var tmp = this._super;
+
+							// Add a new ._super() method that is the same method
+							// but on the super-class
+							this._super = _super[name];
+
+							// The method only need to be bound temporarily, so we
+							// remove it when we're done executing
+							var ret = fn.apply(this, arguments);
+							this._super = tmp;
+
+							return ret;
+						};
+					})(name, protoProps[name]);
+				}
+			}
+		}
+
+		// Add static properties to the constructor function, if supplied.
+		if (staticProps) {
+			ns.extend(child, staticProps);
+		}
+
+		// Correctly set child's `prototype.constructor`.
+		child.prototype.constructor = child;
+
+		// Set a convenience property in case the parent's prototype is needed later.
+		child.__super__ = parent.prototype;
+
+		return child;
+	};
+	ns.extendObjectWithSuper = function(protoProps, classProps) {
+		var child = inherits(this, protoProps, classProps);
+		child.extend = ns.extendObject;
+		return child;
+	};
+
+
 	/**
 	 * Borrowed from underscorejs
 	 * Create a function bound to a given object (assigning this, and arguments, optionally)
@@ -159,7 +245,7 @@
 	 * @param context {{}} scope
 	 * @return {{}}
 	 */
-	var nativeBind = Function.prototype.bind, slice = Array.prototype.slice, ctor = function() {};
+	var nativeBind = Function.prototype.bind, slice = Array.prototype.slice;
 	ns.bind = function(func, context) {
 		/* jshint -W055 */
 		/* jshint -W093 */
@@ -253,7 +339,9 @@
 		/* jshint -W116 */
 		iterator || (iterator = ns.identity);
 		var result = false;
-		if (obj == null) return result;
+		if (obj == null) {
+			return result;
+		}
 		if (Array.prototype.some && obj.some === Array.prototype.some) {
 			return obj.some(iterator, context);
 		}
@@ -285,6 +373,7 @@
 
 	'use strict';
 
+
 	/**
 	 * Helpers
 	 * @type {*}
@@ -292,24 +381,82 @@
 	var _ = use('spirit._helpers');
 
 
-	ns.AbstractModel = function(){
-
+	ns.AbstractModel = function(options) {
+		this._construct(options);
 	};
 
-	ns.AbstractModel.extend = _.extendObject;
+	ns.AbstractModel.extend = _.extendObjectWithSuper;
 	ns.AbstractModel.prototype = {
 
 		defaults: {},
-		initialize: function(){
 
+		_construct: function(options) {
+			this.attributes = _.extend({}, this.defaults, options || {});
+			this.initialize(options);
+		},
+
+		initialize: function(options) {
+			_.isFunction(options);
+			return this;
+		},
+
+		toJSON: function() {
+			if (!JSON || !_.isFunction(JSON.stringify)) {
+				throw 'JSON.stringify does not exist. Download JSON 3 for polyfilling older browsers: http://bestiejs.github.io/json3/';
+			}
+
+			return JSON.stringify(this.attributes);
+		},
+
+		get: function(value) {
+			return this.attributes[value];
+		},
+
+		set: function(prop, val) {
+			if (typeof prop === 'object') {
+				_.each(prop, function(val, key) {
+					this.attributes[key] = val;
+				}, this);
+			} else {
+				this.attributes[prop] = val;
+			}
+			return this;
 		}
+
 
 	};
 
 
+})(use('spirit.model'));
+;(function(ns) {
+
+	'use strict';
+
+	/**
+	 * Helpers
+	 * @type {*}
+	 */
+	var _ = use('spirit._helpers');
+	_.isFunction(this);
 
 
-})(use('spirit.models'));
+	ns.ElementModel = ns.AbstractModel.extend({
+
+		defaults: {
+			el: null,
+			id: null,
+			transitions: []
+		},
+
+		initialize: function(options) {
+			this._super(options);
+			return this;
+		}
+
+	});
+
+
+})(use('spirit.model'));
 ;(function(ns) {
 
 	'use strict';
@@ -330,7 +477,7 @@
 	});
 
 
-})(use('spirit.models'));
+})(use('spirit.model'));
 ;(function(ns) {
 
 	'use strict';
@@ -351,7 +498,7 @@
 	});
 
 
-})(use('spirit.models'));
+})(use('spirit.model'));
 ;(function(ns) {
 
 	'use strict';
@@ -412,7 +559,7 @@
 		this._construct();
 	};
 
-	ns.Timeline.extend = _.extendObject;
+	ns.Timeline.extend = _.extendObjectWithSuper;
 	ns.Timeline.prototype = {
 
 		/**
@@ -566,94 +713,4 @@
 	});
 
 
-})(use('spirit'));
-;/**
- * Borrowed from https://github.com/lukasolson/Backbone-Super
- * Now we can use this._super() everywhere we extend Spirit
- */
-(function(ns) {
-
-	'use strict';
-	/* jshint -W030 */
-	/* jshint -W055 */
-	/* jshint -W116 */
-	/* jshint -W083 */
-	/* jshint -W106 */
-
-
-	/**
-	 * Helpers
-	 * @type {*}
-	 */
-	var _ = use('spirit._helpers'),
-		models = use('spirit.models');
-
-
-	ns.Timeline.extend = models.AbstractModel.extend = function(protoProps, classProps) {
-		var child = inherits(this, protoProps, classProps);
-		child.extend = this.extend;
-		return child;
-	};
-
-	var ctor = function() {}, inherits = function(parent, protoProps, staticProps) {
-		var child,
-			_super = parent.prototype,
-			fnTest = /xyz/.test(function(xyz) {xyz;}) ? /\b_super\b/ : /.*/;
-
-		if (protoProps && protoProps.hasOwnProperty('constructor')) {
-			child = protoProps.constructor;
-		} else {
-			child = function() { parent.apply(this, arguments); };
-		}
-
-		// Inherit class (static) properties from parent.
-		_.extend(child, parent);
-
-		// Set the prototype chain to inherit from `parent`, without calling
-		// `parent`'s constructor function.
-		ctor.prototype = parent.prototype;
-		child.prototype = new ctor();
-
-		// Add prototype properties (instance properties) to the subclass,
-		// if supplied.
-		if (protoProps) {
-			_.extend(child.prototype, protoProps);
-
-			// Copy the properties over onto the new prototype
-			for (var name in protoProps) {
-				// Check if we're overwriting an existing function
-				if (typeof protoProps[name] == "function" && typeof _super[name] == "function" && fnTest.test(protoProps[name])) {
-					child.prototype[name] = (function(name, fn) {
-						return function() {
-							var tmp = this._super;
-
-							// Add a new ._super() method that is the same method
-							// but on the super-class
-							this._super = _super[name];
-
-							// The method only need to be bound temporarily, so we
-							// remove it when we're done executing
-							var ret = fn.apply(this, arguments);
-							this._super = tmp;
-
-							return ret;
-						};
-					})(name, protoProps[name]);
-				}
-			}
-		}
-
-		// Add static properties to the constructor function, if supplied.
-		if (staticProps) {
-			_.extend(child, staticProps);
-		}
-
-		// Correctly set child's `prototype.constructor`.
-		child.prototype.constructor = child;
-
-		// Set a convenience property in case the parent's prototype is needed later.
-		child.__super__ = parent.prototype;
-
-		return child;
-	};
 })(use('spirit'));
