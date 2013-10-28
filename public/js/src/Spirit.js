@@ -192,6 +192,15 @@
 
 
 	/**
+	 * Extend with build in helpers
+	 * For example: bind timeline to scroll!
+	 */
+	_.extend(ns.Timeline.prototype, {
+//		bindToScroll: function(scrollContainer){}
+	});
+
+
+	/**
 	 * Statics
 	 */
 	_.extend(ns.Timeline, {
