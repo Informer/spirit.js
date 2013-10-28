@@ -58,7 +58,7 @@
 		this._construct();
 	};
 
-	ns.Timeline.extend = _.extendObject;
+	ns.Timeline.extend = _.extendObjectWithSuper;
 	ns.Timeline.prototype = {
 
 		/**

@@ -43,9 +43,6 @@ module.exports = function(grunt) {
 
 					// rest
 					'<%= path.src %>/*.js',
-
-					// extensions
-					'<%= path.src %>/extensions/*.js'
 				],
 				dest: '<%= pkg.name %>.js'
 			}
