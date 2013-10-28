@@ -33,9 +33,18 @@ module.exports = function(grunt) {
 
 			dist: {
 				src: [
+					// utils
 					'<%= path.src %>/util/Globals.js',
 					'<%= path.src %>/util/*.js',
+
+					// models
+					'<%= path.src %>/model/AbstractModel.js',
+					'<%= path.src %>/model/*.js',
+
+					// rest
 					'<%= path.src %>/*.js',
+
+					// extensions
 					'<%= path.src %>/extensions/*.js'
 				],
 				dest: '<%= pkg.name %>.js'
@@ -72,7 +81,7 @@ module.exports = function(grunt) {
 				jshintrc: '.jshintrc'
 			},
 
-			src: ['Gruntfile.js', '<%= path.src %>/**/*.js'],
+			src: ['Gruntfile.js', '<%= path.src %>/**/*.js', '<%= path.src %>/*.js'],
 			spec: ['test/*Spec.js']
 		},
 

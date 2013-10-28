@@ -21,10 +21,7 @@ module.exports = function(config) {
 			'public/js/vendors/greensock-js/src/minified/easing/EasePack.min.js',
 
 			// source scripts
-			'public/js/src/util/Globals.js',
-			'public/js/src/util/*.js',
-			'public/js/src/**/*.js',
-			'public/js/src/*.js',
+			'spirit.js',
 
 			// specs
 			'test/helpers/*.js',
