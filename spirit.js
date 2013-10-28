@@ -285,6 +285,77 @@
 
 	'use strict';
 
+	/**
+	 * Helpers
+	 * @type {*}
+	 */
+	var _ = use('spirit._helpers');
+
+
+	ns.AbstractModel = function(){
+
+	};
+
+	ns.AbstractModel.extend = _.extendObject;
+	ns.AbstractModel.prototype = {
+
+		defaults: {},
+		initialize: function(){
+
+		}
+
+	};
+
+
+
+
+})(use('spirit.models'));
+;(function(ns) {
+
+	'use strict';
+
+	/**
+	 * Helpers
+	 * @type {*}
+	 */
+	var _ = use('spirit._helpers');
+
+
+	ns.TransitionModel = ns.AbstractModel.extend({
+
+		initialize: function() {
+			console.log('TransitionModel -> initialize', _.isPrototypeOf(this));
+		}
+
+	});
+
+
+})(use('spirit.models'));
+;(function(ns) {
+
+	'use strict';
+
+	/**
+	 * Helpers
+	 * @type {*}
+	 */
+	var _ = use('spirit._helpers');
+
+
+	ns.TransitionParamModel = ns.AbstractModel.extend({
+
+		initialize: function() {
+			console.log('TransitionParamModel -> initialize', _.isPrototypeOf(this));
+		}
+
+	});
+
+
+})(use('spirit.models'));
+;(function(ns) {
+
+	'use strict';
+
 
 	/**
 	 * Helpers
@@ -475,6 +546,15 @@
 
 
 	/**
+	 * Extend with build in helpers
+	 * For example: bind timeline to scroll!
+	 */
+	_.extend(ns.Timeline.prototype, {
+//		bindToScroll: function(scrollContainer){}
+	});
+
+
+	/**
 	 * Statics
 	 */
 	_.extend(ns.Timeline, {
@@ -505,10 +585,11 @@
 	 * Helpers
 	 * @type {*}
 	 */
-	var _ = use('spirit._helpers');
+	var _ = use('spirit._helpers'),
+		models = use('spirit.models');
 
 
-	ns.Timeline.extend = function(protoProps, classProps) {
+	ns.Timeline.extend = models.AbstractModel.extend = function(protoProps, classProps) {
 		var child = inherits(this, protoProps, classProps);
 		child.extend = this.extend;
 		return child;

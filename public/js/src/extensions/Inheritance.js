@@ -16,10 +16,11 @@
 	 * Helpers
 	 * @type {*}
 	 */
-	var _ = use('spirit._helpers');
+	var _ = use('spirit._helpers'),
+		models = use('spirit.models');
 
 
-	ns.Timeline.extend = function(protoProps, classProps) {
+	ns.Timeline.extend = models.AbstractModel.extend = function(protoProps, classProps) {
 		var child = inherits(this, protoProps, classProps);
 		child.extend = this.extend;
 		return child;
