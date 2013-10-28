@@ -19,7 +19,7 @@ var fixtures = {
 
 describe('Spirit Instantiate', function() {
 
-	describe('Dependencies are all present', function() {
+	describe('Dependencies', function() {
 
 		it('spirit is present', function() {
 			expect(spirit.Timeline).not.toBeUndefined();
@@ -46,14 +46,34 @@ describe('Spirit Instantiate', function() {
 			expect(timeline instanceof spirit.Timeline).toBeTruthy();
 		});
 
-		it ('should have jsonData', function(){
+		it('should have jsonData', function() {
 			var fixture = fixtures.oneElementTwoParams;
 			timeline.parseJSON(fixture);
 
 			expect(timeline._json).toEqual(fixture);
 		});
 
+		describe('And have an invalid container element', function() {
+
+			it('should raise an error on empty', function() {
+				expect(function() {
+					timeline = new spirit.Timeline();
+				}).toThrow(new Error(spirit.Timeline.errorMessages.noContainerElementFound));
+			});
+
+			it('should raise an error on invalid', function() {
+				_.every([ 'strings are not valid', 123, {}, $, function() {}, true, false], function(el) {
+					expect(function() {
+						timeline = new spirit.Timeline(el);
+					}).toThrow(new Error(spirit.Timeline.errorMessages.noContainerElementFound));
+					return true;
+				});
+			});
+
+		});
+
 	});
+
 
 	describe('Extend spirit.Timeline', function() {
 
@@ -83,6 +103,83 @@ describe('Spirit Instantiate', function() {
 			var instance = new Timeline($('<div />'));
 			expect(instance._json).toEqual(fixture);
 		});
+
+	});
+
+
+	describe('Override default options', function() {
+
+		describe(':tweeningEngine', function() {
+
+			it('should raise an error on providing invalid tweening engine values', function() {
+				var tl,
+					shouldRaiseError = function() {
+						tl = new spirit.Timeline($('<div />'), {
+							tweenEngine: {
+								tween: 'invalid tween',
+								timeline: 'invalid timeline'
+							}
+						});
+					};
+
+				expect(shouldRaiseError).toThrow(new Error(spirit.Timeline.errorMessages.invalidTweeningEngines));
+			});
+
+			it('should have default TweenLite/TimelineLite', function() {
+				var tl = new spirit.Timeline($('<div />'));
+				expect(tl.options.tweenEngine.tween).toEqual(window.TweenLite);
+				expect(tl.options.tweenEngine.timeline).toEqual(window.TimelineLite);
+			});
+
+			it('should have custom tweening engines', function() {
+				var tweenFn = function() {},
+					timelineFn = function() {};
+
+				var tl = new spirit.Timeline($('<div />'), {
+					tweenEngine: {
+						tween: tweenFn,
+						timeline: timelineFn
+					}
+				});
+
+				expect(tl.options.tweenEngine.tween).toEqual(tweenFn);
+				expect(tl.options.tweenEngine.timeline).toEqual(timelineFn);
+			});
+
+		});
+
+		describe(':childSelector', function() {
+
+			it('should have the default \'*\' selector', function() {
+				var tl = new spirit.Timeline($('<div />'));
+				expect(tl.options.childSelector).toEqual('*');
+			});
+
+			it('should have custom child selector', function() {
+				var selector = '[data-spirit]';
+				var tl = new spirit.Timeline($('<div />'), {
+					childSelector: selector
+				});
+				expect(tl.options.childSelector).toEqual(selector);
+			});
+
+		});
+
+		describe(':forceDebug', function() {
+
+			it('should have debug false by default', function() {
+				var tl = new spirit.Timeline($('<div />'));
+				expect(tl.isDebug()).toBeFalsy();
+			});
+
+			it('should have force debug (true)', function() {
+				var tl = new spirit.Timeline($('<div />'), { forceDebug: true });
+				expect(tl.isDebug()).toBeTruthy();
+			});
+
+		});
+
+
 	});
 
 

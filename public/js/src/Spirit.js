@@ -24,13 +24,14 @@
 	 * Default options
 	 * @returns {{tweenEngine: {tween: *, timeline: *}, childSelector: string}}
 	 */
-	var defaultOptions = function(){
+	var defaultOptions = function() {
 		return {
 			tweenEngine: {
-				tween:    _.isFunction(window.TweenMax)    ? window.TweenMax    : window.TweenLite,
+				tween: _.isFunction(window.TweenMax) ? window.TweenMax : window.TweenLite,
 				timeline: _.isFunction(window.TimelineMax) ? window.TimelineMax : window.TimelineLite
 			},
-			childSelector: '*'
+			childSelector: '*',
+			forceDebug: false
 		};
 	};
 
@@ -44,12 +45,14 @@
 	ns.Timeline = function($el, options) {
 		// validate and determine $el
 		if (arguments.length === 0 || !(_.some([Array, HTMLElement, $], function(type) { return $el instanceof type; }))) {
-			throw 'Spirit: no container element found! Make sure you provide a container element';
+			throw ns.Timeline.errorMessages.noContainerElementFound;
 		}
 		this.$el = $($($el).get(0));
 
 		// setup options
 		this._validateOptions(_.extend(this.options, defaultOptions(), options || {}));
+		this._debug = !!(this.options.forceDebug);
+
 
 		// construct Spirit
 		this._construct();
@@ -62,7 +65,6 @@
 		 * @private
 		 */
 		_json: {},
-
 
 
 		/**
@@ -79,7 +81,6 @@
 		 * @private
 		 */
 		_construct: function() {
-			this._debug = !!(this.options.forceDebug);
 			log.call(this, "Spirit constructed");
 
 			// cache children
@@ -95,8 +96,7 @@
 		_validateOptions: function() {
 			// validate tweenengine
 			if (!_.isFunction(this.options.tweenEngine.tween) || !_.isFunction(this.options.tweenEngine.timeline)) {
-				throw 'Spirit: no Tween[Lite/Max] or Timeline[Lite/Max] found. ' +
-					'Both are required in order to use Spirit';
+				throw ns.Timeline.errorMessages.invalidTweeningEngines;
 			}
 		},
 
@@ -124,9 +124,6 @@
 		 */
 		constructTimeline: function() {
 		},
-
-
-
 
 
 		/**
@@ -191,6 +188,18 @@
 		on: function() {},
 		off: function() {},
 		trigger: function() {}
+	});
+
+
+	/**
+	 * Statics
+	 */
+	_.extend(ns.Timeline, {
+		errorMessages: {
+			noContainerElementFound: 'Spirit: no container element found! Make sure you provide a container element',
+			invalidTweeningEngines: 'Spirit: no Tween[Lite/Max] or Timeline[Lite/Max] found. ' +
+				'Both are required in order to use Spirit'
+		}
 	});
 
 
