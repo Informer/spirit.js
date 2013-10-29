@@ -4,6 +4,7 @@
 
 
 	var ctor = function() {};
+	var lookupIterator = function(value) { return ns.isFunction(value) ? value : function(obj) { return obj[value]; }; };
 
 
 	/**
@@ -85,7 +86,6 @@
 		return obj;
 	};
 
-
 	/**
 	 * Borrowed from underscorejs
 	 * Validate param on function type
@@ -97,7 +97,6 @@
 			return typeof obj === 'function';
 		};
 	}
-
 
 	/**
 	 * Borrowed from Backbone.extend
@@ -130,7 +129,6 @@
 
 		return child;
 	};
-
 
 	/**
 	 * extendObjectWithSuper
@@ -212,7 +210,6 @@
 		child.extend = ns.extendObject;
 		return child;
 	};
-
 
 	/**
 	 * Borrowed from underscorejs
@@ -343,6 +340,85 @@
 			}
 		}
 		return names.sort();
+	};
+
+	/**
+	 * Borrowed from underscorejs
+	 * Use a comparator function to figure out the smallest index at which an object should be inserted so as to maintain order. Uses binary search.
+	 * @param array
+	 * @param obj
+	 * @param iterator
+	 * @param context
+	 * @returns {number}
+	 */
+	ns.sortedIndex = function(array, obj, iterator, context) {
+		/* jshint -W016 */
+		/* jshint -W030 */
+		/* jshint -W116 */
+		iterator = iterator === null ? ns.identity : lookupIterator(iterator);
+		var value = iterator.call(context, obj);
+		var low = 0, high = array.length;
+		while (low < high) {
+			var mid = (low + high) >>> 1;
+			iterator.call(context, array[mid]) < value ? low = mid + 1 : high = mid;
+		}
+		return low;
+	};
+
+	/**
+	 * Borrowed from underscorejs
+	 * Return the position of the first occurrence of an item in an array, or -1 if the item is not included in the array.
+	 * @param array
+	 * @param item
+	 * @param isSorted
+	 * @returns {int}
+	 */
+	ns.indexOf = function(array, item, isSorted) {
+		/* jshint -W116 */
+		if (array === null) {
+			return -1;
+		}
+		var i = 0, length = array.length;
+		if (isSorted) {
+			if (typeof isSorted == 'number') {
+				i = (isSorted < 0 ? Math.max(0, length + isSorted) : isSorted);
+			} else {
+				i = ns.sortedIndex(array, item);
+				return array[i] === item ? i : -1;
+			}
+		}
+		if (Array.prototype.indexOf && array.indexOf === Array.prototype.indexOf) {
+			return array.indexOf(item, isSorted);
+		}
+		for (; i < length; i++) {
+			if (array[i] === item) {
+				return i;
+			}
+		}
+		return -1;
+	};
+
+
+	/**
+	 * Autobind all methods to scope!
+	 * @param scope
+	 */
+	ns.autoBind = function(scope) {
+		var funcs = ns.functions(scope.constructor.prototype);
+		ns.each(funcs, function(f) {
+			if (f.charAt(0) !== '_' && ns.indexOf(['autoBind', 'constructor'], f) === -1) {
+				scope[f] = ns.bind(scope[f], scope);
+			}
+		});
+	};
+
+	/**
+	 * Check if we are running is test modus?
+	 * @returns {boolean}
+	 */
+	ns.testMode = function() {
+		/* jshint -W106 */
+		return !!(window.__karma__);
 	};
 
 })(use('spirit._helpers'));

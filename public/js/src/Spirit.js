@@ -13,11 +13,16 @@
 	 * Logger
 	 */
 	var log = function() {
+		/* jshint -W106 */
+		/* jshint -W116 */
+		if (_.testMode()) return false;
 		if (this._debug && window.console && _.isFunction(window.console.log)) {
 			var args = [].slice.call(arguments);
 			args.unshift('Spirit: ->');
 			console.log.apply(console, args);
 		}
+
+		return true;
 	};
 
 	/**
