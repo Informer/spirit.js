@@ -37,6 +37,10 @@ module.exports = function(grunt) {
 					'<%= path.src %>/util/Globals.js',
 					'<%= path.src %>/util/*.js',
 
+				    // collections
+					'<%= path.src %>/collection/AbstractCollection.js',
+					'<%= path.src %>/collection/*.js',
+
 					// models
 					'<%= path.src %>/model/AbstractModel.js',
 					'<%= path.src %>/model/*.js',
