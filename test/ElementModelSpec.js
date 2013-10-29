@@ -9,14 +9,6 @@ var _ = use('spirit._helpers');
 _.extend(_, use('jasmine._helpers'));
 
 
-/**
- * Fixtures for testing purposes
- */
-var fixtures = {
-	oneElementTwoParams: _.loadFixture('single_element_2_params.json')
-};
-
-
 describe('ElementModel', function() {
 
 
@@ -25,22 +17,21 @@ describe('ElementModel', function() {
 	it('should create a default model', function() {
 		m = new spirit.model.ElementModel();
 
-		expect(m.attributes).toEqual({
-			el: null,
-			id: null,
-			transitions: []
-		});
+		expect(m.get('el')).toBeNull();
+		expect(m.get('id')).toBeNull();
+		expect(m.get('transitions') instanceof use('spirit.collection').TransitionCollection).toBeTruthy();
 	});
 
 	it('should create a custom model', function() {
-		var customProps = {
+		var props = {
 			el: $('<div />'),
-			id: 'element-1',
-			transitions: []
+			id: 'element-1'
 		};
 
-		m = new spirit.model.ElementModel(customProps);
-		expect(m.attributes).toEqual(customProps);
+		m = new spirit.model.ElementModel(props);
+		expect(m.get('el')).toBe(props.el);
+		expect(m.get('id')).toBe(props.id);
+		expect(m.get('transitions') instanceof use('spirit.collection').TransitionCollection).toBeTruthy();
 	});
 
 
@@ -63,7 +54,7 @@ describe('ElementModel', function() {
 
 			expect(el instanceof $).toBeTruthy();
 			expect(id).toBe('element-1');
-			expect(transitions).toEqual([]);
+			expect(transitions instanceof use('spirit.collection').TransitionCollection).toBeTruthy();
 		});
 
 		it('should store new values', function() {
@@ -76,25 +67,14 @@ describe('ElementModel', function() {
 		it('should store new values literal', function() {
 			var props = {
 				el: 'my awesome element',
-				id: 'my new id',
-				transitions: []
+				id: 'my new id'
 			};
 
 			m.set(props);
-			expect(m.attributes).toEqual(props);
 			expect(m.get('el')).toBe(props.el);
 			expect(m.get('id')).toBe(props.id);
-			expect(m.get('transitions')).toBe(props.transitions);
 		});
 
-		it('should store new values recursively', function() {
-			m.set('transitions', fixtures.oneElementTwoParams.elements[0].transitions);
-			expect(m.get('transitions')).toEqual(fixtures.oneElementTwoParams.elements[0].transitions);
-			window.m = m;
-
-			// todo parse collection of transitions as models
-
-		});
 	});
 
 

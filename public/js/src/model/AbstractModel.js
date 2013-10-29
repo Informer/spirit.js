@@ -18,10 +18,43 @@
 	ns.AbstractModel.prototype = {
 
 		defaults: {},
+		attributes: {},
 
 		_construct: function(options) {
-			this.attributes = _.extend({}, this.defaults, options || {});
+
+			_.autoBind(this);
+
+			// create instances of default parseables
+			_.each(this.defaults, function(val, key) {
+				var ParseableObject = this._getParseableObject(key);
+				if (ParseableObject) {
+					this.defaults[key] = new ParseableObject();
+				}
+			}, this);
+
+			// parse attributes
+			this.attributes = _.extend({}, this.defaults);
+			_.each(options || {}, function(val, key) {
+				this.set(key, val);
+			}, this);
+
 			this.initialize(options);
+		},
+
+		_getParseableObject: function(key) {
+			var PossibleClassObject = this.defaults[key];
+
+			try {
+				if (PossibleClassObject.parseable === true) {
+					return PossibleClassObject;
+				}
+
+				if (PossibleClassObject.constructor.parseable === true) {
+					return PossibleClassObject.constructor;
+				}
+			} catch (error) {}
+
+			return false;
 		},
 
 		initialize: function(options) {
@@ -34,22 +67,35 @@
 				throw 'JSON.stringify does not exist. Download JSON 3 for polyfilling older browsers: http://bestiejs.github.io/json3/';
 			}
 
-			return JSON.stringify(this.attributes);
+			return _.extend({}, this.attributes);
 		},
 
-		get: function(value) {
-			return this.attributes[value];
+		get: function(attr) {
+			return this.attributes[attr];
 		},
 
-		set: function(prop, val) {
-			if (typeof prop === 'object') {
-				_.each(prop, function(val, key) {
+		set: function(key, val) {
+			var setAttr = _.bind(function(key, val) {
+				var PossibleParseableObject = this._getParseableObject(key);
+				if (PossibleParseableObject) {
+					this.attributes[key] = new PossibleParseableObject(val);
+				} else {
 					this.attributes[key] = val;
+				}
+			}, this);
+
+			if (typeof key === 'object') {
+				_.each(key, function(val, key) {
+					setAttr(key, val);
 				}, this);
 			} else {
-				this.attributes[prop] = val;
+				setAttr(key, val);
 			}
 			return this;
+		},
+
+		has: function(attr) {
+			return this.get(attr) !== null;
 		}
 
 

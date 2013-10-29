@@ -6,8 +6,7 @@
 	 * Helpers
 	 * @type {*}
 	 */
-	var _ = use('spirit._helpers');
-	_.isFunction(this);
+//	var _ = use('spirit._helpers');
 
 
 	ns.ElementModel = ns.AbstractModel.extend({
@@ -15,7 +14,7 @@
 		defaults: {
 			el: null,
 			id: null,
-			transitions: []
+			transitions: use('spirit.collection').TransitionCollection
 		},
 
 		initialize: function(options) {

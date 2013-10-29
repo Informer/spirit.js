@@ -28,6 +28,7 @@
 
 
 	var ctor = function() {};
+	var lookupIterator = function(value) { return ns.isFunction(value) ? value : function(obj) { return obj[value]; }; };
 
 
 	/**
@@ -109,7 +110,6 @@
 		return obj;
 	};
 
-
 	/**
 	 * Borrowed from underscorejs
 	 * Validate param on function type
@@ -121,7 +121,6 @@
 			return typeof obj === 'function';
 		};
 	}
-
 
 	/**
 	 * Borrowed from Backbone.extend
@@ -154,7 +153,6 @@
 
 		return child;
 	};
-
 
 	/**
 	 * extendObjectWithSuper
@@ -236,7 +234,6 @@
 		child.extend = ns.extendObject;
 		return child;
 	};
-
 
 	/**
 	 * Borrowed from underscorejs
@@ -369,7 +366,156 @@
 		return names.sort();
 	};
 
+	/**
+	 * Borrowed from underscorejs
+	 * Use a comparator function to figure out the smallest index at which an object should be inserted so as to maintain order. Uses binary search.
+	 * @param array
+	 * @param obj
+	 * @param iterator
+	 * @param context
+	 * @returns {number}
+	 */
+	ns.sortedIndex = function(array, obj, iterator, context) {
+		/* jshint -W016 */
+		/* jshint -W030 */
+		/* jshint -W116 */
+		iterator = iterator === null ? ns.identity : lookupIterator(iterator);
+		var value = iterator.call(context, obj);
+		var low = 0, high = array.length;
+		while (low < high) {
+			var mid = (low + high) >>> 1;
+			iterator.call(context, array[mid]) < value ? low = mid + 1 : high = mid;
+		}
+		return low;
+	};
+
+	/**
+	 * Borrowed from underscorejs
+	 * Return the position of the first occurrence of an item in an array, or -1 if the item is not included in the array.
+	 * @param array
+	 * @param item
+	 * @param isSorted
+	 * @returns {int}
+	 */
+	ns.indexOf = function(array, item, isSorted) {
+		/* jshint -W116 */
+		if (array === null) {
+			return -1;
+		}
+		var i = 0, length = array.length;
+		if (isSorted) {
+			if (typeof isSorted == 'number') {
+				i = (isSorted < 0 ? Math.max(0, length + isSorted) : isSorted);
+			} else {
+				i = ns.sortedIndex(array, item);
+				return array[i] === item ? i : -1;
+			}
+		}
+		if (Array.prototype.indexOf && array.indexOf === Array.prototype.indexOf) {
+			return array.indexOf(item, isSorted);
+		}
+		for (; i < length; i++) {
+			if (array[i] === item) {
+				return i;
+			}
+		}
+		return -1;
+	};
+
+
+	/**
+	 * Autobind all methods to scope!
+	 * @param scope
+	 */
+	ns.autoBind = function(scope) {
+		var funcs = ns.functions(scope.constructor.prototype);
+		ns.each(funcs, function(f) {
+			if (f.charAt(0) !== '_' && ns.indexOf(['autoBind', 'constructor'], f) === -1) {
+				scope[f] = ns.bind(scope[f], scope);
+			}
+		});
+	};
+
+	/**
+	 * Check if we are running is test modus?
+	 * @returns {boolean}
+	 */
+	ns.testMode = function() {
+		/* jshint -W106 */
+		return !!(window.__karma__);
+	};
+
 })(use('spirit._helpers'));;(function(ns) {
+
+	'use strict';
+
+	/**
+	 * Helpers
+	 * @type {*}
+	 */
+	var _ = use('spirit._helpers');
+
+
+
+	ns.AbstractCollection = function(options) {
+		this._construct(options);
+	};
+
+	ns.AbstractCollection.extend = _.extendObjectWithSuper;
+	ns.AbstractCollection.prototype = {
+
+		model: null,
+
+		_construct: function(options){
+			if (!_.testMode()) {
+				console.log('AbstractCollection -> _construct', options);
+			}
+		}
+
+	};
+
+	/**
+	 * Mark as parseable
+	 * In model.defaults {} we can provide class, while creating instance defaults will be set
+	 * @type {boolean}
+	 */
+	ns.AbstractCollection.parseable = true;
+
+
+
+
+})(use('spirit.collection'));
+;(function(ns) {
+
+	'use strict';
+
+	/**
+	 * Helpers
+	 * @type {*}
+	 */
+//	var _ = use('spirit._helpers');
+
+
+	ns.TransitionCollection = ns.AbstractCollection.extend({
+
+		model: 123, //use('spirit.model').TransitionModel,
+
+		initialize: function() {
+			return this;
+
+//			this.autoBind();
+
+			// make sure each model has always a reference to it's previous one
+//			this.on('add', this.updatePrevious);
+//			this.on('remove', this.reapplyPrevious);
+		}
+
+
+	});
+
+
+})(use('spirit.collection'));
+;(function(ns) {
 
 	'use strict';
 
@@ -389,10 +535,43 @@
 	ns.AbstractModel.prototype = {
 
 		defaults: {},
+		attributes: {},
 
 		_construct: function(options) {
-			this.attributes = _.extend({}, this.defaults, options || {});
+
+			_.autoBind(this);
+
+			// create instances of default parseables
+			_.each(this.defaults, function(val, key) {
+				var ParseableObject = this._getParseableObject(key);
+				if (ParseableObject) {
+					this.defaults[key] = new ParseableObject();
+				}
+			}, this);
+
+			// parse attributes
+			this.attributes = _.extend({}, this.defaults);
+			_.each(options || {}, function(val, key) {
+				this.set(key, val);
+			}, this);
+
 			this.initialize(options);
+		},
+
+		_getParseableObject: function(key) {
+			var PossibleClassObject = this.defaults[key];
+
+			try {
+				if (PossibleClassObject.parseable === true) {
+					return PossibleClassObject;
+				}
+
+				if (PossibleClassObject.constructor.parseable === true) {
+					return PossibleClassObject.constructor;
+				}
+			} catch (error) {}
+
+			return false;
 		},
 
 		initialize: function(options) {
@@ -405,22 +584,35 @@
 				throw 'JSON.stringify does not exist. Download JSON 3 for polyfilling older browsers: http://bestiejs.github.io/json3/';
 			}
 
-			return JSON.stringify(this.attributes);
+			return _.extend({}, this.attributes);
 		},
 
-		get: function(value) {
-			return this.attributes[value];
+		get: function(attr) {
+			return this.attributes[attr];
 		},
 
-		set: function(prop, val) {
-			if (typeof prop === 'object') {
-				_.each(prop, function(val, key) {
+		set: function(key, val) {
+			var setAttr = _.bind(function(key, val) {
+				var PossibleParseableObject = this._getParseableObject(key);
+				if (PossibleParseableObject) {
+					this.attributes[key] = new PossibleParseableObject(val);
+				} else {
 					this.attributes[key] = val;
+				}
+			}, this);
+
+			if (typeof key === 'object') {
+				_.each(key, function(val, key) {
+					setAttr(key, val);
 				}, this);
 			} else {
-				this.attributes[prop] = val;
+				setAttr(key, val);
 			}
 			return this;
+		},
+
+		has: function(attr) {
+			return this.get(attr) !== null;
 		}
 
 
@@ -436,8 +628,7 @@
 	 * Helpers
 	 * @type {*}
 	 */
-	var _ = use('spirit._helpers');
-	_.isFunction(this);
+//	var _ = use('spirit._helpers');
 
 
 	ns.ElementModel = ns.AbstractModel.extend({
@@ -445,7 +636,7 @@
 		defaults: {
 			el: null,
 			id: null,
-			transitions: []
+			transitions: use('spirit.collection').TransitionCollection
 		},
 
 		initialize: function(options) {
@@ -514,11 +705,16 @@
 	 * Logger
 	 */
 	var log = function() {
+		/* jshint -W106 */
+		/* jshint -W116 */
+		if (_.testMode()) return false;
 		if (this._debug && window.console && _.isFunction(window.console.log)) {
 			var args = [].slice.call(arguments);
 			args.unshift('Spirit: ->');
 			console.log.apply(console, args);
 		}
+
+		return true;
 	};
 
 	/**

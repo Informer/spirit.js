@@ -93,6 +93,7 @@ describe('Spirit Instantiate', function() {
 			expect(methodsTimeline).toEqual(methodsSpiritTimeline);
 			expect(methodsTimeline).toEqual(methodsSpiritTimeline);
 			expect(instance instanceof spirit.Timeline).toBeTruthy();
+			expect(instance instanceof spirit.Timeline).toBeTruthy();
 		});
 
 		it('should have jsonData', function() {
