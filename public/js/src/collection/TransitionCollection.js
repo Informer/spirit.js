@@ -14,12 +14,20 @@
 		model: 'spirit.model.TransitionModel',
 
 		initialize: function() {
-			return this;
-
 			// make sure each model has always a reference to it's previous one
-//			this.on('add', this.updatePrevious);
-//			this.on('remove', this.reapplyPrevious);
+			this.on('add', this.added);
+			this.on('remove', this.removed);
+		},
+
+
+		added: function() {
+			console.log('TransitionCollection -> added model');
+		},
+
+		removed: function(){
+			console.log('TransitionCollection -> removed model');
 		}
+
 
 
 

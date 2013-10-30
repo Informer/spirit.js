@@ -55,6 +55,16 @@
 			return false;
 		},
 
+		_onModelEvent: function(event, model, collection, options) {
+			if ((event === 'add' || event === 'remove') && collection !== this) {
+				return;
+			}
+			if (event === 'destroy') {
+				this.remove(model, options);
+			}
+			this.trigger.apply(this, arguments);
+		},
+
 		initialize: function() {
 			return this;
 		},
@@ -131,7 +141,7 @@
 				// optionally merge it into the existing model.
 				if (existing = this.get(id)) {
 					if (remove) {
-						modelMap[existing.cid] = true;
+						modelMap[existing.id] = true;
 					}
 					if (merge) {
 						attrs = attrs === model ? model.attributes : attrs;
@@ -154,22 +164,23 @@
 					toAdd.push(model);
 
 					// Listen to added models' events, and index models for lookup by
-					// `id` and by `cid`.
+					// `id`.
 					model.on('all', this._onModelEvent, this);
-					this._byId[model.cid] = model;
-					if (model.id != null) {
-						this._byId[model.id] = model;
-					}
+					this._byId[model.id] = model;
 				}
 				if (order) {
 					order.push(existing || model);
 				}
 			}
 
+
+			console.log('AbstractCollection -> set.. remove?', toRemove);
+
+
 			// Remove nonexistent models if appropriate.
 			if (remove) {
 				for (i = 0, l = this.length; i < l; ++i) {
-					if (!modelMap[(model = this.models[i]).cid]) {
+					if (!modelMap[(model = this.models[i]).id]) {
 						toRemove.push(model);
 					}
 				}
@@ -219,8 +230,28 @@
 		},
 
 		remove: function(models, options) {
-			_.isFunction(models);
-			_.isFunction(options);
+			/* jshint -W030 */
+
+			var singular = !_.isArray(models);
+			models = singular ? [models] : _.clone(models);
+			options || (options = {});
+			var i, l, index, model;
+			for (i = 0, l = models.length; i < l; i++) {
+				model = models[i] = this.get(models[i]);
+				if (!model) {
+					continue;
+				}
+				delete this._byId[model.id];
+				index = this.indexOf(model);
+				this.models.splice(index, 1);
+				this.length--;
+				if (!options.silent) {
+					options.index = index;
+					model.trigger('remove', model, this, options);
+				}
+				this._removeReference(model);
+			}
+			return singular ? models[0] : models;
 		},
 
 		toString: function() {
@@ -235,6 +266,21 @@
 	 * @type {boolean}
 	 */
 	ns.AbstractCollection.parseable = true;
+
+
+	// Underscore methods that we want to implement on the Collection.
+	// 90% of the core usefulness of Backbone Collections is actually implemented
+	// right here:
+	var methods = ['indexOf'];
+
+	// Mix in each Underscore method as a proxy to `Collection#models`.
+	_.each(methods, function(method) {
+		ns.AbstractCollection.prototype[method] = function() {
+			var args = [].slice.call(arguments);
+			args.unshift(this.models);
+			return _[method].apply(_, args);
+		};
+	});
 
 
 })(use('spirit.collection'));

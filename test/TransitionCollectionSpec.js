@@ -37,6 +37,10 @@
 				c = new collection.TransitionCollection(fixtures.oneElementTwoParams.elements[0].transitions);
 			});
 
+			afterEach(function(){
+				c = null;
+			});
+
 			it('should have 2 transitions', function() {
 				expect(c.length).toEqual(2);
 			});
@@ -45,6 +49,28 @@
 				_.each(c.models, function(m) {
 					expect(m instanceof use('spirit.model').TransitionModel);
 				});
+			});
+
+			it('should have 1 model after deleting 1st model', function() {
+				c.remove(c.models[0]);
+				expect(c.length).toEqual(1);
+
+				var m = c.models[0];
+				expect(m.get('frame')).toEqual(200);
+			});
+
+			it ('should have 3 models after adding another', function(){
+//				var m = new (use('spirit.model').TransitionModel)({
+//					params: {},
+//					ease: 'Linear.awesomeness'
+//				});
+
+				c.add({
+					params: {},
+					ease: 'Linear.awesomeness'
+				});
+				expect(c.length).toEqual(3);
+
 			});
 
 		});
