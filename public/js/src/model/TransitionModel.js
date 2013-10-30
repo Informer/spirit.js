@@ -6,13 +6,18 @@
 	 * Helpers
 	 * @type {*}
 	 */
-	var _ = use('spirit._helpers');
+//	var _ = use('spirit._helpers');
 
 
 	ns.TransitionModel = ns.AbstractModel.extend({
 
+		defaults: {
+			params: null,
+			ease: 'Linear.easeNone'
+		},
+
 		initialize: function() {
-			console.log('TransitionModel -> initialize', _.isPrototypeOf(this));
+
 		}
 
 	});

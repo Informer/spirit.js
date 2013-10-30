@@ -15,7 +15,9 @@
 	var log = function() {
 		/* jshint -W106 */
 		/* jshint -W116 */
-		if (_.testMode()) return false;
+		if (_.testMode()) {
+			return false;
+		}
 		if (this._debug && window.console && _.isFunction(window.console.log)) {
 			var args = [].slice.call(arguments);
 			args.unshift('Spirit: ->');
@@ -64,7 +66,8 @@
 	};
 
 	ns.Timeline.extend = _.extendObjectWithSuper;
-	ns.Timeline.prototype = {
+	_.extend(ns.Timeline.prototype, use('spirit.event').Events, {
+
 
 		/**
 		 * @private
@@ -166,7 +169,8 @@
 		 */
 		kill: function() {
 		}
-	};
+
+	});
 
 
 	/**

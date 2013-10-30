@@ -85,6 +85,15 @@
 
 	/**
 	 * Borrowed from underscorejs.
+	 * Is a given value an array? Delegates to ECMA5's native Array.isArray
+	 * @type {Function}
+	 */
+	ns.isArray = Array.isArray || function(obj) {
+		return Object.prototype.toString.call(obj) === '[object Array]';
+	};
+
+	/**
+	 * Borrowed from underscorejs.
 	 * The cornerstone, an `each` implementation, aka `forEach`.
 	 * Handles objects with the built-in `forEach`, arrays, and raw objects.
 	 * Delegates to **ECMAScript 5**'s native `forEach` if available.
@@ -144,6 +153,16 @@
 			return typeof obj === 'function';
 		};
 	}
+
+	/**
+	 * Borrowed from underscorejs
+	 * Add some isType methods: isArguments, isFunction, isString, isNumber, isDate, isRegExp.
+	 */
+	ns.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp'], function(name) {
+		ns['is' + name] = function(obj) {
+			return Object.prototype.toString.call(obj) === '[object ' + name + ']';
+		};
+	});
 
 	/**
 	 * Borrowed from Backbone.extend
@@ -391,6 +410,19 @@
 
 	/**
 	 * Borrowed from underscorejs
+	 * Create a (shallow-cloned) duplicate of an object.
+	 * @param obj
+	 * @returns {*}
+	 */
+	ns.clone = function(obj) {
+		if (typeof obj !== 'object') {
+			return obj;
+		}
+		return ns.isArray(obj) ? obj.slice() : ns.extend({}, obj);
+	};
+
+	/**
+	 * Borrowed from underscorejs
 	 * Use a comparator function to figure out the smallest index at which an object should be inserted so as to maintain order. Uses binary search.
 	 * @param array
 	 * @param obj
@@ -469,6 +501,203 @@
 	};
 
 })(use('spirit._helpers'));;(function(ns) {
+	'use strict';
+
+	var _ = use('spirit._helpers');
+
+
+	// Regular expression used to split event strings.
+	var eventSplitter = /\s+/;
+
+	// Implement fancy features of the Events API such as multiple event
+	// names `"change blur"` and jQuery-style event maps `{change: action}`
+	// in terms of the existing API.
+	var eventsApi = function(obj, action, name, rest) {
+
+		if (!name) {
+			return true;
+		}
+
+		// Handle event maps.
+		if (typeof name === 'object') {
+			for (var key in name) {
+				obj[action].apply(obj, [key, name[key]].concat(rest));
+			}
+			return false;
+		}
+
+		// Handle space separated event names.
+		if (eventSplitter.test(name)) {
+			var names = name.split(eventSplitter);
+			for (var i = 0, l = names.length; i < l; i++) {
+				obj[action].apply(obj, [names[i]].concat(rest));
+			}
+			return false;
+		}
+
+		return true;
+	};
+
+	// A difficult-to-believe, but optimized internal dispatch function for
+	// triggering events. Tries to keep the usual cases speedy (most internal
+	// Backbone events have 3 arguments).
+	var triggerEvents = function(events, args) {
+		/* jshint -W116 */
+
+		var ev, i = -1, l = events.length, a1 = args[0], a2 = args[1], a3 = args[2];
+		switch (args.length) {
+			case 0:
+				while (++i < l) {
+					(ev = events[i]).callback.call(ev.ctx);
+				}
+				return;
+			case 1:
+				while (++i < l) {
+					(ev = events[i]).callback.call(ev.ctx, a1);
+				}
+				return;
+			case 2:
+				while (++i < l) {
+					(ev = events[i]).callback.call(ev.ctx, a1, a2);
+				}
+				return;
+			case 3:
+				while (++i < l) {
+					(ev = events[i]).callback.call(ev.ctx, a1, a2, a3);
+				}
+				return;
+			default:
+				while (++i < l) {
+					(ev = events[i]).callback.apply(ev.ctx, args);
+				}
+		}
+	};
+
+
+	/**
+	 * Event Dispatcher borrowed from backbonejs
+	 * @type {{on: Function, once: Function, off: Function, trigger: Function, stopListening: Function}}
+	 */
+	ns.Events = {
+
+		/* jshint -W030 */
+		/* jshint -W084 */
+
+
+		// Bind an event to a `callback` function. Passing `"all"` will bind
+		// the callback to all events fired.
+		on: function(name, callback, context) {
+			if (!eventsApi(this, 'on', name, [callback, context]) || !callback) {
+				return this;
+			}
+			this._events || (this._events = {});
+			var events = this._events[name] || (this._events[name] = []);
+			events.push({callback: callback, context: context, ctx: context || this});
+			return this;
+		},
+
+		// Bind an event to only be triggered a single time. After the first time
+		// the callback is invoked, it will be removed.
+		once: function(name, callback, context) {
+			if (!eventsApi(this, 'once', name, [callback, context]) || !callback) {
+				return this;
+			}
+			var self = this;
+			var once = _.once(function() {
+				self.off(name, once);
+				callback.apply(this, arguments);
+			});
+			once._callback = callback;
+			return this.on(name, once, context);
+		},
+
+		// Remove one or many callbacks. If `context` is null, removes all
+		// callbacks with that function. If `callback` is null, removes all
+		// callbacks for the event. If `name` is null, removes all bound
+		// callbacks for all events.
+		off: function(name, callback, context) {
+			var retain, ev, events, names, i, l, j, k;
+			if (!this._events || !eventsApi(this, 'off', name, [callback, context])) {
+				return this;
+			}
+			if (!name && !callback && !context) {
+				this._events = {};
+				return this;
+			}
+			names = name ? [name] : _.keys(this._events);
+			for (i = 0, l = names.length; i < l; i++) {
+				name = names[i];
+				if (events = this._events[name]) {
+					this._events[name] = retain = [];
+					if (callback || context) {
+						for (j = 0, k = events.length; j < k; j++) {
+							ev = events[j];
+							if ((callback && callback !== ev.callback && callback !== ev.callback._callback) ||
+								(context && context !== ev.context)) {
+								retain.push(ev);
+							}
+						}
+					}
+					if (!retain.length) {
+						delete this._events[name];
+					}
+				}
+			}
+
+			return this;
+		},
+
+		// Trigger one or many events, firing all bound callbacks. Callbacks are
+		// passed the same arguments as `trigger` is, apart from the event name
+		// (unless you're listening on `"all"`, which will cause your callback to
+		// receive the true name of the event as the first argument).
+		trigger: function(name) {
+			if (!this._events) {
+				return this;
+			}
+			var args = [].slice.call(arguments, 1);
+			if (!eventsApi(this, 'trigger', name, args)) {
+				return this;
+			}
+			var events = this._events[name];
+			var allEvents = this._events.all;
+			if (events) {
+				triggerEvents(events, args);
+			}
+			if (allEvents) {
+				triggerEvents(allEvents, arguments);
+			}
+			return this;
+		},
+
+		// Tell this object to stop listening to either specific events ... or
+		// to every object it's currently listening to.
+		stopListening: function(obj, name, callback) {
+			var listeningTo = this._listeningTo;
+			if (!listeningTo) {
+				return this;
+			}
+			var remove = !name && !callback;
+			if (!callback && typeof name === 'object') {
+				callback = this;
+			}
+			if (obj) {
+				(listeningTo = {})[obj._listenId] = obj;
+			}
+			for (var id in listeningTo) {
+				obj = listeningTo[id];
+				obj.off(name, callback, this);
+				if (remove || _.isEmpty(obj._events)) {
+					delete this._listeningTo[id];
+				}
+			}
+			return this;
+		}
+
+	};
+
+})(use('spirit.event'));
+;(function(ns) {
 
 	'use strict';
 
@@ -485,7 +714,7 @@
 	};
 
 	ns.AbstractModel.extend = _.extendObjectWithSuper;
-	ns.AbstractModel.prototype = {
+	_.extend(ns.AbstractModel.prototype, use('spirit.event').Events, {
 
 		defaults: {},
 		attributes: {},
@@ -572,8 +801,7 @@
 			return this.get(attr) !== null;
 		}
 
-
-	};
+	});
 
 
 })(use('spirit.model'));
@@ -613,7 +841,7 @@
 	 * Helpers
 	 * @type {*}
 	 */
-	var _ = use('spirit._helpers');
+//	var _ = use('spirit._helpers');
 
 
 	ns.TransitionModel = ns.AbstractModel.extend({
@@ -624,7 +852,7 @@
 		},
 
 		initialize: function() {
-			console.log('TransitionModel -> initialize', _.isPrototypeOf(this));
+
 		}
 
 	});
@@ -663,35 +891,225 @@
 	var _ = use('spirit._helpers');
 
 
-
-	ns.AbstractCollection = function(options) {
-		this._construct(options);
+	ns.AbstractCollection = function(models) {
+		this._construct(models);
 	};
 
 	ns.AbstractCollection.extend = _.extendObjectWithSuper;
-	ns.AbstractCollection.prototype = {
+	_.extend(ns.AbstractCollection.prototype, use('spirit.event').Events, {
+
+		_byId: {},
 
 		model: null,
+		length: 0,
+		models: [],
+		comparator: false,
 
-		_construct: function(options){
-
+		_construct: function(models) {
 			_.autoBind(this);
 
-			// parse model
 			this.model = exist(this.model) ? use(this.model) : use('spirit.model').AbstractModel;
-
-			this.initialize(options);
-			if (!_.testMode()) {
-				console.log('AbstractCollection -> _construct', options);
-			}
+			this.reset(models);
+			this.initialize();
 		},
 
-		initialize: function(options){
-			_.isFunction(options);
+		_removeReference: function(model) {
+			if (this === model.collection) {
+				delete model.collection;
+			}
+			model.off('all', this._onModelEvent, this);
+		},
+
+		_prepareModel: function(attrs, options) {
+			if (attrs instanceof use('spirit.model').AbstractModel) {
+				if (!attrs.collection) {
+					attrs.collection = this;
+				}
+				return attrs;
+			}
+			options = options ? _.clone(options) : {};
+			options.collection = this;
+			var model = new this.model(attrs, options);
+			if (!model.validationError) {
+				return model;
+			}
+			this.trigger('invalid', this, model.validationError, options);
+			return false;
+		},
+
+		initialize: function() {
 			return this;
+		},
+
+		reset: function(models, options) {
+			/* jshint -W030 */
+
+			// remove references of each model
+			_.each(this.models, function(m) {
+				this._removeReference(m);
+			}, this);
+
+			// reset vars
+			this.length = 0;
+			this.models = [];
+			options || (options = {});
+
+			// add models
+			models = this.add(models, _.extend({silent: true}, options));
+			if (!options.silent) {
+				this.trigger('reset', this, options);
+			}
+			return models;
+		},
+
+		// Add a model, or list of models to the set.
+		add: function(models, options) {
+			return this.set(models, _.extend({merge: false}, options, {add: true, remove: false}));
+		},
+
+		get: function(obj) {
+			if (obj === null) {
+				return void 0;
+			}
+			return this._byId[obj.id] || this._byId[obj];
+		},
+
+		set: function(models, options) {
+			/* jshint -W116 */
+			/* jshint -W084 */
+			/* jshint -W055 */
+
+			options = _.extend({}, options, {add: true, remove: true, merge: true});
+
+			var singular = !_.isArray(models);
+
+			models = singular ? (models ? [models] : []) : _.clone(models);
+
+
+			var i, l, id, model, attrs, existing, sort;
+			var at = options.at;
+			var targetModel = this.model;
+			var sortable = this.comparator && (at == null) && options.sort !== false;
+			var sortAttr = _.isString(this.comparator) ? this.comparator : null;
+
+			var toAdd = [],
+				toRemove = [],
+				modelMap = {};
+
+			var add = options.add, merge = options.merge, remove = options.remove;
+			var order = !sortable && add && remove ? [] : false;
+
+			// Turn bare objects into model references, and prevent invalid models
+			// from being added.
+			for (i = 0, l = models.length; i < l; i++) {
+				attrs = models[i];
+				if (attrs instanceof use('spirit.model').AbstractModel) {
+					id = model = attrs;
+				} else {
+					id = new targetModel(attrs);
+				}
+
+				// If a duplicate is found, prevent it from being added and
+				// optionally merge it into the existing model.
+				if (existing = this.get(id)) {
+					if (remove) {
+						modelMap[existing.cid] = true;
+					}
+					if (merge) {
+						attrs = attrs === model ? model.attributes : attrs;
+						if (options.parse) {
+							attrs = existing.parse(attrs, options);
+						}
+						existing.set(attrs, options);
+						if (sortable && !sort && existing.hasChanged(sortAttr)) {
+							sort = true;
+						}
+					}
+					models[i] = existing;
+
+					// If this is a new, valid model, push it to the `toAdd` list.
+				} else if (add) {
+					model = models[i] = this._prepareModel(attrs, options);
+					if (!model) {
+						continue;
+					}
+					toAdd.push(model);
+
+					// Listen to added models' events, and index models for lookup by
+					// `id` and by `cid`.
+					model.on('all', this._onModelEvent, this);
+					this._byId[model.cid] = model;
+					if (model.id != null) {
+						this._byId[model.id] = model;
+					}
+				}
+				if (order) {
+					order.push(existing || model);
+				}
+			}
+
+			// Remove nonexistent models if appropriate.
+			if (remove) {
+				for (i = 0, l = this.length; i < l; ++i) {
+					if (!modelMap[(model = this.models[i]).cid]) {
+						toRemove.push(model);
+					}
+				}
+				if (toRemove.length) {
+					this.remove(toRemove, options);
+				}
+			}
+
+			// See if sorting is needed, update `length` and splice in new models.
+			if (toAdd.length || (order && order.length)) {
+				if (sortable) {
+					sort = true;
+				}
+				this.length += toAdd.length;
+				if (at != null) {
+					for (i = 0, l = toAdd.length; i < l; i++) {
+						this.models.splice(at + i, 0, toAdd[i]);
+					}
+				} else {
+					if (order) {
+						this.models.length = 0;
+					}
+					var orderedModels = order || toAdd;
+					for (i = 0, l = orderedModels.length; i < l; i++) {
+						this.models.push(orderedModels[i]);
+					}
+				}
+			}
+
+			// Silently sort the collection if appropriate.
+			if (sort) {
+				this.sort({silent: true});
+			}
+
+			// Unless silenced, it's time to fire all appropriate add/sort events.
+			if (!options.silent) {
+				for (i = 0, l = toAdd.length; i < l; i++) {
+					(model = toAdd[i]).trigger('add', model, this, options);
+				}
+				if (sort || (order && order.length)) {
+					this.trigger('sort', this, options);
+				}
+			}
+
+			// Return the added (or merged) model (or models).
+			return singular ? models[0] : models;
+		},
+
+		remove: function(models, options) {
+			_.isFunction(models);
+			_.isFunction(options);
+		},
+
+		toString: function() {
+			return "[object AbstractCollection]";
 		}
 
-	};
+	});
 
 	/**
 	 * Mark as parseable
@@ -701,10 +1119,7 @@
 	ns.AbstractCollection.parseable = true;
 
 
-
-
-})(use('spirit.collection'));
-;(function(ns) {
+})(use('spirit.collection'));;(function(ns) {
 
 	'use strict';
 
@@ -750,7 +1165,9 @@
 	var log = function() {
 		/* jshint -W106 */
 		/* jshint -W116 */
-		if (_.testMode()) return false;
+		if (_.testMode()) {
+			return false;
+		}
 		if (this._debug && window.console && _.isFunction(window.console.log)) {
 			var args = [].slice.call(arguments);
 			args.unshift('Spirit: ->');
@@ -799,7 +1216,8 @@
 	};
 
 	ns.Timeline.extend = _.extendObjectWithSuper;
-	ns.Timeline.prototype = {
+	_.extend(ns.Timeline.prototype, use('spirit.event').Events, {
+
 
 		/**
 		 * @private
@@ -901,7 +1319,8 @@
 		 */
 		kill: function() {
 		}
-	};
+
+	});
 
 
 	/**

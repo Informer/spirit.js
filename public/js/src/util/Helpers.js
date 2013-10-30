@@ -38,6 +38,15 @@
 
 	/**
 	 * Borrowed from underscorejs.
+	 * Is a given value an array? Delegates to ECMA5's native Array.isArray
+	 * @type {Function}
+	 */
+	ns.isArray = Array.isArray || function(obj) {
+		return Object.prototype.toString.call(obj) === '[object Array]';
+	};
+
+	/**
+	 * Borrowed from underscorejs.
 	 * The cornerstone, an `each` implementation, aka `forEach`.
 	 * Handles objects with the built-in `forEach`, arrays, and raw objects.
 	 * Delegates to **ECMAScript 5**'s native `forEach` if available.
@@ -97,6 +106,16 @@
 			return typeof obj === 'function';
 		};
 	}
+
+	/**
+	 * Borrowed from underscorejs
+	 * Add some isType methods: isArguments, isFunction, isString, isNumber, isDate, isRegExp.
+	 */
+	ns.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp'], function(name) {
+		ns['is' + name] = function(obj) {
+			return Object.prototype.toString.call(obj) === '[object ' + name + ']';
+		};
+	});
 
 	/**
 	 * Borrowed from Backbone.extend
@@ -340,6 +359,19 @@
 			}
 		}
 		return names.sort();
+	};
+
+	/**
+	 * Borrowed from underscorejs
+	 * Create a (shallow-cloned) duplicate of an object.
+	 * @param obj
+	 * @returns {*}
+	 */
+	ns.clone = function(obj) {
+		if (typeof obj !== 'object') {
+			return obj;
+		}
+		return ns.isArray(obj) ? obj.slice() : ns.extend({}, obj);
 	};
 
 	/**

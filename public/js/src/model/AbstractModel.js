@@ -15,7 +15,7 @@
 	};
 
 	ns.AbstractModel.extend = _.extendObjectWithSuper;
-	ns.AbstractModel.prototype = {
+	_.extend(ns.AbstractModel.prototype, use('spirit.event').Events, {
 
 		defaults: {},
 		attributes: {},
@@ -102,8 +102,7 @@
 			return this.get(attr) !== null;
 		}
 
-
-	};
+	});
 
 
 })(use('spirit.model'));
