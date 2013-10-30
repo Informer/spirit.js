@@ -37,16 +37,19 @@ module.exports = function(grunt) {
 					'<%= path.src %>/util/Globals.js',
 					'<%= path.src %>/util/*.js',
 
-				    // collections
-					'<%= path.src %>/collection/AbstractCollection.js',
-					'<%= path.src %>/collection/*.js',
+				    // events
+					'<%= path.src %>/event/*.js',
 
 					// models
 					'<%= path.src %>/model/AbstractModel.js',
 					'<%= path.src %>/model/*.js',
 
+					// collections
+					'<%= path.src %>/collection/AbstractCollection.js',
+					'<%= path.src %>/collection/*.js',
+
 					// rest
-					'<%= path.src %>/*.js',
+					'<%= path.src %>/*.js'
 				],
 				dest: '<%= pkg.name %>.js'
 			}
@@ -132,6 +135,32 @@ module.exports = function(grunt) {
 		}
 
 	});
+
+
+	/*
+	 ------------
+	 UPDATE KARMA TEST FILES WITH CONCAT FILES
+	 -----------
+	 */
+	var karmaFiles = (function(){
+		return [
+			// libs
+			'public/js/vendors/jquery/jquery.min.js',
+			'public/js/vendors/greensock-js/src/minified/TweenLite.min.js',
+			'public/js/vendors/greensock-js/src/minified/TimelineLite.min.js',
+			'public/js/vendors/greensock-js/src/minified/plugins/CSSPlugin.min.js',
+			'public/js/vendors/greensock-js/src/minified/easing/EasePack.min.js',
+
+		].concat(grunt.config('concat.dist.src')).concat([
+			// fixtures
+			{ pattern: 'test/fixtures/*.json', watched: false, served: true, included: false},
+
+			// specs
+			'test/helpers/*.js',
+			'test/*Spec.js'
+		]);
+	})();
+	grunt.config('karma.options.files', karmaFiles);
 
 
 	/*
