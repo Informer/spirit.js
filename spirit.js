@@ -1341,16 +1341,6 @@
 
 
 	/**
-	 * Extend with events
-	 */
-	_.extend(ns.Timeline.prototype, {
-		on: function() {},
-		off: function() {},
-		trigger: function() {}
-	});
-
-
-	/**
 	 * Extend with build in helpers
 	 * For example: bind timeline to scroll!
 	 */
