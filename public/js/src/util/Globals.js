@@ -22,4 +22,27 @@
 		return obj;
 	};
 
+
+	/**
+	 * Check if namespace exists
+	 * @param {string} namespace
+	 * @returns {boolean}
+	 */
+	global.exist = function(namespace) {
+		var segments = namespace.split('.');
+		var doesExist = true;
+
+		for (var i = 0, len = segments.length, obj = window; i < len; ++i) {
+			var segment = segments[i];
+
+			if (!obj[segment]) {
+				doesExist = false;
+				break;
+			}
+			obj = obj[segment];
+		}
+
+		return doesExist;
+	};
+
 })(window);

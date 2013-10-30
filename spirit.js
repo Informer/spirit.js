@@ -22,6 +22,29 @@
 		return obj;
 	};
 
+
+	/**
+	 * Check if namespace exists
+	 * @param {string} namespace
+	 * @returns {boolean}
+	 */
+	global.exist = function(namespace) {
+		var segments = namespace.split('.');
+		var doesExist = true;
+
+		for (var i = 0, len = segments.length, obj = window; i < len; ++i) {
+			var segment = segments[i];
+
+			if (!obj[segment]) {
+				doesExist = false;
+				break;
+			}
+			obj = obj[segment];
+		}
+
+		return doesExist;
+	};
+
 })(window);;(function(ns) {
 
 	'use strict';
@@ -449,76 +472,6 @@
 
 	'use strict';
 
-	/**
-	 * Helpers
-	 * @type {*}
-	 */
-	var _ = use('spirit._helpers');
-
-
-
-	ns.AbstractCollection = function(options) {
-		this._construct(options);
-	};
-
-	ns.AbstractCollection.extend = _.extendObjectWithSuper;
-	ns.AbstractCollection.prototype = {
-
-		model: null,
-
-		_construct: function(options){
-			if (!_.testMode()) {
-				console.log('AbstractCollection -> _construct', options);
-			}
-		}
-
-	};
-
-	/**
-	 * Mark as parseable
-	 * In model.defaults {} we can provide class, while creating instance defaults will be set
-	 * @type {boolean}
-	 */
-	ns.AbstractCollection.parseable = true;
-
-
-
-
-})(use('spirit.collection'));
-;(function(ns) {
-
-	'use strict';
-
-	/**
-	 * Helpers
-	 * @type {*}
-	 */
-//	var _ = use('spirit._helpers');
-
-
-	ns.TransitionCollection = ns.AbstractCollection.extend({
-
-		model: 123, //use('spirit.model').TransitionModel,
-
-		initialize: function() {
-			return this;
-
-//			this.autoBind();
-
-			// make sure each model has always a reference to it's previous one
-//			this.on('add', this.updatePrevious);
-//			this.on('remove', this.reapplyPrevious);
-		}
-
-
-	});
-
-
-})(use('spirit.collection'));
-;(function(ns) {
-
-	'use strict';
-
 
 	/**
 	 * Helpers
@@ -562,6 +515,10 @@
 			var PossibleClassObject = this.defaults[key];
 
 			try {
+				if (typeof PossibleClassObject === 'string' && exist(PossibleClassObject)) {
+					PossibleClassObject = use(PossibleClassObject);
+				}
+
 				if (PossibleClassObject.parseable === true) {
 					return PossibleClassObject;
 				}
@@ -636,7 +593,7 @@
 		defaults: {
 			el: null,
 			id: null,
-			transitions: use('spirit.collection').TransitionCollection
+			transitions: 'spirit.collection.TransitionCollection'
 		},
 
 		initialize: function(options) {
@@ -660,6 +617,11 @@
 
 
 	ns.TransitionModel = ns.AbstractModel.extend({
+
+		defaults: {
+			params: null,
+			ease: 'Linear.easeNone'
+		},
 
 		initialize: function() {
 			console.log('TransitionModel -> initialize', _.isPrototypeOf(this));
@@ -690,6 +652,87 @@
 
 
 })(use('spirit.model'));
+;(function(ns) {
+
+	'use strict';
+
+	/**
+	 * Helpers
+	 * @type {*}
+	 */
+	var _ = use('spirit._helpers');
+
+
+
+	ns.AbstractCollection = function(options) {
+		this._construct(options);
+	};
+
+	ns.AbstractCollection.extend = _.extendObjectWithSuper;
+	ns.AbstractCollection.prototype = {
+
+		model: null,
+
+		_construct: function(options){
+
+			_.autoBind(this);
+
+			// parse model
+			this.model = exist(this.model) ? use(this.model) : use('spirit.model').AbstractModel;
+
+			this.initialize(options);
+			if (!_.testMode()) {
+				console.log('AbstractCollection -> _construct', options);
+			}
+		},
+
+		initialize: function(options){
+			_.isFunction(options);
+			return this;
+		}
+
+	};
+
+	/**
+	 * Mark as parseable
+	 * In model.defaults {} we can provide class, while creating instance defaults will be set
+	 * @type {boolean}
+	 */
+	ns.AbstractCollection.parseable = true;
+
+
+
+
+})(use('spirit.collection'));
+;(function(ns) {
+
+	'use strict';
+
+	/**
+	 * Helpers
+	 * @type {*}
+	 */
+//	var _ = use('spirit._helpers');
+
+
+	ns.TransitionCollection = ns.AbstractCollection.extend({
+
+		model: 'spirit.model.TransitionModel',
+
+		initialize: function() {
+			return this;
+
+			// make sure each model has always a reference to it's previous one
+//			this.on('add', this.updatePrevious);
+//			this.on('remove', this.reapplyPrevious);
+		}
+
+
+
+	});
+
+
+})(use('spirit.collection'));
 ;(function(ns) {
 
 	'use strict';

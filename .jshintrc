@@ -27,6 +27,7 @@
 		"TweenMax": false,
 		"TimelineMax": false,
 		"use": false,
+		"exist": false,
 		"spirit": false,
 		"after": false,
 		"afterEach": false,
