@@ -14,7 +14,7 @@
 		defaults: {
 			el: null,
 			id: null,
-			transitions: use('spirit.collection').TransitionCollection
+			transitions: 'spirit.collection.TransitionCollection'
 		},
 
 		initialize: function(options) {

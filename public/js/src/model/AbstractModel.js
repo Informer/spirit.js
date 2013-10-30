@@ -45,6 +45,10 @@
 			var PossibleClassObject = this.defaults[key];
 
 			try {
+				if (typeof PossibleClassObject === 'string' && exist(PossibleClassObject)) {
+					PossibleClassObject = use(PossibleClassObject);
+				}
+
 				if (PossibleClassObject.parseable === true) {
 					return PossibleClassObject;
 				}
