@@ -713,6 +713,7 @@
 		this._construct(options);
 	};
 
+	ns.AbstractModel._idIterator = 1;
 	ns.AbstractModel.extend = _.extendObjectWithSuper;
 	_.extend(ns.AbstractModel.prototype, use('spirit.event').Events, {
 
@@ -720,6 +721,8 @@
 		attributes: {},
 
 		_construct: function(options) {
+			this.id = ['spirit.model',
+			           ns.AbstractModel._idIterator++].join('.');
 
 			_.autoBind(this);
 

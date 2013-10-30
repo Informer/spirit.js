@@ -31,10 +31,21 @@
 		});
 
 
-		it('should create a custom collection with 2 transitions', function() {
-			c = new collection.TransitionCollection(fixtures.oneElementTwoParams.elements[0].transitions);
-//			expect(c.length).toEqual(2);
+		describe('Create custom collection', function() {
 
+			beforeEach(function() {
+				c = new collection.TransitionCollection(fixtures.oneElementTwoParams.elements[0].transitions);
+			});
+
+			it('should have 2 transitions', function() {
+				expect(c.length).toEqual(2);
+			});
+
+			it('should have 2 models of type TransitionsModel', function() {
+				_.each(c.models, function(m) {
+					expect(m instanceof use('spirit.model').TransitionModel);
+				});
+			});
 
 		});
 
