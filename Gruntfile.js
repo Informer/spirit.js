@@ -35,6 +35,7 @@ module.exports = function(grunt) {
 				src: [
 					// utils
 					'<%= path.src %>/util/Globals.js',
+					'<%= path.src %>/util/Lodash.js',
 					'<%= path.src %>/util/*.js',
 
 				    // events
@@ -71,7 +72,7 @@ module.exports = function(grunt) {
 		watch: {
 			src: {
 				files: ['<%= path.src %>/**/*.js', '<%= path.src %>/*.js'],
-				tasks: ['concat:dist', 'jshint:src']
+				tasks: ['concat:dist', 'jshint:src', 'notify:success']
 			},
 			test: {
 				files: ['test/*Spec.js'],
@@ -84,8 +85,15 @@ module.exports = function(grunt) {
 			options: {
 				jshintrc: '.jshintrc'
 			},
-
-			src: ['Gruntfile.js', '<%= path.src %>/**/*.js', '<%= path.src %>/*.js'],
+			src: {
+				options: {
+					jshintrc: '.jshintrc',
+					ignores: ['public/js/src/util/Lodash.js']
+				},
+				files: {
+					src: ['Gruntfile.js', '<%= path.src %>/**/*.js', '<%= path.src %>/*.js']
+				}
+			},
 			spec: ['test/*Spec.js']
 		},
 
