@@ -88,7 +88,11 @@ module.exports = function(grunt) {
 			src: {
 				options: {
 					jshintrc: '.jshintrc',
-					ignores: ['public/js/src/util/Lodash.js']
+					ignores: [
+						'public/js/src/util/Lodash.js',
+						'public/js/src/model/AbstractModel.js',
+						'public/js/src/collection/AbstractCollection.js'
+					]
 				},
 				files: {
 					src: ['Gruntfile.js', '<%= path.src %>/**/*.js', '<%= path.src %>/*.js']

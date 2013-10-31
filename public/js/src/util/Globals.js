@@ -29,6 +29,9 @@
 	 * @returns {boolean}
 	 */
 	global.exist = function(namespace) {
+		if (typeof namespace !== 'string') {
+			return false;
+		}
 		var segments = namespace.split('.');
 		var doesExist = true;
 
