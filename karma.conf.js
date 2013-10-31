@@ -12,24 +12,8 @@ module.exports = function(config) {
 
 
 		// list of files / patterns to load in the browser
-		files: [
-			// libs
-			'public/js/vendors/jquery/jquery.min.js',
-			'public/js/vendors/greensock-js/src/minified/TweenLite.min.js',
-			'public/js/vendors/greensock-js/src/minified/TimelineLite.min.js',
-			'public/js/vendors/greensock-js/src/minified/plugins/CSSPlugin.min.js',
-			'public/js/vendors/greensock-js/src/minified/easing/EasePack.min.js',
-
-			// source scripts
-			'spirit.js',
-
-			// specs
-			'test/helpers/*.js',
-			'test/*Spec.js',
-
-			// fixtures
-			{ pattern: 'test/fixtures/*.json', watched: false, served: true, included: false}
-		],
+		// Gruntfile.js handles this
+		files: [],
 
 
 		// list of files to exclude

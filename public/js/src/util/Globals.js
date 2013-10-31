@@ -2,12 +2,17 @@
 
 	'use strict';
 
+	// some AMD build optimizers, like r.js, check for condition patterns like the following:
+	var isAMD = (typeof global.define === 'function' && typeof global.define.amd === 'object' && global.define.amd);
+	var context = isAMD ? {} : global;
+
+
 	/**
 	 * Resolves namespace
 	 * @param {string} namespace
 	 * @returns {} recursive namespace
 	 */
-	global.use = function(namespace) {
+	context.use = function(namespace) {
 
 		var segments = namespace.split('.');
 
@@ -28,14 +33,14 @@
 	 * @param {string} namespace
 	 * @returns {boolean}
 	 */
-	global.exist = function(namespace) {
+	context.exist = function(namespace) {
 		if (typeof namespace !== 'string') {
 			return false;
 		}
 		var segments = namespace.split('.');
 		var doesExist = true;
 
-		for (var i = 0, len = segments.length, obj = window; i < len; ++i) {
+		for (var i = 0, len = segments.length, obj = context; i < len; ++i) {
 			var segment = segments[i];
 
 			if (!obj[segment]) {
@@ -47,5 +52,14 @@
 
 		return doesExist;
 	};
+
+
+
+	// if we're running in an AMD environment, define our module
+	if (isAMD) {
+		global.define(function() {
+			return context;
+		});
+	}
 
 })(window);
