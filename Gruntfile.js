@@ -50,7 +50,8 @@ module.exports = function(grunt) {
 					'<%= path.src %>/collection/*.js',
 
 					// rest
-					'<%= path.src %>/*.js'
+					'<%= path.src %>/**/*.js',
+					'<%= path.src %>/*.js',
 				],
 				dest: '<%= pkg.name %>.js'
 			}
