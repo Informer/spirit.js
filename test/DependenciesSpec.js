@@ -18,7 +18,7 @@
 	};
 
 
-	describe('Spirit Instantiate', function() {
+	describe('Dependencies', function() {
 
 		describe('Dependencies', function() {
 

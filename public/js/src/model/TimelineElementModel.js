@@ -9,7 +9,7 @@
 //	var _ = use('spirit._helpers');
 
 
-	ns.ElementModel = ns.AbstractModel.extend({
+	ns.TimelineElementModel = ns.AbstractModel.extend({
 
 		defaults: {
 			el: null,

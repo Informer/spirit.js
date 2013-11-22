@@ -14,13 +14,13 @@
 		collection = use('spirit.collection');
 
 
-	describe('ElementModel', function() {
+	describe('TimelineElementModel', function() {
 
 
 		var m;
 
 		it('should create a default model', function() {
-			m = new model.ElementModel();
+			m = new model.TimelineElementModel();
 
 			expect(m.get('el')).toBeNull();
 			expect(m.get('id')).toBeNull();
@@ -34,7 +34,7 @@
 				id: 'element-1'
 			};
 
-			m = new model.ElementModel(props);
+			m = new model.TimelineElementModel(props);
 			expect(m.get('el')).toBe(props.el);
 			expect(m.get('id')).toBe(props.id);
 			expect(m.get('transitions') instanceof collection.TransitionCollection).toBeTruthy();
@@ -46,7 +46,7 @@
 			var m;
 
 			beforeEach(function() {
-				m = new model.ElementModel({
+				m = new model.TimelineElementModel({
 					el: $('<div />'),
 					id: 'element-1',
 					transitions: []

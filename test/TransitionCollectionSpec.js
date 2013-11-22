@@ -72,11 +72,10 @@
 				expect(c.length).toEqual(3);
 				expect(added.attributes).toEqual(m.attributes);
 				expect(added instanceof m.constructor).toBeTruthy();
-
-
 			});
 
 		});
+
 
 
 	});
