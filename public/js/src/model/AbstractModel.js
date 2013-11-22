@@ -32,7 +32,7 @@
 		var PossibleClassObject = ns;
 
 		try {
-			if (typeof PossibleClassObject === 'string' && exist(PossibleClassObject)) {
+			if (_.isString(PossibleClassObject) && exist(PossibleClassObject)) {
 				PossibleClassObject = use(PossibleClassObject);
 			}
 			if (PossibleClassObject.parseable === true) {
@@ -49,13 +49,12 @@
 
 	ns.AbstractModel = function(attributes, options) {
 
-		// set defaults parseables to Class objects
-		this.parseables = {};
+		// set defaults _parseables to Class objects
+		this._parseables = {};
 		_.each(this.defaults, function(val, key) {
 			var PO = getParseableObject(val);
 			if (PO) {
-				this.parseables[key] = PO;
-				this.defaults[key] = new PO();
+				this._parseables[key] = PO;
 			}
 		}, this);
 
@@ -174,8 +173,12 @@
 
 					// default Backbone.Model behavior = current[attr] = val
 					// but we want to make sure it parses into the specified parseable if needed
-					var PO = this.parseables[attr];
-					current[attr] = PO ? new PO(val) : val;
+					var PO = this._parseables[attr];
+					if (PO) {
+						current[attr] = (_.isArray(val) || (_.isObject(val) && (val instanceof ns.AbstractModel))) ? new PO(val) : new PO();
+					}else{
+						current[attr] = val;
+					}
 				}
 			}
 
