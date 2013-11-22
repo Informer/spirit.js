@@ -12,11 +12,8 @@
 	ns.StateModel = ns.AbstractModel.extend({
 
 		defaults: {
-		},
-
-		initialize: function(options) {
-			this._super(options);
-			return this;
+			name: 'undefined',
+			tweenObj: {}
 		}
 
 	});

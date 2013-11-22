@@ -2,12 +2,17 @@
 
 	'use strict';
 
+	// some AMD build optimizers, like r.js, check for condition patterns like the following:
+	var isAMD = (typeof global.define === 'function' && typeof global.define.amd === 'object' && global.define.amd);
+	var context = isAMD ? {} : global;
+
+
 	/**
 	 * Resolves namespace
 	 * @param {string} namespace
 	 * @returns {} recursive namespace
 	 */
-	global.use = function(namespace) {
+	context.use = function(namespace) {
 
 		var segments = namespace.split('.');
 
@@ -28,14 +33,14 @@
 	 * @param {string} namespace
 	 * @returns {boolean}
 	 */
-	global.exist = function(namespace) {
+	context.exist = function(namespace) {
 		if (typeof namespace !== 'string') {
 			return false;
 		}
 		var segments = namespace.split('.');
 		var doesExist = true;
 
-		for (var i = 0, len = segments.length, obj = window; i < len; ++i) {
+		for (var i = 0, len = segments.length, obj = context; i < len; ++i) {
 			var segment = segments[i];
 
 			if (!obj[segment]) {
@@ -47,6 +52,15 @@
 
 		return doesExist;
 	};
+
+
+
+	// if we're running in an AMD environment, define our module
+	if (isAMD) {
+		global.define(function() {
+			return context;
+		});
+	}
 
 })(window);;/**
  * @license
@@ -5214,7 +5228,7 @@
 		var PossibleClassObject = ns;
 
 		try {
-			if (typeof PossibleClassObject === 'string' && exist(PossibleClassObject)) {
+			if (_.isString(PossibleClassObject) && exist(PossibleClassObject)) {
 				PossibleClassObject = use(PossibleClassObject);
 			}
 			if (PossibleClassObject.parseable === true) {
@@ -5231,13 +5245,12 @@
 
 	ns.AbstractModel = function(attributes, options) {
 
-		// set defaults parseables to Class objects
-		this.parseables = {};
+		// set defaults _parseables to Class objects
+		this._parseables = {};
 		_.each(this.defaults, function(val, key) {
 			var PO = getParseableObject(val);
 			if (PO) {
-				this.parseables[key] = PO;
-				this.defaults[key] = new PO();
+				this._parseables[key] = PO;
 			}
 		}, this);
 
@@ -5356,8 +5369,12 @@
 
 					// default Backbone.Model behavior = current[attr] = val
 					// but we want to make sure it parses into the specified parseable if needed
-					var PO = this.parseables[attr];
-					current[attr] = PO ? new PO(val) : val;
+					var PO = this._parseables[attr];
+					if (PO) {
+						current[attr] = (_.isArray(val) || (_.isObject(val) && (val instanceof ns.AbstractModel))) ? new PO(val) : new PO();
+					}else{
+						current[attr] = val;
+					}
 				}
 			}
 
@@ -5582,7 +5599,29 @@
 //	var _ = use('spirit._helpers');
 
 
-	ns.ElementModel = ns.AbstractModel.extend({
+	ns.StateModel = ns.AbstractModel.extend({
+
+		defaults: {
+			name: 'undefined',
+			tweenObj: {}
+		}
+
+	});
+
+
+})(use('spirit.model'));
+;(function(ns) {
+
+	'use strict';
+
+	/**
+	 * Helpers
+	 * @type {*}
+	 */
+//	var _ = use('spirit._helpers');
+
+
+	ns.TimelineElementModel = ns.AbstractModel.extend({
 
 		defaults: {
 			el: null,
@@ -6112,6 +6151,25 @@
 //	var _ = use('spirit._helpers');
 
 
+	ns.StatesCollection = ns.AbstractCollection.extend({
+
+		model: 'spirit.model.StateModel'
+
+	});
+
+
+})(use('spirit.collection'));
+;(function(ns) {
+
+	'use strict';
+
+	/**
+	 * Helpers
+	 * @type {*}
+	 */
+//	var _ = use('spirit._helpers');
+
+
 	ns.TransitionCollection = ns.AbstractCollection.extend({
 
 		model: 'spirit.model.TransitionModel',
@@ -6349,3 +6407,127 @@
 
 
 })(use('spirit'));
+;(function() {
+	'use strict';
+
+
+	/**
+	 * Helpers
+	 * @type {*}
+	 */
+	var _ = use('spirit._helpers'),
+		model = use('spirit.model'),
+		collection = use('spirit.collection');
+
+
+	var tweener = _.isFunction(window.TweenMax) ? window.TweenMax : window.TweenLite,
+		getObjectFromString = function(str) {
+		if (_.isUndefined(str) || !_.isString(str)) {
+			return {};
+		}
+
+		var obj;
+		try {
+			obj = $.parseJSON(str.replace(/([a-zA-Z_]+\.(?:[a-zA-Z_]+)?|[a-zA-Z_]+)/g, '"$1"'));
+		} catch (e) {}
+		return obj;
+	};
+
+
+	/**
+	 * jQuery.spiritAnimateTo(state, speed, tweenOptions)
+	 * jQuery.spiritAnimateTo(speed, tweenOptions)
+	 */
+	$.fn.spiritAnimateTo = function() {
+		var args = [].slice.call(arguments),
+			isState = function() {
+				return _.isString(args[0]);
+			},
+			isDirect = function() {
+				return _.isNumber(args[0]);
+			};
+
+
+		if (isState()) {
+			return methods.animateToState.apply(this, [
+				args[0],
+				_.isNumber(args[1]) ? args[1] : defaults.speed,
+				_.isObject(args[2]) ? args[2] : {}
+			]);
+		} else if (isDirect()) {
+			return methods.animateTo.apply(this, [
+				args[0],
+				_.isObject(args[1]) ? args[1] : {}
+			]);
+		} else {
+			$.error('invalid function parameters provided for jQuery.spiritAnimateTo. ' +
+				'First param needs to be a state (string) or speed (number)');
+		}
+	};
+
+
+	var defaults = {
+		speed: 1
+	};
+
+
+	var methods = {
+
+		animateToState: function(state, speed, options) {
+			return this.each(function() {
+				
+				var $this = $(this),
+					states = $this.data('spirit-states');
+
+				// parse states
+				if (_.isString(states)) {
+					var coll = new collection.StatesCollection();
+
+					_.each(getObjectFromString(states), function(val, key) {
+						coll.add({
+							name: key,
+							tweenObj: val
+						}, {silent: true});
+					});
+
+					$this.data('spirit-states', coll);
+					states = coll;
+				}
+
+				if (!(states instanceof collection.StatesCollection)) {
+					$this.trigger('spirit_error', {msg: 'jQuery.spiritAnimateTo: State[' + state + '] not found on element'});
+				} else {
+
+					var found = states.where({name: state});
+					if (found.length === 0) {
+						$this.trigger('spirit_error', {msg: 'jQuery.spiritAnimateTo: State[' + state + '] not found on element'});
+						return;
+					}
+
+					// we found state.. animate it!
+					var tweenObj = _.first(found).get('tweenObj');
+					if (_.isObject(tweenObj)) {
+						methods.animateTo.apply(this, [speed, _.extend(tweenObj, options)]);
+					}
+				}
+
+			});
+		},
+
+		animateTo: function(speed, tweenObj) {
+			var animateSingleElement = function() {
+				var $this = $(this);
+				if (tweener) {
+					tweener.to($this, speed, tweenObj);
+				}
+			};
+			return (this instanceof HTMLElement) ? animateSingleElement.call(this) : this.each(animateSingleElement);
+		}
+
+	};
+
+
+
+
+
+})();

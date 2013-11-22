@@ -20,8 +20,10 @@
 	"smarttabs": true,
 	"-W015": true,
 	"-W034": true,
+	"-W098": true,
 	"globals": {
 		"$": false,
+		"jasmine": false,
 		"TweenLite": false,
 		"TimelineLite": false,
 		"TweenMax": false,

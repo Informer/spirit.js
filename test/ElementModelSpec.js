@@ -14,7 +14,7 @@
 		collection = use('spirit.collection');
 
 
-	describe('TimelineElementModel', function() {
+	describe('ElementModel', function() {
 
 
 		var m;
