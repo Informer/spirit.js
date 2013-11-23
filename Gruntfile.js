@@ -38,7 +38,7 @@ module.exports = function(grunt) {
 					'<%= path.src %>/util/Lodash.js',
 					'<%= path.src %>/util/*.js',
 
-				    // events
+					// events
 					'<%= path.src %>/event/*.js',
 
 					// models
@@ -144,7 +144,33 @@ module.exports = function(grunt) {
 			continuous: {
 				singleRun: true,
 				browsers: ['PhantomJS']
+			},
+			coverage: {
+				singleRun: true,
+				browsers: ['PhantomJS'],
+				reporters: ['progress', 'coverage'],
+				coverageReporter: {
+					type: 'html',
+					dir: 'coverage/'
+				},
+				preprocessors: {
+					'public/js/src/*.js': ['coverage'],
+					'public/js/src/**/*.js': ['coverage']
+				}
 			}
+		},
+
+
+		open : {
+			coverage : {
+				path: './coverage/PhantomJS 1.9.2 (Mac OS X)/index.html',
+				app: 'Google Chrome'
+			}
+		},
+
+
+		clean: {
+			coverage: ["coverage", "path/to/dir/two"]
 		}
 
 	});
@@ -152,10 +178,10 @@ module.exports = function(grunt) {
 
 	/*
 	 ------------
-	 UPDATE KARMA TEST FILES WITH CONCAT FILES
+	 UPDATE KARMA TEST FILES WITH CONCATTED FILES
 	 -----------
 	 */
-	var karmaFiles = (function(){
+	var karmaFiles = (function() {
 		return [
 			// libs
 			'public/js/vendors/jquery/jquery.min.js',
@@ -165,13 +191,13 @@ module.exports = function(grunt) {
 			'public/js/vendors/greensock-js/src/minified/easing/EasePack.min.js',
 
 		].concat(grunt.config('concat.dist.src')).concat([
-			// fixtures
-			{ pattern: 'test/fixtures/*.json', watched: false, served: true, included: false},
+				// fixtures
+				{ pattern: 'test/fixtures/*.json', watched: false, served: true, included: false},
 
-			// specs
-			'test/helpers/*.js',
-			'test/*Spec.js'
-		]);
+				// specs
+				'test/helpers/*.js',
+				'test/*Spec.js'
+			]);
 	})();
 	grunt.config('karma.options.files', karmaFiles);
 
@@ -195,6 +221,8 @@ module.exports = function(grunt) {
 
 	grunt.registerTask('test', ['karma:all']);
 	grunt.registerTask('test:ci', ['karma:continuous']);
+	grunt.registerTask('test:coverage', ['karma:coverage', 'open:coverage']);
+	grunt.registerTask('test:watch', ['karma:watch']);
 
 	grunt.registerTask('release', ['default', 'bump-commit']);
 	grunt.registerTask('release:patch', ['bump-only:patch', 'release']);
