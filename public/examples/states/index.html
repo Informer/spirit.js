@@ -22,13 +22,23 @@
 			height: 100px;
 			border-radius: 50%;
 			margin-top: 100px;
+			-webkit-backface-visibility: hidden;
+			-webkit-transform-style: preserve-3d;
+			-webkit-perspective: 800;
+			-webkit-transform: translateZ(0);
 		}
 	</style>
 </head>
 <body>
 
 <div class="ball"
-	 data-spirit-states="{one: {x: 300, y: 200, alpha: 0.5, scale: 0.5}, two: {x: 500, y:0, alpha: 1, backgroundColor: green}, three: {x: 0, y: 0,scale:1.5, backgroundColor: red}}"></div>
+	 data-spirit-states="{
+
+	 one: {x: 300, y: 200, alpha: 0.5, scale: 0.5, ease: Elastic.easeOut, borderRadius: 50%},
+	 two: {x: 500, y:0, alpha: 1, backgroundColor: green, borderRadius: 0, rotation: +90deg},
+	 three: {x: 0, y: 0,scale:1.5, backgroundColor: red, rotation: 0deg}
+
+	 }"></div>
 
 
 <div class="states">

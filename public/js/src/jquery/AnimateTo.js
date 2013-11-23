@@ -13,16 +13,17 @@
 
 	var tweener = _.isFunction(window.TweenMax) ? window.TweenMax : window.TweenLite,
 		getObjectFromString = function(str) {
-		if (_.isUndefined(str) || !_.isString(str)) {
-			return {};
-		}
-
-		var obj;
-		try {
-			obj = $.parseJSON(str.replace(/([a-zA-Z_]+\.(?:[a-zA-Z_]+)?|[a-zA-Z_]+)/g, '"$1"'));
-		} catch (e) {}
-		return obj;
-	};
+			if (_.isUndefined(str) || !_.isString(str)) {
+				return {};
+			}
+	
+			var obj;
+			try {
+				var json = str.replace(/'|"/g, '').replace(/((?![\d]+|\.)[\w\.]+|(\+|-)?[\d]+(%|px|em|deg))/g, '"$1"');
+				obj = $.parseJSON(json);
+			} catch (e) {}
+			return obj;
+		};
 
 
 	/**
