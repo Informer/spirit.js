@@ -6425,19 +6425,25 @@
 			if (_.isUndefined(str) || !_.isString(str)) {
 				return {};
 			}
-	
+
 			var obj;
 			try {
-				var json = str.replace(/'|"/g, '').replace(/((?![\d]+|\.)[\w\.]+|(\+|-)?[\d]+(%|px|em|deg))/g, '"$1"');
+				var json = str.replace(/'|"/g, '').replace(/((?![\d]+|\.)[#\w\.]+|(\+|-)?[\d]+(%|px|em|deg))/g, '"$1"');
 				obj = $.parseJSON(json);
 			} catch (e) {}
+			
 			return obj;
 		};
 
 
 	/**
+	 * Animate to state
+	 *
 	 * jQuery.spiritAnimateTo(state, speed, tweenOptions)
 	 * jQuery.spiritAnimateTo(speed, tweenOptions)
+	 *
+	 * @see examples/states
+	 * @return {jQuery}
 	 */
 	$.fn.spiritAnimateTo = function() {
 		var args = [].slice.call(arguments),
@@ -6447,7 +6453,6 @@
 			isDirect = function() {
 				return _.isNumber(args[0]);
 			};
-
 
 		if (isState()) {
 			return methods.animateToState.apply(this, [
@@ -6482,9 +6487,15 @@
 
 				// parse states
 				if (_.isString(states)) {
-					var coll = new collection.StatesCollection();
+					var coll = new collection.StatesCollection(),
+						stateObj = getObjectFromString(states);
 
-					_.each(getObjectFromString(states), function(val, key) {
+					if (!stateObj) {
+						$this.trigger('spirit_error', {msg: 'jQuery.spiritAnimateTo: could not parse states: ' + states });
+						return;
+					}
+
+					_.each(stateObj, function(val, key) {
 						coll.add({
 							name: key,
 							tweenObj: val
@@ -6526,9 +6537,6 @@
 		}
 
 	};
-
-
-
 
 
 })();
