@@ -1,52 +1,42 @@
 {
-  "name": "spirit",
-  "title": "Spirit",
-  "description": "Powerful library for timed animation. Create a visual animation timeline of your HTML DOM elements in a snap!",
-  "homepage": "http://spiritjs.io/",
-  "version": "0.1.0",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/inlet/spirit.js.git"
-  },
-  "bugs": {
-    "url": "https://github.com/inlet/spirit.js/issues"
-  },
-  "keywords": [
-    "spirit",
-    "animation",
-    "library",
-    "timeline",
-    "states",
-    "js",
-    "javascript",
-    "css",
-    "css3"
-  ],
-  "author": {
-    "name": "Patrick Brouwer",
-    "email": "patrick@inlet.nl",
-    "url": "http://inlet.nl"
-  },
-  "engines": {
-    "node": "0.8.x"
-  },
-  "dependencies": {},
-  "devDependencies": {
-    "grunt": "~0.4.0",
-    "grunt-contrib-concat": "~0.3.0",
-    "grunt-contrib-uglify": "~0.1.2",
-    "grunt-contrib-watch": "~0.3.1",
-    "grunt-contrib-jshint": "~0.6.0",
-    "grunt-bump": "~0.0.11",
-    "grunt-notify": "~0.2.13",
-    "grunt-karma": "~0.6.2",
-    "time-grunt": "~0.1.1",
-    "load-grunt-tasks": "~0.1.3",
-    "karma-coverage": "~0.1.2",
-    "grunt-open": "~0.2.2",
-    "grunt-contrib-clean": "~0.5.0"
-  },
-  "scripts": {
-    "test": "grunt test:ci"
-  }
+	"name": "spirit",
+	"title": "Spirit",
+	"description": "Powerful library for timed animation. Create a visual animation timeline of your HTML DOM elements in a snap!",
+	"homepage": "http://spiritjs.io/",
+	"version": "0.1.0",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/inlet/spirit.js.git"
+	},
+	"bugs": {
+		"url": "https://github.com/inlet/spirit.js/issues"
+	},
+	"keywords": ["spirit", "animation", "editor", "library", "timeline", "states", "js", "javascript", "css", "css3"],
+	"author": {
+		"name": "Patrick Brouwer",
+		"email": "patrick@inlet.nl",
+		"url": "http://inlet.nl"
+	},
+	"engines": {
+		"node": "0.8.x"
+	},
+	"dependencies": {},
+	"devDependencies": {
+		"grunt": "~0.4.0",
+		"grunt-contrib-concat": "~0.3.0",
+		"grunt-contrib-uglify": "~0.1.2",
+		"grunt-contrib-watch": "~0.3.1",
+		"grunt-contrib-jshint": "~0.6.0",
+		"grunt-notify": "~0.2.13",
+		"grunt-karma": "~0.6.2",
+		"time-grunt": "~0.1.1",
+		"load-grunt-tasks": "~0.1.3",
+		"karma-coverage": "~0.1.2",
+		"grunt-open": "~0.2.2",
+		"grunt-contrib-clean": "~0.5.0"
+	},
+	"scripts": {
+		"test": "grunt test:ci",
+		"postinstall": "bower install && grunt build"
+	}
 }

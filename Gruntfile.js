@@ -1,71 +1,92 @@
 'use strict';
 
+
 module.exports = function(grunt) {
 
+	/**
+	 * Time grunt tasks
+	 * And autoload all tasks
+	 */
 	require('time-grunt')(grunt);
 	require('load-grunt-tasks')(grunt);
 
-	/*
-	 ------------
-	 GRUNT CONFIG
-	 -----------
+
+	/**
+	 * Paths
+	 * @type {Object}
 	 */
-	grunt.initConfig({
+	var path = {
+		src: 'public/js/src',
+		vendor: 'public/js/vendors'
+	};
+
+
+	/**
+	 * Source files in order of concatenation
+	 * @type {Array}
+	 */
+	var sourceFiles = [
+		path.src + '/util/Globals.js',
+		path.src + '/util/Lodash.js',
+		path.src + '/util/*.js',
+		path.src + '/event/*.js',
+		path.src + '/model/AbstractModel.js',
+		path.src + '/model/*.js',
+		path.src + '/collection/AbstractCollection.js',
+		path.src + '/collection/*.js',
+		path.src + '/**/*.js',
+		path.src + '/*.js'
+	];
+
+
+	/**
+	 * Library files needed as dependency
+	 * @type {Array}
+	 */
+	var libraryFiles = [
+		path.vendor + '/jquery/jquery.min.js',
+		path.vendor + '/greensock-js/src/minified/TweenLite.min.js',
+		path.vendor + '/greensock-js/src/minified/TimelineLite.min.js',
+		path.vendor + '/greensock-js/src/minified/plugins/CSSPlugin.min.js',
+		path.vendor + '/greensock-js/src/minified/easing/EasePack.min.js'
+	];
+
+
+	/**
+	 * Ignore files for code hinting
+	 * @type {Array}
+	 */
+	var ignoreHinting = [
+		path.src + '/util/Lodash.js',
+		path.src + '/model/AbstractModel.js',
+		path.src + '/collection/AbstractCollection.js'
+	];
+
+
+	/**
+	 * Grunt config
+	 * @type {Object}
+	 */
+	var config = {
 
 		pkg: grunt.file.readJSON('package.json'),
 		bower: grunt.file.readJSON('.bowerrc'),
 		banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
-			'<%= grunt.template.today("yyyy-mm-dd") %>\n' +
-			'<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
-			'* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>; \n*/\n',
-
-
-		path: {
-			src: 'public/js/src',
-			vendors: '<%= bower.directory %>'
-		},
+				'<%= grunt.template.today("yyyy-mm-dd") %>\n' +
+				'<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
+				'* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>; \n*/\n',
 
 
 		concat: {
-			options: {
-				separator: ';'
-			},
-
-			dist: {
-				src: [
-					// utils
-					'<%= path.src %>/util/Globals.js',
-					'<%= path.src %>/util/Lodash.js',
-					'<%= path.src %>/util/*.js',
-
-					// events
-					'<%= path.src %>/event/*.js',
-
-					// models
-					'<%= path.src %>/model/AbstractModel.js',
-					'<%= path.src %>/model/*.js',
-
-					// collections
-					'<%= path.src %>/collection/AbstractCollection.js',
-					'<%= path.src %>/collection/*.js',
-
-					// rest
-					'<%= path.src %>/**/*.js',
-					'<%= path.src %>/*.js',
-				],
-				dest: '<%= pkg.name %>.js'
-			}
+			options: {separator: ';'},
+			dist: {src: sourceFiles, dest: '<%= pkg.name %>.js'}
 		},
 
 
 		uglify: {
 			dist: {
-				files: {
-					'<%= pkg.name %>.min.js': '<%= pkg.name %>.js'
-				},
-				options: {
-					banner: '<%= banner %>'
-				}
+				files: {'<%= pkg.name %>.min.js': '<%= pkg.name %>.js'},
+				options: {banner: '<%= banner %>'}
 			}
 		},
 
@@ -83,20 +104,13 @@ module.exports = function(grunt) {
 
 
 		jshint: {
-			options: {
-				jshintrc: '.jshintrc'
-			},
+			options: {jshintrc: '.jshintrc'},
 			src: {
 				options: {
-					jshintrc: '.jshintrc',
-					ignores: [
-						'public/js/src/util/Lodash.js',
-						'public/js/src/model/AbstractModel.js',
-						'public/js/src/collection/AbstractCollection.js'
-					]
+					ignores: ignoreHinting
 				},
 				files: {
-					src: ['Gruntfile.js', '<%= path.src %>/**/*.js', '<%= path.src %>/*.js']
+					src: ['Gruntfile.js', path.src + '/**/*.js', path.src + '/*.js']
 				}
 			},
 			spec: ['test/*Spec.js']
@@ -111,29 +125,26 @@ module.exports = function(grunt) {
 			}
 		},
 
-
-		bump: {
-			options: {
-				files: ['package.json', 'bower.json'],
-				updateConfigs: ['pkg', 'banner'],
-				commit: true,
-				commitMessage: 'Release v%VERSION%',
-				commitFiles: ['package.json', 'bower.json', '<%= pkg.name %>.min.js', '<%= pkg.name %>.js'],
-				createTag: true,
-				tagName: 'v%VERSION%',
-				tagMessage: 'Version %VERSION%',
-				push: true,
-				pushTo: 'origin master',
-				gitDescribeOptions: '--tags --always --abbrev=1 --dirty=-d' // options to use with '$ git describe'
-			}
-		},
-
-
 		karma: {
 			options: {
 				configFile: 'karma.conf.js',
 				runnerPort: 9999,
-				singleRun: true
+				singleRun: true,
+				files: function() {
+
+					return []
+						.concat(grunt.file.expand(libraryFiles))
+						.concat(grunt.file.expand(sourceFiles))
+						.concat([
+							// fixtures
+							{ pattern: 'test/fixtures/*.json', watched: false, served: true, included: false},
+
+							// specs
+							'test/helpers/*.js',
+							'test/*Spec.js'
+						]);
+
+				}.call(this)
 			},
 			all: {
 				browsers: ['PhantomJS', 'Chrome', 'ChromeCanary', 'Firefox']
@@ -153,17 +164,23 @@ module.exports = function(grunt) {
 					type: 'html',
 					dir: 'coverage/'
 				},
-				preprocessors: {
-					'public/js/src/*.js': ['coverage'],
-					'public/js/src/**/*.js': ['coverage']
-				}
+				preprocessors: function(){
+
+					var cwd = {};
+					cwd[path.src + '/*.js'] = cwd[path.src + '/**/*.js'] = ['coverage'];
+					return cwd;
+
+				}.call(this)
 			}
 		},
 
 
-		open : {
-			coverage : {
-				path: './coverage/PhantomJS 1.9.2 (Mac OS X)/index.html',
+		open: {
+			coverage: {
+				path: function() {
+					var reports = grunt.file.expand('coverage/PhantomJS*/index.html');
+					return reports[reports.length - 1].toString();
+				},
 				app: 'Google Chrome'
 			}
 		},
@@ -173,61 +190,24 @@ module.exports = function(grunt) {
 			coverage: ["coverage", "path/to/dir/two"]
 		}
 
-	});
+	};
 
 
-	/*
-	 ------------
-	 UPDATE KARMA TEST FILES WITH CONCATTED FILES
-	 -----------
+	/**
+	 * Init the grunt config file
 	 */
-	var karmaFiles = (function() {
-		return [
-			// libs
-			'public/js/vendors/jquery/jquery.min.js',
-			'public/js/vendors/greensock-js/src/minified/TweenLite.min.js',
-			'public/js/vendors/greensock-js/src/minified/TimelineLite.min.js',
-			'public/js/vendors/greensock-js/src/minified/plugins/CSSPlugin.min.js',
-			'public/js/vendors/greensock-js/src/minified/easing/EasePack.min.js',
-
-		].concat(grunt.config('concat.dist.src')).concat([
-				// fixtures
-				{ pattern: 'test/fixtures/*.json', watched: false, served: true, included: false},
-
-				// specs
-				'test/helpers/*.js',
-				'test/*Spec.js'
-			]);
-	})();
-	grunt.config('karma.options.files', karmaFiles);
+	grunt.initConfig(config);
 
 
-	/*
-	 ------------
-	 GRUNT TASKS
-	 -----------
+
+	/**
+	 * Grunt tasks
 	 */
-
-	grunt.registerTask('build', 'Create the build version (spirit.js & spirit.min.js)', [
-		'concat',
-		'uglify'
-	]);
-
-	grunt.registerTask('default', [
-		'jshint',
-		'test',
-		'build'
-	]);
-
+	grunt.registerTask('default', ['jshint', 'test', 'build']);
+	grunt.registerTask('build', 'Create the build version (spirit.js & spirit.min.js)', ['concat', 'uglify']);
 	grunt.registerTask('test', ['karma:all']);
 	grunt.registerTask('test:ci', ['karma:continuous']);
-	grunt.registerTask('test:coverage', ['karma:coverage', 'open:coverage']);
+	grunt.registerTask('test:coverage', ['clean:coverage', 'karma:coverage', 'open:coverage']);
 	grunt.registerTask('test:watch', ['karma:watch']);
-
-	grunt.registerTask('release', ['default', 'bump-commit']);
-	grunt.registerTask('release:patch', ['bump-only:patch', 'release']);
-	grunt.registerTask('release:minor', ['bump-only:minor', 'release']);
-	grunt.registerTask('release:major', ['bump-only:major', 'release']);
-
 
 };
