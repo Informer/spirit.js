@@ -17,7 +17,8 @@ module.exports = function(grunt) {
 	 */
 	var path = {
 		src: 'public/js/src',
-		vendor: 'public/js/vendors'
+		vendor: 'public/js/vendors',
+		examples: 'public/examples'
 	};
 
 
@@ -26,16 +27,22 @@ module.exports = function(grunt) {
 	 * @type {Array}
 	 */
 	var sourceFiles = [
-		path.src + '/util/Globals.js',
+		path.src + '/header.js',
+
+		// utils
 		path.src + '/util/Lodash.js',
-		path.src + '/util/*.js',
+		path.src + '/util/Helpers.js',
+		path.src + '/util/Globals.js',
+
+		// source files
 		path.src + '/event/*.js',
 		path.src + '/model/AbstractModel.js',
 		path.src + '/model/*.js',
 		path.src + '/collection/AbstractCollection.js',
 		path.src + '/collection/*.js',
-		path.src + '/**/*.js',
-		path.src + '/*.js'
+	    path.src + '/jquery/*.js',
+
+	    path.src + '/footer.js'
 	];
 
 
@@ -57,6 +64,8 @@ module.exports = function(grunt) {
 	 * @type {Array}
 	 */
 	var ignoreHinting = [
+		path.src + '/header.js',
+		path.src + '/footer.js',
 		path.src + '/util/Lodash.js',
 		path.src + '/model/AbstractModel.js',
 		path.src + '/collection/AbstractCollection.js'
@@ -64,7 +73,7 @@ module.exports = function(grunt) {
 
 
 	/**
-	 * Grunt config
+	 * Grunt configuration
 	 * @type {Object}
 	 */
 	var config = {
@@ -93,7 +102,7 @@ module.exports = function(grunt) {
 
 		watch: {
 			src: {
-				files: ['<%= path.src %>/**/*.js', '<%= path.src %>/*.js'],
+				files: [path.src + '/**/*.js', path.src + '/*.js'],
 				tasks: ['concat:dist', 'jshint:src', 'notify:success']
 			},
 			test: {
@@ -119,9 +128,7 @@ module.exports = function(grunt) {
 
 		notify: {
 			success: {
-				options: {
-					message: 'Successfully compiled'
-				}
+				options: {message: 'Successfully compiled'}
 			}
 		},
 
@@ -153,11 +160,9 @@ module.exports = function(grunt) {
 				singleRun: false
 			},
 			continuous: {
-				singleRun: true,
 				browsers: ['PhantomJS']
 			},
 			coverage: {
-				singleRun: true,
 				browsers: ['PhantomJS'],
 				reporters: ['progress', 'coverage'],
 				coverageReporter: {

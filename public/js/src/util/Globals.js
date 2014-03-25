@@ -1,65 +1,42 @@
-(function(global) {
 
-	'use strict';
+/**
+ * Determine debug mode
+ * @type {Boolean}
+ */
+var debug = true;
 
-	// some AMD build optimizers, like r.js, check for condition patterns like the following:
-	var isAMD = (typeof global.define === 'function' && typeof global.define.amd === 'object' && global.define.amd);
-	var context = isAMD ? {} : global;
+/**
+ * Make helpers globally available
+ * @type {Object}
+ */
+var _ = use('spirit._helpers');
 
-
-	/**
-	 * Resolves namespace
-	 * @param {string} namespace
-	 * @returns {} recursive namespace
-	 */
-	context.use = function(namespace) {
-
-		var segments = namespace.split('.');
-
-		for (var i = 0, len = segments.length, obj = window; i < len; ++i) {
-			var segment = segments[i];
-			if (!obj[segment]) {
-				obj[segment] = {};
-			}
-			obj = obj[segment];
-		}
-
-		return obj;
-	};
-
-
-	/**
-	 * Check if namespace exists
-	 * @param {string} namespace
-	 * @returns {boolean}
-	 */
-	context.exist = function(namespace) {
-		if (typeof namespace !== 'string') {
-			return false;
-		}
-		var segments = namespace.split('.');
-		var doesExist = true;
-
-		for (var i = 0, len = segments.length, obj = context; i < len; ++i) {
-			var segment = segments[i];
-
-			if (!obj[segment]) {
-				doesExist = false;
-				break;
-			}
-			obj = obj[segment];
-		}
-
-		return doesExist;
-	};
-
-
-
-	// if we're running in an AMD environment, define our module
-	if (isAMD) {
-		global.define(function() {
-			return context;
-		});
+/**
+ * Prints log messages in debug mode
+ * @returns {Boolean}
+ */
+var log = function() {
+	/* jshint -W106 */
+	/* jshint -W116 */
+	if (!!(window.__karma__)) {
+		return false;
 	}
 
-})(window);
+	if (window.console && _.isFunction(window.console.log)) {
+		var args = [].slice.call(arguments);
+		args.unshift('Spirit: ->');
+		console.log.apply(console, args);
+	}
+
+	return true;
+};
+
+/**
+ * Global defaults
+ * @type {Object}
+ */
+var defaults = {
+	tween: _.isFunction(window.TweenMax) ? window.TweenMax : window.TweenLite,
+	timeline: _.isFunction(window.TimelineMax) ? window.TimelineMax : window.TimelineLite
+};
+

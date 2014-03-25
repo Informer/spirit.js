@@ -1,22 +1,27 @@
-(function(global) {
+(function(global){
+
 
 	'use strict';
 
-	// some AMD build optimizers, like r.js, check for condition patterns like the following:
-	var isAMD = (typeof global.define === 'function' && typeof global.define.amd === 'object' && global.define.amd);
-	var context = isAMD ? {} : global;
+
+	/**
+	 * Object to store namespace in
+	 * This will eventually be exposed on window or returned as module
+	 * @type {Object}
+	 */
+	var context = {};
 
 
 	/**
 	 * Resolves namespace
 	 * @param {string} namespace
-	 * @returns {} recursive namespace
+	 * @returns {Object} recursive namespace
 	 */
-	context.use = function(namespace) {
+	var use = function(namespace) {
 
 		var segments = namespace.split('.');
 
-		for (var i = 0, len = segments.length, obj = window; i < len; ++i) {
+		for (var i = 0, len = segments.length, obj = context; i < len; ++i) {
 			var segment = segments[i];
 			if (!obj[segment]) {
 				obj[segment] = {};
@@ -30,10 +35,10 @@
 
 	/**
 	 * Check if namespace exists
-	 * @param {string} namespace
-	 * @returns {boolean}
+	 * @param {String} namespace (example spirit.model.fixture)
+	 * @returns {Boolean}
 	 */
-	context.exist = function(namespace) {
+	var exist = function(namespace) {
 		if (typeof namespace !== 'string') {
 			return false;
 		}
@@ -55,14 +60,8 @@
 
 
 
-	// if we're running in an AMD environment, define our module
-	if (isAMD) {
-		global.define(function() {
-			return context;
-		});
-	}
 
-})(window);;/**
+;/**
  * @license
  * Lo-Dash 2.2.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash underscore exports="amd,commonjs,global,node" -o ./dist/lodash.underscore.js`
@@ -4997,7 +4996,17 @@
 		return !!(window.__karma__);
 	};
 
-})(use('spirit._helpers'));;(function(ns) {
+})(use('spirit._helpers'));;
+
+
+/**
+ * Make helpers globally available
+ * @type {Object}
+ */
+var _ = use('spirit._helpers');
+
+
+;(function(ns) {
 	'use strict';
 
 	var _ = use('spirit._helpers');
@@ -6193,220 +6202,6 @@
 
 
 })(use('spirit.collection'));
-;(function(ns) {
-
-	'use strict';
-
-
-	/**
-	 * Helpers
-	 * @type {*}
-	 */
-	var _ = use('spirit._helpers');
-
-	/**
-	 * Logger
-	 */
-	var log = function() {
-		/* jshint -W106 */
-		/* jshint -W116 */
-		if (_.testMode()) {
-			return false;
-		}
-		if (this._debug && window.console && _.isFunction(window.console.log)) {
-			var args = [].slice.call(arguments);
-			args.unshift('Spirit: ->');
-			console.log.apply(console, args);
-		}
-
-		return true;
-	};
-
-	/**
-	 * Default options
-	 * @returns {{tweenEngine: {tween: *, timeline: *}, childSelector: string}}
-	 */
-	var defaultOptions = function() {
-		return {
-			tweenEngine: {
-				tween: _.isFunction(window.TweenMax) ? window.TweenMax : window.TweenLite,
-				timeline: _.isFunction(window.TimelineMax) ? window.TimelineMax : window.TimelineLite
-			},
-			childSelector: '*',
-			forceDebug: false
-		};
-	};
-
-
-	/**
-	 *
-	 * @param $el {HTMLElement} DOM element containing the animateable children
-	 * @param options {{}} custom configuration
-	 * @constructor
-	 */
-	ns.Timeline = function($el, options) {
-		// validate and determine $el
-		if (arguments.length === 0 || !(_.some([Array, HTMLElement, $], function(type) { return $el instanceof type; }))) {
-			throw ns.Timeline.errorMessages.noContainerElementFound;
-		}
-		this.$el = $($($el).get(0));
-
-		// setup options
-		this._validateOptions(_.extend(this.options, defaultOptions(), options || {}));
-		this._debug = !!(this.options.forceDebug);
-
-
-		// construct Spirit
-		this._construct();
-	};
-
-	ns.Timeline.extend = _.extendObjectWithSuper;
-	_.extend(ns.Timeline.prototype, use('spirit.event').Events, {
-
-
-		/**
-		 * @private
-		 */
-		_json: {},
-
-
-		/**
-		 * @public
-		 */
-		$el: null,
-		$elements: null,
-		options: {},
-		timeline: null,
-
-
-		/**
-		 * Constructor
-		 * @private
-		 */
-		_construct: function() {
-			log.call(this, "Spirit constructed");
-
-			// cache children
-			this.$elements = this.$el.find(this.options.childSelector);
-
-			this.initialize();
-
-			if (this.jsonData) {
-				this.parseJSON(this.jsonData);
-			}
-		},
-
-		_validateOptions: function() {
-			// validate tweenengine
-			if (!_.isFunction(this.options.tweenEngine.tween) || !_.isFunction(this.options.tweenEngine.timeline)) {
-				throw ns.Timeline.errorMessages.invalidTweeningEngines;
-			}
-		},
-
-		/**
-		 * Initialize
-		 * Invoked by constructor, can be overridden for your needs
-		 * @public
-		 */
-		initialize: function() {
-			log.call(this, "initialized with options: ", this.options);
-		},
-
-		/**
-		 * Preconstruct timeline
-		 * Can be overridden to apply custom candy before the timeline gets constructed
-		 * @param timeline
-		 */
-		preConstructTimeline: function(timeline) {
-			log.call(this, "preconstruct Timeline");
-			return timeline;
-		},
-
-		/**
-		 * Construct the main timeline
-		 */
-		constructTimeline: function() {
-		},
-
-
-		/**
-		 * Update timeline
-		 * @param frame {Number} pixels
-		 * @returns {*}
-		 */
-		update: function(frame) {
-			log.call(this, 'update:', frame);
-
-			// do timeline update logic
-			return frame;
-		},
-
-
-		/**
-		 * Extract JSON
-		 * @returns {{}}
-		 */
-		toJSON: function() {
-			return {};
-		},
-
-		/**
-		 * Parse JSON
-		 */
-		parseJSON: function(json) {
-			this._json = json;
-			// parse json here
-			log.call(this, 'parseJSON', json);
-		},
-
-		/**
-		 * Kill THE SPIRIT
-		 */
-		kill: function() {
-		}
-
-	});
-
-
-	/**
-	 * Extend with debugging sugar
-	 */
-	_.extend(ns.Timeline.prototype, {
-
-		_debug: false,
-
-		forceDebug: function(debuggable) {
-			this._debug = debuggable;
-		},
-
-		isDebug: function() {
-			return this._debug;
-		}
-	});
-
-
-	/**
-	 * Extend with build in helpers
-	 * For example: bind timeline to scroll!
-	 */
-	_.extend(ns.Timeline.prototype, {
-//		bindToScroll: function(scrollContainer){}
-	});
-
-
-	/**
-	 * Statics
-	 */
-	_.extend(ns.Timeline, {
-		errorMessages: {
-			noContainerElementFound: 'Spirit: no container element found! Make sure you provide a container element',
-			invalidTweeningEngines: 'Spirit: no Tween[Lite/Max] or Timeline[Lite/Max] found. ' +
-				'Both are required in order to use Spirit'
-		}
-	});
-
-
-})(use('spirit'));
 ;(function() {
 	'use strict';
 
@@ -6540,3 +6335,21 @@
 
 
 })();
+;
+
+
+	/**
+	 * Finally make spirit namespace available
+	 * if we're running in AMD environment return context as module
+	 * else expose it on global (window) object
+	 */
+	if (typeof global.define === "function" && global.define.amd) {
+		global.define('spiritjs', [], function(){
+			return context;
+		});
+	}else {
+		_.extend(global, context);
+	}
+
+
+})(window);
