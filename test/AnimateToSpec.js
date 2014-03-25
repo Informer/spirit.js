@@ -1,16 +1,6 @@
 (function() {
 	'use strict';
 
-	/**
-	 * Use spirit & jasmine helpers with _
-	 * @type {*}
-	 * @private
-	 */
-	var _ = use('spirit._helpers');
-	_.extend(_, use('jasmine._helpers'));
-
-	var model = use('spirit.model'),
-		collection = use('spirit.collection');
 
 	describe('$.spiritAnimateTo', function() {
 
@@ -89,7 +79,7 @@
 				$el.spiritAnimateTo("open", 0);
 
 				var states = $el.data('spirit-states');
-				expect(states instanceof collection.StatesCollection).toBeTruthy();
+				expect(states instanceof spirit.collection.StatesCollection).toBeTruthy();
 				expect(states.length).toEqual(2);
 			});
 

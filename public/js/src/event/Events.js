@@ -1,9 +1,6 @@
 (function(ns) {
 	'use strict';
 
-	var _ = use('spirit._helpers');
-
-
 	// Regular expression used to split event strings.
 	var eventSplitter = /\s+/;
 

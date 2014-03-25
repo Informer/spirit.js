@@ -2,20 +2,8 @@
 
 	'use strict';
 
-	/**
-	 * Helpers
-	 * @type {*}
-	 */
-	var _ = use('spirit._helpers');
 
-
-	ns.TransitionParamModel = ns.AbstractModel.extend({
-
-		initialize: function() {
-			console.log('TransitionParamModel -> initialize', _.isPrototypeOf(this));
-		}
-
-	});
+	ns.TransitionParamModel = ns.AbstractModel.extend({});
 
 
 })(use('spirit.model'));

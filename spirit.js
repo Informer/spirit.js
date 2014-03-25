@@ -1,9 +1,6 @@
 (function(global){
 
 
-	'use strict';
-
-
 	/**
 	 * Object to store namespace in
 	 * This will eventually be exposed on window or returned as module
@@ -4997,7 +4994,11 @@
 	};
 
 })(use('spirit._helpers'));;
-
+/**
+ * Determine debug mode
+ * @type {Boolean}
+ */
+var debug = true;
 
 /**
  * Make helpers globally available
@@ -5005,12 +5006,37 @@
  */
 var _ = use('spirit._helpers');
 
+/**
+ * Prints log messages in debug mode
+ * @returns {Boolean}
+ */
+var log = function() {
+	/* jshint -W106 */
+	/* jshint -W116 */
+	if (!!(window.__karma__)) {
+		return false;
+	}
+
+	if (window.console && _.isFunction(window.console.log)) {
+		var args = [].slice.call(arguments);
+		args.unshift('Spirit: ->');
+		console.log.apply(console, args);
+	}
+
+	return true;
+};
+
+/**
+ * Global defaults
+ * @type {Object}
+ */
+var globalDefaults = {
+	tween: _.isFunction(window.TweenMax) ? window.TweenMax : window.TweenLite,
+	timeline: _.isFunction(window.TimelineMax) ? window.TimelineMax : window.TimelineLite
+};
 
 ;(function(ns) {
 	'use strict';
-
-	var _ = use('spirit._helpers');
-
 
 	// Regular expression used to split event strings.
 	var eventSplitter = /\s+/;
@@ -5212,13 +5238,6 @@ var _ = use('spirit._helpers');
 (function(ns) {
 
 	'use strict';
-
-
-	/**
-	 * Helpers
-	 * @type {*}
-	 */
-	var _ = use('spirit._helpers');
 
 
 	// Wrap an optional error callback with a fallback error event.
@@ -5601,13 +5620,6 @@ var _ = use('spirit._helpers');
 
 	'use strict';
 
-	/**
-	 * Helpers
-	 * @type {*}
-	 */
-//	var _ = use('spirit._helpers');
-
-
 	ns.StateModel = ns.AbstractModel.extend({
 
 		defaults: {
@@ -5617,30 +5629,18 @@ var _ = use('spirit._helpers');
 
 	});
 
-
 })(use('spirit.model'));
 ;(function(ns) {
 
 	'use strict';
 
-	/**
-	 * Helpers
-	 * @type {*}
-	 */
-//	var _ = use('spirit._helpers');
 
-
-	ns.TimelineElementModel = ns.AbstractModel.extend({
+	ns.TimelineModel = ns.AbstractModel.extend({
 
 		defaults: {
 			el: null,
 			id: null,
 			transitions: 'spirit.collection.TransitionCollection'
-		},
-
-		initialize: function(options) {
-			this._super(options);
-			return this;
 		}
 
 	});
@@ -5650,23 +5650,12 @@ var _ = use('spirit._helpers');
 ;(function(ns) {
 
 	'use strict';
-
-	/**
-	 * Helpers
-	 * @type {*}
-	 */
-//	var _ = use('spirit._helpers');
-
 
 	ns.TransitionModel = ns.AbstractModel.extend({
 
 		defaults: {
 			params: null,
 			ease: 'Linear.easeNone'
-		},
-
-		initialize: function() {
-
 		}
 
 	});
@@ -5677,20 +5666,8 @@ var _ = use('spirit._helpers');
 
 	'use strict';
 
-	/**
-	 * Helpers
-	 * @type {*}
-	 */
-	var _ = use('spirit._helpers');
 
-
-	ns.TransitionParamModel = ns.AbstractModel.extend({
-
-		initialize: function() {
-			console.log('TransitionParamModel -> initialize', _.isPrototypeOf(this));
-		}
-
-	});
+	ns.TransitionParamModel = ns.AbstractModel.extend({});
 
 
 })(use('spirit.model'));
@@ -5699,12 +5676,6 @@ var _ = use('spirit._helpers');
 (function(ns) {
 
 	'use strict';
-
-	/**
-	 * Helpers
-	 * @type {*}
-	 */
-	var _ = use('spirit._helpers');
 
 
 	// Default options for `Collection#set`.
@@ -6149,35 +6120,19 @@ var _ = use('spirit._helpers');
 })(use('spirit.collection'));
 
 
-/* jshint ignore:end */;(function(ns) {
+/* jshint ignore:end */
+;(function(ns) {
 
 	'use strict';
 
-	/**
-	 * Helpers
-	 * @type {*}
-	 */
-//	var _ = use('spirit._helpers');
-
-
 	ns.StatesCollection = ns.AbstractCollection.extend({
-
 		model: 'spirit.model.StateModel'
-
 	});
-
 
 })(use('spirit.collection'));
 ;(function(ns) {
 
 	'use strict';
-
-	/**
-	 * Helpers
-	 * @type {*}
-	 */
-//	var _ = use('spirit._helpers');
-
 
 	ns.TransitionCollection = ns.AbstractCollection.extend({
 
@@ -6207,28 +6162,36 @@ var _ = use('spirit._helpers');
 
 
 	/**
-	 * Helpers
-	 * @type {*}
+	 * Imports
+	 * @type {Object}
 	 */
-	var _ = use('spirit._helpers'),
-		model = use('spirit.model'),
+	var model = use('spirit.model'),
 		collection = use('spirit.collection');
 
+	/**
+	 * Get tween engine (TweenLite|TweenMax)
+	 * @type {Function|Object}
+	 */
+	var tweener = globalDefaults.tween;
 
-	var tweener = _.isFunction(window.TweenMax) ? window.TweenMax : window.TweenLite,
-		getObjectFromString = function(str) {
-			if (_.isUndefined(str) || !_.isString(str)) {
-				return {};
-			}
+	/**
+	 * Parse string to object conform GASP properties
+	 * @param str {String}
+	 * @returns {Object}
+	 */
+	var getObjectFromString = function(str) {
+		if (_.isUndefined(str) || !_.isString(str)) {
+			return {};
+		}
 
-			var obj;
-			try {
-				var json = str.replace(/'|"/g, '').replace(/((?![\d]+|\.)[#\w\.]+|(\+|-)?[\d]+(%|px|em|deg))/g, '"$1"');
-				obj = $.parseJSON(json);
-			} catch (e) {}
-			
-			return obj;
-		};
+		var obj;
+		try {
+			var json = str.replace(/'|"/g, '').replace(/((?![\d]+|\.)[#\w\.]+|(\+|-)?[\d]+(%|px|em|deg))/g, '"$1"');
+			obj = $.parseJSON(json);
+		} catch (e) {}
+
+		return obj;
+	};
 
 
 	/**
@@ -6267,16 +6230,31 @@ var _ = use('spirit._helpers');
 	};
 
 
+	/**
+	 * Default config
+	 * @type {Object}
+	 */
 	var defaults = {
 		speed: 1
 	};
 
 
+	/**
+	 * Methods to execute
+	 * @type {Object}
+	 */
 	var methods = {
 
+		/**
+		 * Animate to a state
+		 * @param state {String} Name of state
+		 * @param speed {Number} Time of animation (seconds)
+		 * @param options {Object} Override GASP properties
+		 * @returns {jQuery} Current jQuery (collection) of execution
+		 */
 		animateToState: function(state, speed, options) {
 			return this.each(function() {
-				
+
 				var $this = $(this),
 					states = $this.data('spirit-states');
 
@@ -6321,6 +6299,13 @@ var _ = use('spirit._helpers');
 			});
 		},
 
+
+		/**
+		 * Execute animation
+		 * @param speed {Number} Time of animation
+		 * @param tweenObj {Object} GASP properties
+		 * @returns {HTMLElement|jQuery}
+		 */
 		animateTo: function(speed, tweenObj) {
 			var animateSingleElement = function() {
 				var $this = $(this);

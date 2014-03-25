@@ -2,13 +2,6 @@
 
 	'use strict';
 
-	/**
-	 * Helpers
-	 * @type {*}
-	 */
-//	var _ = use('spirit._helpers');
-
-
 	ns.TransitionCollection = ns.AbstractCollection.extend({
 
 		model: 'spirit.model.TransitionModel',

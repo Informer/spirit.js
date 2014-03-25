@@ -35,7 +35,7 @@ var log = function() {
  * Global defaults
  * @type {Object}
  */
-var defaults = {
+var globalDefaults = {
 	tween: _.isFunction(window.TweenMax) ? window.TweenMax : window.TweenLite,
 	timeline: _.isFunction(window.TimelineMax) ? window.TimelineMax : window.TimelineLite
 };

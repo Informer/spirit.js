@@ -22,6 +22,8 @@
 	"globals": {
 		"$": false,
 		"jasmine": false,
+		"collection": false,
+		"model": false,
 		"TweenLite": false,
 		"TimelineLite": false,
 		"TweenMax": false,
@@ -32,6 +34,7 @@
 		"spirit": false,
 		"context": false,
 		"_": false,
+		"globalDefaults": false,
 		"after": false,
 		"afterEach": false,
 		"angular": false,

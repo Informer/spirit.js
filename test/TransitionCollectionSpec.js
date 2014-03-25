@@ -2,39 +2,25 @@
 	'use strict';
 
 
-	/**
-	 * Use spirit & jasmine helpers with _
-	 * @type {*}
-	 * @private
-	 */
-	var _ = use('spirit._helpers');
-	_.extend(_, use('jasmine._helpers'));
+	var _ = jasmine._helpers;
 
-
-	/**
-	 * Fixtures for testing purposes
-	 */
-	var fixtures = {
-		oneElementTwoParams: _.loadFixture('single_element_2_params.json')
-	};
-
-
-	var collection = use('spirit.collection');
 
 	describe('TransitionCollection', function() {
 
-		var c;
+		var c,
+			transitions = _.loadFixture('transitions.json').transitions;
+
 
 		it('should create a default collection', function() {
-			c = new collection.TransitionCollection();
-			expect(c instanceof collection.TransitionCollection).toBeTruthy();
+			c = new spirit.collection.TransitionCollection();
+			expect(c instanceof spirit.collection.TransitionCollection).toBeTruthy();
 		});
 
 
 		describe('Create custom collection', function() {
 
 			beforeEach(function() {
-				c = new collection.TransitionCollection(fixtures.oneElementTwoParams.elements[0].transitions);
+				c = new spirit.collection.TransitionCollection(transitions);
 			});
 
 			afterEach(function() {
@@ -47,7 +33,7 @@
 
 			it('should have 2 models of type TransitionsModel', function() {
 				_.each(c.models, function(m) {
-					expect(m instanceof use('spirit.model').TransitionModel);
+					expect(m instanceof spirit.model.TransitionModel);
 				});
 			});
 
@@ -60,7 +46,7 @@
 			});
 
 			it('should have 3 models after adding another', function() {
-				var m = new (use('spirit.model').TransitionModel)({
+				var m = new spirit.model.TransitionModel({
 					params: {},
 					ease: 'Linear.awesomeness'
 				});
@@ -75,7 +61,6 @@
 			});
 
 		});
-
 
 
 	});

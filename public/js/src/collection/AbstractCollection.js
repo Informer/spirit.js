@@ -4,12 +4,6 @@
 
 	'use strict';
 
-	/**
-	 * Helpers
-	 * @type {*}
-	 */
-	var _ = use('spirit._helpers');
-
 
 	// Default options for `Collection#set`.
 	var setOptions = {add: true, remove: true, merge: true};

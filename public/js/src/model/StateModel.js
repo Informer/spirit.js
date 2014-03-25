@@ -2,13 +2,6 @@
 
 	'use strict';
 
-	/**
-	 * Helpers
-	 * @type {*}
-	 */
-//	var _ = use('spirit._helpers');
-
-
 	ns.StateModel = ns.AbstractModel.extend({
 
 		defaults: {
@@ -17,6 +10,5 @@
 		}
 
 	});
-
 
 })(use('spirit.model'));

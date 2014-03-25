@@ -3,28 +3,36 @@
 
 
 	/**
-	 * Helpers
-	 * @type {*}
+	 * Imports
+	 * @type {Object}
 	 */
-	var _ = use('spirit._helpers'),
-		model = use('spirit.model'),
+	var model = use('spirit.model'),
 		collection = use('spirit.collection');
 
+	/**
+	 * Get tween engine (TweenLite|TweenMax)
+	 * @type {Function|Object}
+	 */
+	var tweener = globalDefaults.tween;
 
-	var tweener = _.isFunction(window.TweenMax) ? window.TweenMax : window.TweenLite,
-		getObjectFromString = function(str) {
-			if (_.isUndefined(str) || !_.isString(str)) {
-				return {};
-			}
+	/**
+	 * Parse string to object conform GSAP properties
+	 * @param str {String}
+	 * @returns {Object}
+	 */
+	var getObjectFromString = function(str) {
+		if (_.isUndefined(str) || !_.isString(str)) {
+			return {};
+		}
 
-			var obj;
-			try {
-				var json = str.replace(/'|"/g, '').replace(/((?![\d]+|\.)[#\w\.]+|(\+|-)?[\d]+(%|px|em|deg))/g, '"$1"');
-				obj = $.parseJSON(json);
-			} catch (e) {}
-			
-			return obj;
-		};
+		var obj;
+		try {
+			var json = str.replace(/'|"/g, '').replace(/((?![\d]+|\.)[#\w\.]+|(\+|-)?[\d]+(%|px|em|deg))/g, '"$1"');
+			obj = $.parseJSON(json);
+		} catch (e) {}
+
+		return obj;
+	};
 
 
 	/**
@@ -63,16 +71,31 @@
 	};
 
 
+	/**
+	 * Default config
+	 * @type {Object}
+	 */
 	var defaults = {
 		speed: 1
 	};
 
 
+	/**
+	 * Methods to execute
+	 * @type {Object}
+	 */
 	var methods = {
 
+		/**
+		 * Animate to a state
+		 * @param state {String} Name of state
+		 * @param speed {Number} Time of animation (seconds)
+		 * @param options {Object} Override GSAP properties
+		 * @returns {jQuery} Current jQuery (collection) of execution
+		 */
 		animateToState: function(state, speed, options) {
 			return this.each(function() {
-				
+
 				var $this = $(this),
 					states = $this.data('spirit-states');
 
@@ -117,6 +140,13 @@
 			});
 		},
 
+
+		/**
+		 * Execute animation
+		 * @param speed {Number} Time of animation
+		 * @param tweenObj {Object} GSAP properties
+		 * @returns {HTMLElement|jQuery}
+		 */
 		animateTo: function(speed, tweenObj) {
 			var animateSingleElement = function() {
 				var $this = $(this);

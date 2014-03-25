@@ -24,11 +24,10 @@ module.exports = function(grunt) {
 
 	/**
 	 * Source files in order of concatenation
+	 * NOTE: concat wraps these files between header.js & footer.js
 	 * @type {Array}
 	 */
 	var sourceFiles = [
-		path.src + '/header.js',
-
 		// utils
 		path.src + '/util/Lodash.js',
 		path.src + '/util/Helpers.js',
@@ -41,8 +40,6 @@ module.exports = function(grunt) {
 		path.src + '/collection/AbstractCollection.js',
 		path.src + '/collection/*.js',
 	    path.src + '/jquery/*.js',
-
-	    path.src + '/footer.js'
 	];
 
 
@@ -88,7 +85,13 @@ module.exports = function(grunt) {
 
 		concat: {
 			options: {separator: ';'},
-			dist: {src: sourceFiles, dest: '<%= pkg.name %>.js'}
+			dist: {
+				src: []
+					.concat([path.src + '/header.js'])
+					.concat(sourceFiles)
+					.concat([path.src + '/footer.js']),
+				dest: '<%= pkg.name %>.js'
+			}
 		},
 
 
@@ -140,10 +143,25 @@ module.exports = function(grunt) {
 				files: function() {
 
 					return []
+						/**
+						 * We're not including header.js & footer.js in tests
+						 * So instead provide a globals.js needed by sourceFiles
+						 * Substitutes header.js & footer.js just for testing purposes
+						 */
+						.concat(grunt.file.expand('test/util/globals.js'))
+
+						/**
+						 * Library and source files to include
+						 */
 						.concat(grunt.file.expand(libraryFiles))
 						.concat(grunt.file.expand(sourceFiles))
+
+						/**
+						 * And of course!
+						 * Include fixtures and specs
+						 */
 						.concat([
-							// fixtures
+							// fixtures (only serve)
 							{ pattern: 'test/fixtures/*.json', watched: false, served: true, included: false},
 
 							// specs

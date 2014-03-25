@@ -9,13 +9,6 @@
 	'use strict';
 
 
-	/**
-	 * Helpers
-	 * @type {*}
-	 */
-	var _ = use('spirit._helpers');
-
-
 	// Wrap an optional error callback with a fallback error event.
 	var wrapError = function(model, options) {
 		var error = options.error;
