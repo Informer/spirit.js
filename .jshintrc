@@ -22,6 +22,8 @@
 	"globals": {
 		"$": false,
 		"jasmine": false,
+		"requirejs": false,
+		"define": false,
 		"collection": false,
 		"model": false,
 		"TweenLite": false,

@@ -10,6 +10,10 @@ module.exports = function(grunt) {
 	require('time-grunt')(grunt);
 	require('load-grunt-tasks')(grunt);
 
+	/**
+	 * We'll use lodash
+	 */
+	var _ = require('lodash');
 
 	/**
 	 * Paths
@@ -157,17 +161,18 @@ module.exports = function(grunt) {
 						.concat(grunt.file.expand(sourceFiles))
 
 						/**
-						 * And of course!
-						 * Include fixtures and specs
+						 * Include fixtures (serve only)
 						 */
-						.concat([
-							// fixtures (only serve)
-							{ pattern: 'test/fixtures/*.json', watched: false, served: true, included: false},
+						.concat([{ pattern: 'test/fixtures/*.json', watched: false, served: true, included: false}])
 
-							// specs
+						/**
+						 * And finally the specs
+						 */
+						.concat(grunt.file.expand([
 							'test/helpers/*.js',
-							'test/*Spec.js'
-						]);
+							'test/*Spec.js',
+							'!test/AMDSpec.js'
+						]));
 
 				}.call(this)
 			},
@@ -177,7 +182,21 @@ module.exports = function(grunt) {
 			watch: {
 				singleRun: false
 			},
-			continuous: {
+			headless: {
+				browsers: ['PhantomJS']
+			},
+			amd: {
+				options: {
+					frameworks: ['jasmine', 'requirejs'],
+					files: _.map(libraryFiles, function(lib){
+						return { pattern: lib, included: false };
+					}).concat([
+						{ pattern: 'spirit.js', included: false },
+						{ pattern: 'test/AMDSpec.js', included: false },
+
+						'test/amd-config/config.js'
+					])
+				},
 				browsers: ['PhantomJS']
 			},
 			coverage: {
@@ -229,7 +248,7 @@ module.exports = function(grunt) {
 	grunt.registerTask('default', ['jshint', 'test', 'build']);
 	grunt.registerTask('build', 'Create the build version (spirit.js & spirit.min.js)', ['concat', 'uglify']);
 	grunt.registerTask('test', ['karma:all']);
-	grunt.registerTask('test:ci', ['karma:continuous']);
+	grunt.registerTask('test:ci', ['karma:headless', 'karma:amd']);
 	grunt.registerTask('test:coverage', ['clean:coverage', 'karma:coverage', 'open:coverage']);
 	grunt.registerTask('test:watch', ['karma:watch']);
 

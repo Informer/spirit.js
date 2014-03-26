@@ -4812,43 +4812,17 @@
     		};
     	});
 
-    	/*--------------------------------------------------------------------------*/
 
-    	// some AMD build optimizers, like r.js, check for condition patterns like the following:
-    	if (typeof define == 'function' && typeof define.amd == 'object' && define.amd) {
-    		// Expose Lo-Dash to the global object even when an AMD loader is present in
-    		// case Lo-Dash was injected by a third-party script and not intended to be
-    		// loaded as a module. The global assignment can be reverted in the Lo-Dash
-    		// module by its `noConflict()` method.
-    		root._ = lodash;
 
-    		// define as an anonymous module so, through path mapping, it can be
-    		// referenced as the "underscore" module
-    		define(function() {
-    			return lodash;
-    		});
-    	}
-    	// check for `exports` after `define` in case a build optimizer adds an `exports` object
-    	else if (freeExports && freeModule) {
-    		// in Node.js or RingoJS
-    		if (moduleExports) {
-    			(freeModule.exports = lodash)._ = lodash;
-    		}
-    		// in Narwhal or Rhino -require
-    		else {
-    			freeExports._ = lodash;
-    		}
-    	}
-    	else {
     		// in a browser or Rhino
 //    		root._ = lodash;
 		    lodash.extend(ns, lodash);
-    	}
     }.call(ns));
 
 })(use('spirit._helpers'));
 
-/* jshint ignore:end */;(function(ns) {
+/* jshint ignore:end */
+;(function(ns) {
 
 	'use strict';
 
@@ -6328,9 +6302,9 @@ var globalDefaults = {
 	 * if we're running in AMD environment return context as module
 	 * else expose it on global (window) object
 	 */
-	if (typeof global.define === "function" && global.define.amd) {
-		global.define('spiritjs', [], function(){
-			return context;
+	if (typeof define === "function" && define.amd) {
+		define(function() {
+			return context.spirit || {};
 		});
 	}else {
 		_.extend(global, context);
