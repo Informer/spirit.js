@@ -21,11 +21,7 @@
 	 * @returns {Object}
 	 */
 	var getObjectFromString = function(str) {
-		if (_.isUndefined(str) || !_.isString(str)) {
-			return {};
-		}
-
-		var obj;
+		var obj = {};
 		try {
 			var json = str.replace(/'|"/g, '').replace(/((?![\d]+|\.)[#\w\.]+|(\+|-)?[\d]+(%|px|em|deg))/g, '"$1"');
 			obj = $.parseJSON(json);
@@ -104,7 +100,7 @@
 					var coll = new collection.StatesCollection(),
 						stateObj = getObjectFromString(states);
 
-					if (!stateObj) {
+					if (_.size(stateObj) === 0) {
 						$this.trigger('spirit_error', {msg: 'jQuery.spiritAnimateTo: could not parse states: ' + states });
 						return;
 					}

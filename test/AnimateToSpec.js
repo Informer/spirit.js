@@ -116,6 +116,21 @@
 				expect($el.get(0)._gsTransform.x).toEqual(states.close.x);
 				expect($el.get(0)._gsTransform.y).toEqual(states.close.y);
 			});
+
+			it ('should dispatch error if states could not be parsed', function(){
+				var events = {
+					error: function() {}
+				};
+
+				spyOn(events, 'error');
+
+				var $el = $('<div data-spirit-states="bar-foo" />');
+				$el.on('spirit_error', events.error);
+				$el.spiritAnimateTo('bar-foo');
+
+				expect(events.error).toHaveBeenCalled();
+				expect(events.error.mostRecentCall.args[1]).toEqual({msg: 'jQuery.spiritAnimateTo: could not parse states: bar-foo'});
+			});
 		});
 
 
