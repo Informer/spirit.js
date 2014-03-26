@@ -25,7 +25,7 @@
 				expect(function() {
 					$el.spiritAnimateTo();
 				}).toThrow('invalid function parameters provided for jQuery.spiritAnimateTo. ' +
-						'First param needs to be a state (string) or speed (number)');
+					'First param needs to be a state (string) or speed (number)');
 			});
 
 			it('should dispatch error event when animate to unknown state', function() {
@@ -53,6 +53,7 @@
 
 				jasmine.Clock.tick(1);
 				expect($el.get(0)._gsTransform.x).toEqual(100);
+				expect($el.get(0)._gsTransform.y).toEqual(200);
 			});
 		});
 
@@ -117,7 +118,7 @@
 				expect($el.get(0)._gsTransform.y).toEqual(states.close.y);
 			});
 
-			it ('should dispatch error if states could not be parsed', function(){
+			it('should dispatch error if states could not be parsed', function() {
 				var events = {
 					error: function() {}
 				};
@@ -131,11 +132,6 @@
 				expect(events.error).toHaveBeenCalled();
 				expect(events.error.mostRecentCall.args[1]).toEqual({msg: 'jQuery.spiritAnimateTo: could not parse states: bar-foo'});
 			});
-		});
-
-
-		describe('execute on element directly (no states)', function() {
-
 		});
 
 

@@ -7,41 +7,41 @@
 
 	describe('TransitionCollection', function() {
 
-		var c,
+		var coll,
 			transitions = _.loadFixture('transitions.json').transitions;
 
 
 		it('should create a default collection', function() {
-			c = new spirit.collection.TransitionCollection();
-			expect(c instanceof spirit.collection.TransitionCollection).toBeTruthy();
+			coll = new spirit.collection.TransitionCollection();
+			expect(coll instanceof spirit.collection.TransitionCollection).toBeTruthy();
 		});
 
 
 		describe('Create custom collection', function() {
 
 			beforeEach(function() {
-				c = new spirit.collection.TransitionCollection(transitions);
+				coll = new spirit.collection.TransitionCollection(transitions);
 			});
 
 			afterEach(function() {
-				c = null;
+				coll = null;
 			});
 
 			it('should have 2 transitions', function() {
-				expect(c.length).toEqual(2);
+				expect(coll.length).toEqual(2);
 			});
 
 			it('should have 2 models of type TransitionsModel', function() {
-				_.each(c.models, function(m) {
+				_.each(coll.models, function(m) {
 					expect(m instanceof spirit.model.TransitionModel);
 				});
 			});
 
 			it('should have 1 model after deleting 1st model', function() {
-				c.remove(c.models[0]);
-				expect(c.length).toEqual(1);
+				coll.remove(coll.models[0]);
+				expect(coll.length).toEqual(1);
 
-				var m = c.models[0];
+				var m = coll.models[0];
 				expect(m.get('frame')).toEqual(200);
 			});
 
@@ -51,17 +51,16 @@
 					ease: 'Linear.awesomeness'
 				});
 
-				var added = c.add({
+				var added = coll.add({
 					params: {},
 					ease: 'Linear.awesomeness'
 				});
-				expect(c.length).toEqual(3);
+				expect(coll.length).toEqual(3);
 				expect(added.attributes).toEqual(m.attributes);
 				expect(added instanceof m.constructor).toBeTruthy();
 			});
 
 		});
-
 
 	});
 
