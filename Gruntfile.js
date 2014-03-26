@@ -67,6 +67,7 @@ module.exports = function(grunt) {
 	var ignoreHinting = [
 		path.src + '/header.js',
 		path.src + '/footer.js',
+		path.src + '/util/Globals.js',
 		path.src + '/util/Lodash.js',
 		path.src + '/model/AbstractModel.js',
 		path.src + '/collection/AbstractCollection.js'
@@ -107,10 +108,22 @@ module.exports = function(grunt) {
 		},
 
 
+		replace: {
+			buildversion: {
+				src: ['spirit.min.js'],
+				overwrite: true,
+				replacements: [{
+					from: '{buildversion}',
+					to: '<%= pkg.version %>'
+				}]
+			}
+		},
+
+
 		watch: {
 			src: {
 				files: [path.src + '/**/*.js', path.src + '/*.js'],
-				tasks: ['concat:dist', 'jshint:src', 'notify:success']
+				tasks: ['build', 'jshint:src', 'notify:success']
 			},
 			test: {
 				files: ['test/*Spec.js'],
@@ -126,7 +139,7 @@ module.exports = function(grunt) {
 					ignores: ignoreHinting
 				},
 				files: {
-					src: ['Gruntfile.js', path.src + '/**/*.js', path.src + '/*.js']
+					src: ['Gruntfile.js', path.src + '/**/*.js']
 				}
 			},
 			spec: ['test/*Spec.js']
@@ -194,7 +207,7 @@ module.exports = function(grunt) {
 						{ pattern: 'spirit.js', included: false },
 						{ pattern: 'test/AMDSpec.js', included: false },
 
-						'test/amd-config/config.js'
+						'test/amd/config.js'
 					])
 				},
 				browsers: ['PhantomJS']
@@ -246,7 +259,7 @@ module.exports = function(grunt) {
 	 * Grunt tasks
 	 */
 	grunt.registerTask('default', ['jshint', 'test', 'build']);
-	grunt.registerTask('build', 'Create the build version (spirit.js & spirit.min.js)', ['concat', 'uglify']);
+	grunt.registerTask('build', 'Create the build version (spirit.js & spirit.min.js)', ['concat', 'uglify', 'replace:buildversion']);
 	grunt.registerTask('test', ['karma:all']);
 	grunt.registerTask('test:ci', ['karma:headless', 'karma:amd']);
 	grunt.registerTask('test:coverage', ['clean:coverage', 'karma:coverage', 'open:coverage']);

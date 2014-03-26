@@ -6,7 +6,12 @@
 	 * This will eventually be exposed on window or returned as module
 	 * @type {Object}
 	 */
-	var context = {};
+	var context = {
+		spirit: {
+			VERSION: "{buildversion}"
+		}
+	};
+
 
 
 	/**
