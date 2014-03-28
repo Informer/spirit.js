@@ -1,0 +1,17 @@
+{
+
+	"params": [
+		{
+			"param": "translateX",
+			"value": -50
+		},
+		{
+			"param": "translateY",
+			"value": -400
+		},
+		{
+			"param": "left",
+			"value": 100
+		}
+	]
+}

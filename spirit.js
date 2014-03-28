@@ -5646,10 +5646,171 @@ var globalDefaults = {
 	'use strict';
 
 
-	ns.TransitionParamModel = ns.AbstractModel.extend({});
+	/**
+	 * Transition Parameter Model
+	 * Data Object containing a CSS parameter and it's value
+	 * When value is wrapper between { } then it's considered as an evaluated value
+	 */
+	ns.TransitionParamModel = ns.AbstractModel.extend({
+
+		defaults: {
+			param: null,
+			value: null
+		},
+
+
+		/**
+		 * Check if current parameter is a CSS Transform
+		 * @returns {Boolean}
+		 */
+		isCSSTransform: function() {
+			var p = ns.TransitionParamModel.params,
+				transforms = [
+					p.translateX, p.translateY, p.translateZ,
+					p.rotateX, p.rotateY, p.rotateZ,
+					p.skewX, p.skewY,
+					p.scaleX, p.scaleY
+				];
+
+			return _.contains(transforms, this.get('param'));
+		},
+
+
+		/**
+		 * Check if current value is evaluable
+		 * What this means is that the current value does have a reference (js code),
+		 * that's get evaluated in time (JIT). Use getValue to retrieve the actual param value instead.
+		 * @returns {Boolean}
+		 */
+		isEval: function() {
+			/* jshint -W092 */
+			return /\{(.*?)\}/.test(this.get('value'));
+		},
+
+
+		/**
+		 * Get the calculated value based on a (collection) mapping
+		 * @param mappings {{ expression, map}|[{ expression, map}]}
+		 * @returns {*}
+		 */
+		getValue: function(mappings) {
+			var v = this.get('value');
+
+			if (this.isEval()) {
+
+				if (mappings) {
+					// store valid mappings
+					var extractionObject = {};
+					_.each(!_.isArray(mappings) ? [mappings] : mappings, function(mapping, i) {
+						if (mapping.expression instanceof RegExp) {
+							if (mapping.expression.global) {
+								mapping.expression.lastIndex = 0;
+							}
+
+							if (mapping.expression.test(v)) {
+								extractionObject[mapping.expression] = mapping;
+							}
+						}
+					});
+
+					// create the evaluated string out of it
+					for (var i in extractionObject) {
+						v = v.replace(extractionObject[i].expression, 'extractionObject[' + i + '].map');
+					}
+				}
+
+				try {
+					/* jshint -W061 */
+					return eval(v);
+				} catch (e) {}
+			}
+
+			return v;
+		}
+
+	});
+
+
+	/**
+	 * List of all possible CSS params
+	 * @type {Object}
+	 */
+	ns.TransitionParamModel.params = {
+
+		autoAlpha: 'autoAlpha',
+		translateX: 'translateX',
+		translateY: 'translateY',
+		translateZ: 'translateZ',
+
+		rotateX: 'rotateX',
+		rotateY: 'rotateY',
+		rotateZ: 'rotateZ',
+
+		skewX: 'skewX',
+		skewY: 'skewY',
+
+		scaleX: 'scaleX',
+		scaleY: 'scaleY',
+
+		opacity: 'opacity',
+
+		transformOrigin: 'transformOrigin',
+		perspective: 'perspective',
+
+		backgroundPositionX: 'backgroundPositionX',
+		backgroundPositionY: 'backgroundPositionY',
+
+		width: 'width',
+		height: 'height',
+
+		color: 'color',
+		backgroundColor: 'backgroundColor',
+
+		paddingTop: 'paddingTop',
+		paddingBottom: 'paddingBottom',
+		paddingLeft: 'paddingLeft',
+		paddingRight: 'paddingRight',
+
+		marginTop: 'marginTop',
+		marginBottom: 'marginBottom',
+		marginLeft: 'marginLeft',
+		marginRight: 'marginRight',
+
+		fontSize: 'fontSize',
+
+		borderWidth: 'borderWidth',
+		borderColor: 'borderColor',
+
+		borderTopWidth: 'borderTopWidth',
+		borderBottomWidth: 'borderBottomWidth',
+		borderLeftWidth: 'borderLeftWidth',
+		borderRightWidth: 'borderRightWidth',
+
+		borderTopColor: 'borderTopColor',
+		borderBottomColor: 'borderBottomColor',
+		borderLeftColor: 'borderLeftColor',
+		borderRightColor: 'borderRightColor',
+
+		borderTopLeftRadius: 'borderTopLeftRadius',
+		borderTopRightRadius: 'borderTopRightRadius',
+		borderBottomRightRadius: 'borderBottomRightRadius',
+		borderBottomLeftRadius: 'borderBottomLeftRadius'
+
+	};
 
 
 })(use('spirit.model'));
+;(function(ns) {
+	'use strict';
+
+	ns.RegExpMapping = function(expression, map) {
+
+		this.expression = expression;
+		this.map = map;
+
+	};
+
+})(use('spirit.model.vo'));
 ;/* jshint ignore:start */
 
 (function(ns) {
@@ -6134,6 +6295,56 @@ var globalDefaults = {
 
 	});
 
+
+})(use('spirit.collection'));
+;(function(ns) {
+
+	'use strict';
+
+	ns.TransitionParamCollection = ns.AbstractCollection.extend({
+
+		model: 'spirit.model.TransitionParamModel',
+
+
+		/**
+		 * Construct Tween GASP parameters from current collection
+		 * @param evaluationExpressions {Object} evaluation mapping
+		 * @returns {Object}
+		 */
+		constructTweenObject: function(evaluationExpressions){
+
+			var constructed = {},
+				paramModel = use('spirit.model').TransitionParamModel.params,
+				params = this.filter(function(param){
+					return param.get('param') !== null && param.get('value') !== null;
+				});
+
+			_.each(params, function(param){
+				if (param.isCSSTransform()) {
+					switch(param.get('param')) {
+						case paramModel.translateX: constructed.x = param.getValue(evaluationExpressions); break;
+						case paramModel.translateY: constructed.y = param.getValue(evaluationExpressions); break;
+						case paramModel.translateZ: constructed.z = param.getValue(evaluationExpressions); break;
+
+						case paramModel.rotateX: constructed.rotationX = '+=' + param.getValue(evaluationExpressions) + 'deg'; break;
+						case paramModel.rotateY: constructed.rotationY = '+=' + param.getValue(evaluationExpressions) + 'deg'; break;
+						case paramModel.rotateZ: constructed.rotationZ = '+=' + param.getValue(evaluationExpressions) + 'deg'; break;
+
+						case paramModel.skewX: constructed.skewX = param.getValue(evaluationExpressions) + 'deg'; break;
+						case paramModel.skewY: constructed.skewY = param.getValue(evaluationExpressions) + 'deg'; break;
+
+						case paramModel.scaleX:  constructed.scaleX = param.getValue(evaluationExpressions); break;
+						case paramModel.scaleY:  constructed.scaleY = param.getValue(evaluationExpressions); break;
+					}
+				}else{
+					constructed[param.get('param')] = param.getValue(evaluationExpressions);
+				}
+			});
+
+			return constructed;
+		}
+
+	});
 
 })(use('spirit.collection'));
 ;(function() {

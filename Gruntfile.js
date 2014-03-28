@@ -41,6 +41,7 @@ module.exports = function(grunt) {
 		path.src + '/event/*.js',
 		path.src + '/model/AbstractModel.js',
 		path.src + '/model/*.js',
+		path.src + '/model/vo/*.js',
 		path.src + '/collection/AbstractCollection.js',
 		path.src + '/collection/*.js',
 	    path.src + '/jquery/*.js',
@@ -127,7 +128,7 @@ module.exports = function(grunt) {
 			},
 			test: {
 				files: ['test/*Spec.js'],
-				tasks: ['jshint:spec', 'test:ci']
+				tasks: ['jshint:spec', 'karma:headless']
 			}
 		},
 
