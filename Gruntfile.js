@@ -76,6 +76,24 @@ module.exports = function(grunt) {
 
 
 	/**
+	 * Include files for code coverage
+	 * testing purposes
+	 * @type {Array}
+	 */
+	var codeCoverage = [
+		path.src + '/collection/**/*.js',
+		path.src + '/model/**/*.js',
+		path.src + '/jquery/**/*.js',
+		path.src + '/event/**/*.js',
+
+	    // exclude
+	    '!' + path.src + '/collection/AbstractCollection.js',
+	    '!' + path.src + '/model/AbstractModel.js',
+	    '!' + path.src + '/event/Events.js'
+	];
+
+
+	/**
 	 * Grunt configuration
 	 * @type {Object}
 	 */
@@ -153,6 +171,7 @@ module.exports = function(grunt) {
 			}
 		},
 
+
 		karma: {
 			options: {
 				configFile: 'karma.conf.js',
@@ -221,11 +240,9 @@ module.exports = function(grunt) {
 					dir: 'coverage/'
 				},
 				preprocessors: function(){
-
 					var cwd = {};
-					cwd[path.src + '/*.js'] = cwd[path.src + '/**/*.js'] = ['coverage'];
+					_.each(grunt.file.expand(codeCoverage), function(path){ cwd[path] = ['coverage']; });
 					return cwd;
-
 				}.call(this)
 			}
 		},
