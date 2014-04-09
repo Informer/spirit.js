@@ -47,6 +47,7 @@
 		"expect": false,
 		"inject": false,
 		"it": false,
+		"xit": false,
 		"spyOn": false
 	}
 }

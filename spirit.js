@@ -6314,27 +6314,24 @@ var globalDefaults = {
 		constructTweenObject: function(evaluationExpressions){
 
 			var constructed = {},
-				paramModel = use('spirit.model').TransitionParamModel.params,
-				params = this.filter(function(param){
-					return param.get('param') !== null && param.get('value') !== null;
-				});
+				css = use('spirit.model').TransitionParamModel.params;
 
-			_.each(params, function(param){
+			_.each(this.filter(function(param){ return param.get('param') !== null && param.get('value') !== null; }), function(param){
 				if (param.isCSSTransform()) {
 					switch(param.get('param')) {
-						case paramModel.translateX: constructed.x = param.getValue(evaluationExpressions); break;
-						case paramModel.translateY: constructed.y = param.getValue(evaluationExpressions); break;
-						case paramModel.translateZ: constructed.z = param.getValue(evaluationExpressions); break;
+						case css.translateX: constructed.x = param.getValue(evaluationExpressions); break;
+						case css.translateY: constructed.y = param.getValue(evaluationExpressions); break;
+						case css.translateZ: constructed.z = param.getValue(evaluationExpressions); break;
 
-						case paramModel.rotateX: constructed.rotationX = '+=' + param.getValue(evaluationExpressions) + 'deg'; break;
-						case paramModel.rotateY: constructed.rotationY = '+=' + param.getValue(evaluationExpressions) + 'deg'; break;
-						case paramModel.rotateZ: constructed.rotationZ = '+=' + param.getValue(evaluationExpressions) + 'deg'; break;
+						case css.rotateX: constructed.rotationX = '+=' + param.getValue(evaluationExpressions) + 'deg'; break;
+						case css.rotateY: constructed.rotationY = '+=' + param.getValue(evaluationExpressions) + 'deg'; break;
+						case css.rotateZ: constructed.rotationZ = '+=' + param.getValue(evaluationExpressions) + 'deg'; break;
 
-						case paramModel.skewX: constructed.skewX = param.getValue(evaluationExpressions) + 'deg'; break;
-						case paramModel.skewY: constructed.skewY = param.getValue(evaluationExpressions) + 'deg'; break;
+						case css.skewX: constructed.skewX = param.getValue(evaluationExpressions) + 'deg'; break;
+						case css.skewY: constructed.skewY = param.getValue(evaluationExpressions) + 'deg'; break;
 
-						case paramModel.scaleX:  constructed.scaleX = param.getValue(evaluationExpressions); break;
-						case paramModel.scaleY:  constructed.scaleY = param.getValue(evaluationExpressions); break;
+						case css.scaleX:  constructed.scaleX = param.getValue(evaluationExpressions); break;
+						case css.scaleY:  constructed.scaleY = param.getValue(evaluationExpressions); break;
 					}
 				}else{
 					constructed[param.get('param')] = param.getValue(evaluationExpressions);

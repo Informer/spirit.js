@@ -7,7 +7,6 @@
 
 	describe('TransitionParamModel', function() {
 
-
 		it('should have a list of params', function() {
 			var list = spirit.model.TransitionParamModel.params;
 			expect(_.isObject(list)).toBeTruthy();
@@ -53,6 +52,11 @@
 			expect(model.getValue()).toBe('120');
 		});
 
+		it ('should validate isEval() when value is wrapped in {}', function(){
+			expect(new spirit.model.TransitionParamModel({ param: 'top', value: '{foobar}' }).isEval()).toBeTruthy();
+			expect(new spirit.model.TransitionParamModel({ param: 'top', value: '' }).isEval()).toBeFalsy();
+		});
+
 		it('should evaluate when providing a RegExpMapping', function() {
 			var model = new spirit.model.TransitionParamModel({
 					param: 'left',
@@ -79,20 +83,41 @@
 			expect(model.getValue([mappingA, mappingB])).toEqual("20-foobar");
 		});
 
-		it('should evaluate when execute a existing function without a mapping', function() {
-			// create function
-			window.doMathPower = function(val) { return Math.pow(val, 2); };
+		describe('with existing js function', function(){
 
-			var model = new spirit.model.TransitionParamModel({
-				param: 'top',
-				value: '{doMathPower(10)}'
+			beforeEach(function(){
+				window.doMathPower = function(val) { return Math.pow(val, 2); };
 			});
 
-			expect(model.getValue()).toBe(100);
+			afterEach(function(){
+				delete(window.doMathPower);
+			});
 
-			// remove function
-			delete(window.doMathPower);
+			it('should evaluate without a mapping', function() {
+				var model = new spirit.model.TransitionParamModel({
+					param: 'top',
+					value: '{doMathPower(10)}'
+				});
+
+				expect(model.getValue()).toBe(100);
+			});
+
+			it ('should evaluate with a mapping', function(){
+				var model = new spirit.model.TransitionParamModel({
+					param: 'top',
+					value: '{doMathPower(foo) + bar}'
+				});
+
+				expect(model.getValue([
+					new spirit.model.vo.RegExpMapping(/foo/, 50),
+					new spirit.model.vo.RegExpMapping(/bar/, 50)
+				])).toBe(2550);
+			});
 		});
+
+
+
+
 
 	});
 
