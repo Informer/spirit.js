@@ -165,7 +165,15 @@ gulp.task('jshint:src', function() {
     .pipe(plugins.jshint())
     .pipe(plugins.notify(jshintNotifier))
     .pipe(plugins.jshint.reporter('jshint-stylish'))
-    .pipe(plugins.size({title: 'jshint'}));
+    .pipe(plugins.size({title: 'jshint:src'}));
+});
+
+gulp.task('jshint:test', function(){
+  return gulp.src('test/*Spec.js')
+    .pipe(plugins.jshint())
+    .pipe(plugins.notify(jshintNotifier))
+    .pipe(plugins.jshint.reporter('jshint-stylish'))
+    .pipe(plugins.size({title: 'jshint:test'}));
 });
 
 // Uglify and concat to spirit.js and spirit.min.js
@@ -257,7 +265,15 @@ gulp.task('test:coverage', function(cb){
 // Clean up things
 gulp.task('clean', del.bind(null, ['coverage', 'spirit.min.js', 'spirit.min.js.map']));
 
+// Watch files
+gulp.task('watch', ['watch:src', 'watch:test']);
+
 // Watch source files
 gulp.task('watch:src', function() {
   gulp.watch('src/**/**.js', ['jshint:src', 'uglify']);
+});
+
+// Watch specs
+gulp.task('watch:test', function(){
+  gulp.watch('test/*Spec.js', ['jshint:test', 'test:src']);
 });

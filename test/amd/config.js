@@ -14,7 +14,7 @@ requirejs.config({
 	baseUrl: '/base',
 
 	paths: {
-		'jquery':           'vendor/jquery/jquery.min',
+		'jquery':           'vendor/jquery/jquery',
 		'tweenlite':        'vendor/greensock-js/src/minified/TweenLite.min',
 		'timelinelite':     'vendor/greensock-js/src/minified/TimelineLite.min'
 	},
