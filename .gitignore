@@ -3,5 +3,5 @@
 _SpecRunner.html
 *.iml
 node_modules
-public/js/vendors/
+vendor
 coverage

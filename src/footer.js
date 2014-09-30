@@ -1,6 +1,4 @@
 
-
-
 	/**
 	 * Finally make spirit namespace available
 	 * if we're running in AMD environment return context as module
@@ -13,6 +11,5 @@
 	}else {
 		_.extend(global, context);
 	}
-
 
 })(window);

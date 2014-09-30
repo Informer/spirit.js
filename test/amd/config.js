@@ -14,13 +14,13 @@ requirejs.config({
 	baseUrl: '/base',
 
 	paths: {
-		'jquery':           'public/js/vendors/jquery/jquery.min',
-		'tweenlite':        'public/js/vendors/greensock-js/src/minified/TweenLite.min',
-		'timelinelite':     'public/js/vendors/greensock-js/src/minified/TimelineLite.min'
+		'jquery':           'vendor/jquery/jquery.min',
+		'tweenlite':        'vendor/greensock-js/src/minified/TweenLite.min',
+		'timelinelite':     'vendor/greensock-js/src/minified/TimelineLite.min'
 	},
 
 	shim: {
-		spirit: {
+		'spirit.min': {
 			deps: [
 				'jquery',
 			    'tweenlite',
@@ -30,8 +30,8 @@ requirejs.config({
 
 		'tweenlite': {
 			deps: [
-				'public/js/vendors/greensock-js/src/minified/plugins/CSSPlugin.min',
-				'public/js/vendors/greensock-js/src/minified/easing/EasePack.min'
+				'vendor/greensock-js/src/minified/plugins/CSSPlugin.min',
+				'vendor/greensock-js/src/minified/easing/EasePack.min'
 			]
 		}
 	},

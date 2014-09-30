@@ -2,7 +2,6 @@
 
 	'use strict';
 
-
 	ns.TimelineModel = ns.AbstractModel.extend({
 
 		defaults: {
@@ -12,6 +11,5 @@
 		}
 
 	});
-
 
 })(use('spirit.model'));

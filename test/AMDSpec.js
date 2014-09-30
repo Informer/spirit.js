@@ -1,4 +1,4 @@
-define(['spirit'], function(spirit){
+define(['spirit.min'], function(spirit){
 	'use strict';
 
 	describe('AMD compatible', function(){

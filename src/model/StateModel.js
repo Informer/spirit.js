@@ -1,14 +1,14 @@
 (function(ns) {
 
-	'use strict';
+  'use strict';
 
-	ns.StateModel = ns.AbstractModel.extend({
+  ns.StateModel = ns.AbstractModel.extend({
 
-		defaults: {
-			name: 'undefined',
-			tweenObj: {}
-		}
+    defaults: {
+      name: 'undefined',
+      tweenObj: {}
+    }
 
-	});
+  });
 
 })(use('spirit.model'));

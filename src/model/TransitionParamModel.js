@@ -1,159 +1,151 @@
 (function(ns) {
 
-	'use strict';
+  'use strict';
 
+  /**
+   * Transition Parameter Model
+   * Data Object containing a CSS parameter and it's value
+   * When value is wrapper between { } then it's considered as an evaluated value
+   */
+  ns.TransitionParamModel = ns.AbstractModel.extend({
 
-	/**
-	 * Transition Parameter Model
-	 * Data Object containing a CSS parameter and it's value
-	 * When value is wrapper between { } then it's considered as an evaluated value
-	 */
-	ns.TransitionParamModel = ns.AbstractModel.extend({
+    defaults: {
+      param: null,
+      value: null
+    },
 
-		defaults: {
-			param: null,
-			value: null
-		},
+    /**
+     * Check if current parameter is a CSS Transform
+     * @returns {Boolean}
+     */
+    isCSSTransform: function() {
+      var p = ns.TransitionParamModel.params,
+          transforms = [
+            p.translateX, p.translateY, p.translateZ,
+            p.rotateX, p.rotateY, p.rotateZ,
+            p.skewX, p.skewY,
+            p.scaleX, p.scaleY
+          ];
 
+      return _.contains(transforms, this.get('param'));
+    },
 
-		/**
-		 * Check if current parameter is a CSS Transform
-		 * @returns {Boolean}
-		 */
-		isCSSTransform: function() {
-			var p = ns.TransitionParamModel.params,
-				transforms = [
-					p.translateX, p.translateY, p.translateZ,
-					p.rotateX, p.rotateY, p.rotateZ,
-					p.skewX, p.skewY,
-					p.scaleX, p.scaleY
-				];
+    /**
+     * Check if current value is evaluable
+     * What this means is that the current value does have a reference (js code),
+     * that's get evaluated in time (JIT). Use getValue to retrieve the actual param value instead.
+     * @returns {Boolean}
+     */
+    isEval: function() {
+      /* jshint -W092 */
+      return /\{(.*?)\}/.test(this.get('value'));
+    },
 
-			return _.contains(transforms, this.get('param'));
-		},
+    /**
+     * Get the calculated value based on a (collection) mapping
+     * @param mappings {{ expression, map}|[{ expression, map}]}
+     * @returns {*}
+     */
+    getValue: function(mappings) {
+      var v = this.get('value');
 
+      if (this.isEval()) {
 
-		/**
-		 * Check if current value is evaluable
-		 * What this means is that the current value does have a reference (js code),
-		 * that's get evaluated in time (JIT). Use getValue to retrieve the actual param value instead.
-		 * @returns {Boolean}
-		 */
-		isEval: function() {
-			/* jshint -W092 */
-			return /\{(.*?)\}/.test(this.get('value'));
-		},
+        if (mappings) {
+          // store valid mappings
+          var extractionObject = {};
+          _.each(!_.isArray(mappings) ? [mappings] : mappings, function(mapping, i) {
+            if (mapping.expression instanceof RegExp) {
+              if (mapping.expression.global) {
+                mapping.expression.lastIndex = 0;
+              }
 
+              if (mapping.expression.test(v)) {
+                extractionObject[mapping.expression] = mapping;
+              }
+            }
+          });
 
-		/**
-		 * Get the calculated value based on a (collection) mapping
-		 * @param mappings {{ expression, map}|[{ expression, map}]}
-		 * @returns {*}
-		 */
-		getValue: function(mappings) {
-			var v = this.get('value');
+          // create the evaluated string out of it
+          for (var i in extractionObject) {
+            v = v.replace(extractionObject[i].expression, 'extractionObject[' + i + '].map');
+          }
+        }
 
-			if (this.isEval()) {
+        try {
+          /* jshint -W061 */
+          return eval(v);
+        } catch (e) {}
+      }
 
-				if (mappings) {
-					// store valid mappings
-					var extractionObject = {};
-					_.each(!_.isArray(mappings) ? [mappings] : mappings, function(mapping, i) {
-						if (mapping.expression instanceof RegExp) {
-							if (mapping.expression.global) {
-								mapping.expression.lastIndex = 0;
-							}
+      return v;
+    }
 
-							if (mapping.expression.test(v)) {
-								extractionObject[mapping.expression] = mapping;
-							}
-						}
-					});
+  });
 
-					// create the evaluated string out of it
-					for (var i in extractionObject) {
-						v = v.replace(extractionObject[i].expression, 'extractionObject[' + i + '].map');
-					}
-				}
+  /**
+   * List of all possible CSS params
+   * @type {Object}
+   */
+  ns.TransitionParamModel.params = {
+    autoAlpha: 'autoAlpha',
+    translateX: 'translateX',
+    translateY: 'translateY',
+    translateZ: 'translateZ',
 
-				try {
-					/* jshint -W061 */
-					return eval(v);
-				} catch (e) {}
-			}
+    rotateX: 'rotateX',
+    rotateY: 'rotateY',
+    rotateZ: 'rotateZ',
 
-			return v;
-		}
+    skewX: 'skewX',
+    skewY: 'skewY',
 
-	});
+    scaleX: 'scaleX',
+    scaleY: 'scaleY',
 
+    opacity: 'opacity',
 
-	/**
-	 * List of all possible CSS params
-	 * @type {Object}
-	 */
-	ns.TransitionParamModel.params = {
+    transformOrigin: 'transformOrigin',
+    perspective: 'perspective',
 
-		autoAlpha: 'autoAlpha',
-		translateX: 'translateX',
-		translateY: 'translateY',
-		translateZ: 'translateZ',
+    backgroundPositionX: 'backgroundPositionX',
+    backgroundPositionY: 'backgroundPositionY',
 
-		rotateX: 'rotateX',
-		rotateY: 'rotateY',
-		rotateZ: 'rotateZ',
+    width: 'width',
+    height: 'height',
 
-		skewX: 'skewX',
-		skewY: 'skewY',
+    color: 'color',
+    backgroundColor: 'backgroundColor',
 
-		scaleX: 'scaleX',
-		scaleY: 'scaleY',
+    paddingTop: 'paddingTop',
+    paddingBottom: 'paddingBottom',
+    paddingLeft: 'paddingLeft',
+    paddingRight: 'paddingRight',
 
-		opacity: 'opacity',
+    marginTop: 'marginTop',
+    marginBottom: 'marginBottom',
+    marginLeft: 'marginLeft',
+    marginRight: 'marginRight',
 
-		transformOrigin: 'transformOrigin',
-		perspective: 'perspective',
+    fontSize: 'fontSize',
 
-		backgroundPositionX: 'backgroundPositionX',
-		backgroundPositionY: 'backgroundPositionY',
+    borderWidth: 'borderWidth',
+    borderColor: 'borderColor',
 
-		width: 'width',
-		height: 'height',
+    borderTopWidth: 'borderTopWidth',
+    borderBottomWidth: 'borderBottomWidth',
+    borderLeftWidth: 'borderLeftWidth',
+    borderRightWidth: 'borderRightWidth',
 
-		color: 'color',
-		backgroundColor: 'backgroundColor',
+    borderTopColor: 'borderTopColor',
+    borderBottomColor: 'borderBottomColor',
+    borderLeftColor: 'borderLeftColor',
+    borderRightColor: 'borderRightColor',
 
-		paddingTop: 'paddingTop',
-		paddingBottom: 'paddingBottom',
-		paddingLeft: 'paddingLeft',
-		paddingRight: 'paddingRight',
-
-		marginTop: 'marginTop',
-		marginBottom: 'marginBottom',
-		marginLeft: 'marginLeft',
-		marginRight: 'marginRight',
-
-		fontSize: 'fontSize',
-
-		borderWidth: 'borderWidth',
-		borderColor: 'borderColor',
-
-		borderTopWidth: 'borderTopWidth',
-		borderBottomWidth: 'borderBottomWidth',
-		borderLeftWidth: 'borderLeftWidth',
-		borderRightWidth: 'borderRightWidth',
-
-		borderTopColor: 'borderTopColor',
-		borderBottomColor: 'borderBottomColor',
-		borderLeftColor: 'borderLeftColor',
-		borderRightColor: 'borderRightColor',
-
-		borderTopLeftRadius: 'borderTopLeftRadius',
-		borderTopRightRadius: 'borderTopRightRadius',
-		borderBottomRightRadius: 'borderBottomRightRadius',
-		borderBottomLeftRadius: 'borderBottomLeftRadius'
-
-	};
-
+    borderTopLeftRadius: 'borderTopLeftRadius',
+    borderTopRightRadius: 'borderTopRightRadius',
+    borderBottomRightRadius: 'borderBottomRightRadius',
+    borderBottomLeftRadius: 'borderBottomLeftRadius'
+  };
 
 })(use('spirit.model'));

@@ -1,6 +1,5 @@
 (function(global){
 
-
 	/**
 	 * Object to store namespace in
 	 * This will eventually be exposed on window or returned as module
@@ -11,8 +10,6 @@
 			VERSION: "{buildversion}"
 		}
 	};
-
-
 
 	/**
 	 * Resolves namespace
@@ -33,7 +30,6 @@
 
 		return obj;
 	};
-
 
 	/**
 	 * Check if namespace exists
@@ -59,7 +55,3 @@
 
 		return doesExist;
 	};
-
-
-
-
