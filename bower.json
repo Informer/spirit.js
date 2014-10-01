@@ -13,7 +13,7 @@
     "type": "git",
     "url": "git://github.com/inlet/spirit.js.git"
   },
-  "main": "spirit.js",
+  "main": "./spirit.min.js",
   "dependencies": {
     "jquery": "~2.0.3",
     "greensock-js": "~1.10.2"

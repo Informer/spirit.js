@@ -74,7 +74,7 @@
     "underscore": "^1.7.0"
   },
   "scripts": {
-    "test": "gulp test:ci",
+    "test": "gulp test",
     "postinstall": "bower install && gulp"
   }
 }
