@@ -202,7 +202,8 @@ gulp.task('test:src', function(cb) {
   var test = karma.start({
     configFile: __dirname + '/karma.conf.js',
     files: config.testFiles(),
-    browsers: ['PhantomJS']
+    browsers: ['PhantomJS'],
+    reporters: ['dots']
   }, function(exitCode){
     if (exitCode) {
       sfx.play("funk");
