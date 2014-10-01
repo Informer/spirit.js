@@ -1,4 +1,4 @@
-# SpiritJS
+# SpiritJS [![Build Status](https://travis-ci.org/inlet/spirit.js.svg?branch=master)](https://travis-ci.org/inlet/spirit.js) [![Dependencies](http://img.shields.io/badge/dependencies-jquery%20and%20greensock-brightgreen.svg)](https://github.com/inlet/spirit.js) [![License](http://img.shields.io/badge/license-Apache%202-blue.svg)](https://github.com/inlet/spirit.js)  
 
 The animation toolkit every frontender & designer needs! 
 
