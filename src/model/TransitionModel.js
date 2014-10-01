@@ -5,6 +5,7 @@
 	ns.TransitionModel = ns.AbstractModel.extend({
 
 		defaults: {
+      frame: 0,
 			params: null,
 			ease: 'Linear.easeNone'
 		}
