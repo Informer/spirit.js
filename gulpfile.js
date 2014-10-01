@@ -199,11 +199,16 @@ gulp.task('test', function(cb){
 
 // Test source specs
 gulp.task('test:src', function(cb) {
-  karma.start({
+  var test = karma.start({
     configFile: __dirname + '/karma.conf.js',
     files: config.testFiles(),
     browsers: ['PhantomJS']
-  }, cb);
+  }, function(exitCode){
+    if (exitCode) {
+      sfx.play("funk");
+    }
+    cb();
+  });
 });
 
 // Test amd specs
@@ -221,7 +226,9 @@ gulp.task('test:amd', function(cb){
 
       'test/amd/config.js'
     ])
-  }, cb);
+  }, function(){
+    cb();
+  });
 });
 
 // Test over Chrome
@@ -231,7 +238,9 @@ gulp.task('test:browser', function(cb){
     files: config.testFiles(),
     browsers: ['Chrome'],
     singleRun: false
-  }, cb);
+  }, function(){
+    cb();
+  });
 });
 
 // Create a coverage report
