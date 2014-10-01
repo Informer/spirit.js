@@ -2,10 +2,7 @@
 
 	'use strict';
 
-
-
 	var ctor = function() {};
-
 
 	/**
 	 * Borrowed from Backbone.extend
@@ -119,7 +116,6 @@
 		child.extend = ns.extendObject;
 		return child;
 	};
-
 
 	/**
 	 * Autobind all methods to scope!

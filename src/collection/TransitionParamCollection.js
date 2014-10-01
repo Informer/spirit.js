@@ -6,7 +6,6 @@
 
 		model: 'spirit.model.TransitionParamModel',
 
-
 		/**
 		 * Construct Tween GSAP parameters from current collection
 		 * @param evaluationExpressions {Object} evaluation mapping

@@ -1,9 +1,7 @@
 (function() {
 	'use strict';
 
-
 	var _ = jasmine._helpers;
-
 
 	describe('TransitionParamModel', function() {
 
@@ -67,7 +65,6 @@
 					bar: function() { return "foobar"; }
 				});
 
-
 			// mapping $this to a jQuery object
 			model.set('value', '{$this.data("x") + 10}');
 			expect(model.getValue(mappingA)).toBe(30);
@@ -114,10 +111,6 @@
 				])).toBe(2550);
 			});
 		});
-
-
-
-
 
 	});
 

@@ -2,7 +2,6 @@
 
 	'use strict';
 
-
 	describe('StatesCollection', function() {
 
 		it('should create empty collection', function() {

@@ -1,7 +1,6 @@
 (function() {
 	'use strict';
 
-
 	/**
 	 * Imports
 	 * @type {Object}
@@ -29,7 +28,6 @@
 
 		return obj;
 	};
-
 
 	/**
 	 * Animate to state
@@ -66,7 +64,6 @@
 		}
 	};
 
-
 	/**
 	 * Default config
 	 * @type {Object}
@@ -74,7 +71,6 @@
 	var defaults = {
 		speed: 1
 	};
-
 
 	/**
 	 * Methods to execute
@@ -132,10 +128,8 @@
 						methods.animateTo.apply(this, [speed, _.extend(tweenObj, options)]);
 					}
 				}
-
 			});
 		},
-
 
 		/**
 		 * Execute animation
@@ -152,8 +146,6 @@
 			};
 			return (this instanceof HTMLElement) ? animateSingleElement.call(this) : this.each(animateSingleElement);
 		}
-
 	};
-
 
 })();

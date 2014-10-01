@@ -1,9 +1,7 @@
 (function() {
 	'use strict';
 
-
 	var _ = jasmine._helpers;
-
 
 	describe('TransitionCollection', function() {
 

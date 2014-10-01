@@ -17,5 +17,6 @@
   "dependencies": {
     "jquery": "~2.0.3",
     "greensock-js": "~1.10.2"
+
   }
 }

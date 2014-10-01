@@ -38,7 +38,6 @@
     return false;
   };
 
-
   ns.AbstractModel = function(attributes, options) {
 
     // set defaults _parseables to Class objects
@@ -282,7 +281,6 @@
       wrapError(this, options);
       return this.sync('read', this, options);
     },
-
 
     // Destroy this model on the server if it was already persisted.
     // Optimistically removes the model from its collection, if it has one.

@@ -4,11 +4,9 @@
 
 	'use strict';
 
-
 	// Default options for `Collection#set`.
 	var setOptions = {add: true, remove: true, merge: true};
 	var addOptions = {add: true, remove: false};
-
 
 	ns.AbstractCollection = function(models, options) {
 
@@ -29,10 +27,8 @@
 		}
 	};
 
-
 	ns.AbstractCollection.extend = _.extendObjectWithSuper;
 	_.extend(ns.AbstractCollection.prototype, use('spirit.event').Events, {
-
 
 		// The default model for a collection is just a **Backbone.Model**.
 		// This should be overridden in most cases.
@@ -308,7 +304,6 @@
 			return _.invoke(this.models, 'get', attr);
 		},
 
-
 		// Create a new instance of a model in this collection. Add the model to the
 		// collection immediately, unless `wait: true` is passed, in which case we
 		// wait for the server to agree.
@@ -409,7 +404,6 @@
 	 */
 	ns.AbstractCollection.parseable = true;
 
-
 	// Underscore methods that we want to implement on the Collection.
 	// 90% of the core usefulness of Backbone Collections is actually implemented
 	// right here:
@@ -445,6 +439,5 @@
 
 
 })(use('spirit.collection'));
-
 
 /* jshint ignore:end */

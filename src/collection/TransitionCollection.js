@@ -20,8 +20,6 @@
 //			console.log('TransitionCollection -> removed model');
 		}
 
-
 	});
-
 
 })(use('spirit.collection'));

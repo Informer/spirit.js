@@ -2,7 +2,6 @@
 
 	'use strict';
 
-
 	var _ = jasmine._helpers;
 
 	describe('TransitionParamCollection', function() {
@@ -29,7 +28,7 @@
 			beforeEach(function(){
 				coll.add(fixture);
 			});
-			
+
 			it ('should have corresponding models', function(){
 				expect(coll.length).toBe(fixture.length);
 
