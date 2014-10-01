@@ -6,7 +6,7 @@
 
 		defaults: {
       frame: 0,
-			params: null,
+			params: 'spirit.collection.TransitionParamCollection',
 			ease: 'Linear.easeNone'
 		}
 
