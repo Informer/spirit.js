@@ -8,7 +8,7 @@
 		it('should have a list of params', function() {
 			var list = spirit.model.TransitionParamModel.params;
 			expect(_.isObject(list)).toBeTruthy();
-			expect(_.size(list) > 0).toBeGreaterThan(0);
+			expect(_.size(list)).toBeGreaterThan(0);
 		});
 
 		it('should validate on CSS Transforms', function() {
