@@ -206,6 +206,8 @@ gulp.task('test:src', function(cb) {
   }, function(exitCode){
     if (exitCode) {
       sfx.play("funk");
+    }else{
+      sfx.play("tink");
     }
     cb();
   });
