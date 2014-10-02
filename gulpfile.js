@@ -240,6 +240,7 @@ gulp.task('test:browser', function(cb){
     configFile: __dirname + '/karma.conf.js',
     files: config.testFiles(),
     browsers: ['Chrome'],
+    autoWatch: true,
     singleRun: false
   }, function(){
     cb();
