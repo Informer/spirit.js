@@ -4,12 +4,12 @@
 
   var _ = jasmine._helpers;
 
-  describe('TransitionModel', function() {
+  describe('model.Transition', function() {
 
     var transition;
 
     beforeEach(function() {
-      transition = new spirit.model.TransitionModel();
+      transition = new spirit.model.Transition();
     });
 
     afterEach(function() {
@@ -18,7 +18,7 @@
 
     it('should have an empty transition by default', function() {
       expect(transition.get('frame')).toBe(0);
-      expect(transition.get('params') instanceof spirit.collection.TransitionParamCollection).toBeTruthy();
+      expect(transition.get('params') instanceof spirit.collection.TransitionParams).toBeTruthy();
       expect(transition.get('params').length).toBe(0);
       expect(transition.get('ease')).toBe('Linear.easeNone');
     });
@@ -39,7 +39,7 @@
       expect(responder.event.calls.length).toBe(2);
 
       var firstParam = transition.get('params').at(0);
-      expect(firstParam instanceof spirit.model.TransitionParamModel).toBeTruthy();
+      expect(firstParam instanceof spirit.model.TransitionParam).toBeTruthy();
       expect(firstParam.get('param')).toBe('top');
       expect(firstParam.get('value')).toBe(0);
     });

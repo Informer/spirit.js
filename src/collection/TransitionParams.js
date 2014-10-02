@@ -2,9 +2,9 @@
 
 	'use strict';
 
-	ns.TransitionParamCollection = ns.AbstractCollection.extend({
+	ns.TransitionParams = ns.Abstract.extend({
 
-		model: 'spirit.model.TransitionParamModel',
+		model: 'spirit.model.TransitionParam',
 
 		/**
 		 * Construct Tween GSAP parameters from current collection
@@ -14,7 +14,7 @@
 		constructTweenObject: function(evaluationExpressions){
 
 			var constructed = {},
-				css = use('spirit.model').TransitionParamModel.params;
+				css = use('spirit.model').TransitionParam.params;
 
 			_.each(this.filter(function(param){ return param.get('param') !== null && param.get('value') !== null; }), function(param){
 				if (param.isCSSTransform()) {

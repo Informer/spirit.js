@@ -4,12 +4,12 @@
 
 	var _ = jasmine._helpers;
 
-	describe('TransitionParamCollection', function() {
+	describe('collection.TransitionParams', function() {
 
 		var coll;
 
 		beforeEach(function() {
-			coll = new spirit.collection.TransitionParamCollection();
+			coll = new spirit.collection.TransitionParams();
 		});
 
 		afterEach(function() {

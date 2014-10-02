@@ -2,9 +2,9 @@
 
 	'use strict';
 
-	ns.TransitionCollection = ns.AbstractCollection.extend({
+	ns.Transitions = ns.Abstract.extend({
 
-		model: 'spirit.model.TransitionModel',
+		model: 'spirit.model.Transition',
 
 		initialize: function() {
 			// make sure each model has always a reference to it's previous one

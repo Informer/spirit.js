@@ -80,7 +80,7 @@
 				$el.spiritAnimateTo("open", 0);
 
 				var states = $el.data('spirit-states');
-				expect(states instanceof spirit.collection.StatesCollection).toBeTruthy();
+				expect(states instanceof spirit.collection.States).toBeTruthy();
 				expect(states.length).toEqual(2);
 			});
 

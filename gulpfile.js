@@ -72,11 +72,12 @@ var config = {
     'src/util/Globals.js',
 
     // source files
+    'src/factory/*.js',
     'src/event/*.js',
-    'src/model/AbstractModel.js',
+    'src/model/Abstract.js',
     'src/model/*.js',
     'src/model/vo/*.js',
-    'src/collection/AbstractCollection.js',
+    'src/collection/Abstract.js',
     'src/collection/*.js',
     'src/jquery/*.js'
   ],
@@ -102,8 +103,8 @@ var config = {
     '**/src/footer.js',
     '**/src/util/Globals.js',
     '**/src/util/Lodash.js',
-    '**/src/model/AbstractModel.js',
-    '**/src/collection/AbstractCollection.js'
+    '**/src/model/Abstract.js',
+    '**/src/collection/Abstract.js'
   ],
 
   /**
@@ -118,8 +119,8 @@ var config = {
     'src/event/**/*.js',
 
     // exclude
-    '!src/collection/AbstractCollection.js',
-    '!src/model/AbstractModel.js',
+    '!src/collection/Abstract.js',
+    '!src/model/Abstract.js',
     '!src/event/Events.js'
   ],
 
@@ -142,8 +143,8 @@ var config = {
       // And finally the specs
       .concat(expand({cwd: '.'}, [
         'test/helpers/*.js',
-        'test/*Spec.js',
-        '!test/AMDSpec.js'
+        'test/**/*Spec.js',
+        '!test/amd/AMDSpec.js'
       ]));
   }
 
@@ -225,7 +226,7 @@ gulp.task('test:amd', function(cb){
     }).concat([
       { pattern: 'spirit.min.js', included: false },
       { pattern: 'spirit.min.js.map', included: false },
-      { pattern: 'test/AMDSpec.js', included: false },
+      { pattern: 'test/amd/AMDSpec.js', included: false },
 
       'test/amd/config.js'
     ])

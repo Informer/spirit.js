@@ -8,10 +8,10 @@
 	var setOptions = {add: true, remove: true, merge: true};
 	var addOptions = {add: true, remove: false};
 
-	ns.AbstractCollection = function(models, options) {
+	ns.Abstract = function(models, options) {
 
 		// parse model!
-		this.model = exist(this.model) ? use(this.model) : use('spirit.model').AbstractModel;
+		this.model = exist(this.model) ? use(this.model) : use('spirit.model').Abstract;
 
 		options || (options = {});
 		if (options.model) {
@@ -27,12 +27,12 @@
 		}
 	};
 
-	ns.AbstractCollection.extend = _.extendObjectWithSuper;
-	_.extend(ns.AbstractCollection.prototype, use('spirit.event').Events, {
+	ns.Abstract.extend = _.extendObjectWithSuper;
+	_.extend(ns.Abstract.prototype, use('spirit.event').Events, {
 
 		// The default model for a collection is just a **Backbone.Model**.
 		// This should be overridden in most cases.
-		model: 'spirit.model.AbstractModel',
+		model: 'spirit.model.Abstract',
 
 		// Initialize is an empty function by default. Override it with your own
 		// initialization logic.
@@ -98,7 +98,7 @@
 			// from being added.
 			for (i = 0, l = models.length; i < l; i++) {
 				attrs = models[i];
-				if (attrs instanceof use('spirit.model').AbstractModel) {
+				if (attrs instanceof use('spirit.model').Abstract) {
 					id = model = attrs;
 				} else {
 					id = attrs[targetModel.prototype.idAttribute];
@@ -351,7 +351,7 @@
 		// Prepare a hash of attributes (or other model) to be added to this
 		// collection.
 		_prepareModel: function(attrs, options) {
-			if (attrs instanceof use('spirit.model').AbstractModel) {
+			if (attrs instanceof use('spirit.model').Abstract) {
 				if (!attrs.collection) {
 					attrs.collection = this;
 				}
@@ -402,7 +402,7 @@
 	 * In model.defaults {} we can provide class, while creating instance defaults will be set
 	 * @type {boolean}
 	 */
-	ns.AbstractCollection.parseable = true;
+	ns.Abstract.parseable = true;
 
 	// Underscore methods that we want to implement on the Collection.
 	// 90% of the core usefulness of Backbone Collections is actually implemented
@@ -416,7 +416,7 @@
 
 	// Mix in each Underscore method as a proxy to `Collection#models`.
 	_.each(methods, function(method) {
-		ns.AbstractCollection.prototype[method] = function() {
+		ns.Abstract.prototype[method] = function() {
 			var args = [].slice.call(arguments);
 			args.unshift(this.models);
 			return _[method].apply(_, args);
@@ -429,7 +429,7 @@
 
 	// Use attributes instead of properties.
 	_.each(attributeMethods, function(method) {
-		ns.AbstractCollection.prototype[method] = function(value, context) {
+		ns.Abstract.prototype[method] = function(value, context) {
 			var iterator = _.isFunction(value) ? value : function(model) {
 				return model.get(value);
 			};

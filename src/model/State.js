@@ -2,7 +2,7 @@
 
   'use strict';
 
-  ns.StateModel = ns.AbstractModel.extend({
+  ns.State = ns.Abstract.extend({
 
     defaults: {
       name: 'undefined',

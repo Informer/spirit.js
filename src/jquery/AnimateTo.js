@@ -93,7 +93,7 @@
 
 				// parse states
 				if (_.isString(states)) {
-					var coll = new collection.StatesCollection(),
+					var coll = new collection.States(),
 						stateObj = getObjectFromString(states);
 
 					if (_.size(stateObj) === 0) {
@@ -112,7 +112,7 @@
 					states = coll;
 				}
 
-				if (!(states instanceof collection.StatesCollection)) {
+				if (!(states instanceof collection.States)) {
 					$this.trigger('spirit_error', {msg: 'jQuery.spiritAnimateTo: State[' + state + '] not found on element'});
 				} else {
 

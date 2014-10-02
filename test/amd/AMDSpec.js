@@ -13,9 +13,9 @@ define(['spirit.min'], function(spirit){
 		});
 
 		it('should run a regular test (create empty collection)', function() {
-			var c = new spirit.collection.StatesCollection();
+			var c = new spirit.collection.States();
 			expect(c.length).toBe(0);
-			expect(c.model).toBe(spirit.model.StateModel);
+			expect(c.model).toBe(spirit.model.State);
 		});
 
 	});

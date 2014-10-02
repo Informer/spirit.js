@@ -2,18 +2,18 @@
 
 	'use strict';
 
-	ns.TimelineModel = ns.AbstractModel.extend({
+	ns.Timeline = ns.Abstract.extend({
 
 		defaults: {
 			el: null,
 			id: null,
-			transitions: 'spirit.collection.TransitionCollection'
+			transitions: 'spirit.collection.Transitions'
 		},
 
     /**
      * Initialize
      * This model can be constructed by json data or by assigning real values.
-     * @returns {ns.TimelineModel}
+     * @returns {ns.Timeline}
      */
     initialize: function(){
       _.autoBind(this);
@@ -28,7 +28,7 @@
           this.set({el: $($el.get(0))}, {silent: true});
           this.bindModelToElement();
         }else{
-          throw new Error('[spirit.TimelineModel] Can\'t apply timeline on element. Element: ' + selector + ' can\'t be found');
+          throw new Error('[spirit.model.Timeline] Can\'t apply timeline on element. Element: ' + selector + ' can\'t be found');
         }
       }
       return this;
@@ -37,7 +37,7 @@
     /**
      * Bind this model to element
      * Retrieve this model by DOM element: $(..).data('spirit-model');
-     * @returns {ns.TimelineModel}
+     * @returns {ns.Timeline}
      */
     bindModelToElement: function(){
       this.get('el').data('spirit-model', this);

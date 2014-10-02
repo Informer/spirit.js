@@ -38,7 +38,7 @@
     return false;
   };
 
-  ns.AbstractModel = function(attributes, options) {
+  ns.Abstract = function(attributes, options) {
 
     // set defaults _parseables to Class objects
     this._parseables = {};
@@ -65,8 +65,8 @@
     this.initialize.apply(this, arguments);
   };
 
-  ns.AbstractModel.extend = _.extendObjectWithSuper;
-  _.extend(ns.AbstractModel.prototype, use('spirit.event').Events, {
+  ns.Abstract.extend = _.extendObjectWithSuper;
+  _.extend(ns.Abstract.prototype, use('spirit.event').Events, {
 
     // A hash of attributes whose current and previous value differ.
     changed: null,
@@ -166,7 +166,7 @@
           // but we want to make sure it parses into the specified parseable if needed
           var PO = this._parseables[attr];
           if (PO) {
-            current[attr] = (_.isArray(val) || (_.isObject(val) && (val instanceof ns.AbstractModel))) ? new PO(val) : new PO();
+            current[attr] = (_.isArray(val) || (_.isObject(val) && (val instanceof ns.Abstract))) ? new PO(val) : new PO();
           } else {
             current[attr] = val;
           }
@@ -372,7 +372,7 @@
 
   // Mix in each Underscore method as a proxy to `Model#attributes`.
   _.each(modelMethods, function(method) {
-    ns.AbstractModel.prototype[method] = function() {
+    ns.Abstract.prototype[method] = function() {
       var args = slice.call(arguments);
       args.unshift(this.attributes);
       return _[method].apply(_, args);

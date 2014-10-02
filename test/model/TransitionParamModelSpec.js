@@ -3,24 +3,24 @@
 
 	var _ = jasmine._helpers;
 
-	describe('TransitionParamModel', function() {
+	describe('model.TransitionParam', function() {
 
 		it('should have a list of params', function() {
-			var list = spirit.model.TransitionParamModel.params;
+			var list = spirit.model.TransitionParam.params;
 			expect(_.isObject(list)).toBeTruthy();
 			expect(_.size(list)).toBeGreaterThan(0);
 		});
 
 		it('should validate on CSS Transforms', function() {
-			var yes = new spirit.model.TransitionParamModel({ param: 'translateX', value: 10 }),
-				nope = new spirit.model.TransitionParamModel({ param: 'left', value: 10 });
+			var yes = new spirit.model.TransitionParam({ param: 'translateX', value: 10 }),
+				nope = new spirit.model.TransitionParam({ param: 'left', value: 10 });
 
 			expect(yes.isCSSTransform()).toBeTruthy();
 			expect(nope.isCSSTransform()).toBeFalsy();
 		});
 
 		it('should listen to change:value events JIT', function() {
-			var model = new spirit.model.TransitionParamModel({ param: 'top', value: 0 }),
+			var model = new spirit.model.TransitionParam({ param: 'top', value: 0 }),
 				values = [],
 				responder = {
 					event: function(m, val) {
@@ -43,7 +43,7 @@
 		});
 
 		it('should give me a valid value when executing getValue()', function() {
-			var model = new spirit.model.TransitionParamModel({ param: 'top', value: 120 });
+			var model = new spirit.model.TransitionParam({ param: 'top', value: 120 });
 
 			expect(model.getValue()).toBe(120);
 			model.set('value', '120');
@@ -51,12 +51,12 @@
 		});
 
 		it ('should validate isEval() when value is wrapped in {}', function(){
-			expect(new spirit.model.TransitionParamModel({ param: 'top', value: '{foobar}' }).isEval()).toBeTruthy();
-			expect(new spirit.model.TransitionParamModel({ param: 'top', value: '' }).isEval()).toBeFalsy();
+			expect(new spirit.model.TransitionParam({ param: 'top', value: '{foobar}' }).isEval()).toBeTruthy();
+			expect(new spirit.model.TransitionParam({ param: 'top', value: '' }).isEval()).toBeFalsy();
 		});
 
 		it('should evaluate when providing a RegExpMapping', function() {
-			var model = new spirit.model.TransitionParamModel({
+			var model = new spirit.model.TransitionParam({
 					param: 'left',
 					value: ''
 				}),
@@ -91,7 +91,7 @@
 			});
 
 			it('should evaluate without a mapping', function() {
-				var model = new spirit.model.TransitionParamModel({
+				var model = new spirit.model.TransitionParam({
 					param: 'top',
 					value: '{doMathPower(10)}'
 				});
@@ -100,7 +100,7 @@
 			});
 
 			it ('should evaluate with a mapping', function(){
-				var model = new spirit.model.TransitionParamModel({
+				var model = new spirit.model.TransitionParam({
 					param: 'top',
 					value: '{doMathPower(foo) + bar}'
 				});

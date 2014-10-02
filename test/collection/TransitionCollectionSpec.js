@@ -3,22 +3,22 @@
 
 	var _ = jasmine._helpers;
 
-	describe('TransitionCollection', function() {
+	describe('collection.Transitions', function() {
 
 		var coll,
 			transitions = _.loadFixture('transitions.json').transitions;
 
 
 		it('should create a default collection', function() {
-			coll = new spirit.collection.TransitionCollection();
-			expect(coll instanceof spirit.collection.TransitionCollection).toBeTruthy();
+			coll = new spirit.collection.Transitions();
+			expect(coll instanceof spirit.collection.Transitions).toBeTruthy();
 		});
 
 
 		describe('Create custom collection', function() {
 
 			beforeEach(function() {
-				coll = new spirit.collection.TransitionCollection(transitions);
+				coll = new spirit.collection.Transitions(transitions);
 			});
 
 			afterEach(function() {
@@ -29,9 +29,9 @@
 				expect(coll.length).toEqual(2);
 			});
 
-			it('should have 2 models of type TransitionsModel', function() {
+			it('should have 2 models of type model.Transition', function() {
 				_.each(coll.models, function(m) {
-					expect(m instanceof spirit.model.TransitionModel);
+					expect(m instanceof spirit.model.Transition);
 				});
 			});
 
@@ -44,7 +44,7 @@
 			});
 
 			it('should have 3 models after adding another', function() {
-				var m = new spirit.model.TransitionModel({
+				var m = new spirit.model.Transition({
 					params: {},
 					ease: 'Linear.awesomeness'
 				});

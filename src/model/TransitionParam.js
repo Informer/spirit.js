@@ -7,7 +7,7 @@
    * Data Object containing a CSS parameter and it's value
    * When value is wrapper between { } then it's considered as an evaluated value
    */
-  ns.TransitionParamModel = ns.AbstractModel.extend({
+  ns.TransitionParam = ns.Abstract.extend({
 
     defaults: {
       param: null,
@@ -19,7 +19,7 @@
      * @returns {Boolean}
      */
     isCSSTransform: function() {
-      var p = ns.TransitionParamModel.params,
+      var p = ns.TransitionParam.params,
           transforms = [
             p.translateX, p.translateY, p.translateZ,
             p.rotateX, p.rotateY, p.rotateZ,
@@ -87,7 +87,7 @@
    * List of all possible CSS params
    * @type {Object}
    */
-  ns.TransitionParamModel.params = {
+  ns.TransitionParam.params = {
     autoAlpha: 'autoAlpha',
     translateX: 'translateX',
     translateY: 'translateY',

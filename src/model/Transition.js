@@ -2,11 +2,11 @@
 
 	'use strict';
 
-	ns.TransitionModel = ns.AbstractModel.extend({
+	ns.Transition = ns.Abstract.extend({
 
 		defaults: {
       frame: 0,
-			params: 'spirit.collection.TransitionParamCollection',
+			params: 'spirit.collection.TransitionParams',
 			ease: 'Linear.easeNone'
 		}
 

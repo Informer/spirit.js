@@ -131,7 +131,7 @@
 	};
 
 	/**
-	 * Check if we are running is test modus?
+	 * Check if we are running in test mode?
 	 * @returns {boolean}
 	 */
 	ns.testMode = function() {
