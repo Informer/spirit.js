@@ -289,5 +289,5 @@ gulp.task('watch:src', function() {
 
 // Watch specs
 gulp.task('watch:test', function(){
-  gulp.watch('test/*Spec.js', ['jshint:test', 'test:src']);
+  gulp.watch('test/**/*Spec.js', ['jshint:test', 'test:src']);
 });
