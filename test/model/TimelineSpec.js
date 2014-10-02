@@ -38,6 +38,13 @@
       $el.remove();
     });
 
+    it ('should throw an error if "id" in json does not match any element', function(){
+      var jsonData = _.loadFixture('timeline.json').elements[0];
+      expect(function() {
+        new spirit.model.Timeline(jsonData);
+      }).toThrow('[spirit.model.Timeline] Can\'t apply timeline on element. Element: [data-spirit-id=' + jsonData.id + '] can\'t be found');
+    });
+
   });
 
 })();
