@@ -32,7 +32,9 @@
       transition.set({
         frame: 12,
         ease: 'Linear.easeOut',
-        params: [{ "param": "top", "value": 0 }]
+        params: [
+          { "param": "top", "value": 0 }
+        ]
       });
 
       expect(responder.event).toHaveBeenCalled();

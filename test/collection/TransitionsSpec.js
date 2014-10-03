@@ -53,11 +53,11 @@
 
     });
 
-    describe('Chaining models', function(){
+    describe('Chaining models', function() {
 
       var coll;
 
-      beforeEach(function(){
+      beforeEach(function() {
         coll = new spirit.collection.Transitions();
         coll.add({ frame: 100, ease: 'Linear.easeNone', params: [] });
         coll.add({ frame: 12, ease: 'Linear.easeNone', params: [] });
@@ -65,7 +65,7 @@
         coll.add({ frame: 33, ease: 'Linear.easeNone', params: [] });
       });
 
-      afterEach(function(){
+      afterEach(function() {
         coll.reset();
       });
 
@@ -75,11 +75,11 @@
         expect(coll.pluck('frame')).toEqual([12, 33, 100, 323]);
       });
 
-      it ('should have previous model', function(){
+      it('should have previous model', function() {
         expect(coll.at(0).get('previousModel')).toBeUndefined();
 
-        _.times(coll.length-1, function(i){
-          expect(coll.at(i+1).get('previousModel')).toBe(coll.at(i));
+        _.times(coll.length - 1, function(i) {
+          expect(coll.at(i + 1).get('previousModel')).toBe(coll.at(i));
         });
       });
     });

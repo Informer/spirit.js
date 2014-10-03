@@ -1,11 +1,11 @@
 (function(ns) {
-	'use strict';
+  'use strict';
 
-	ns.RegExpMapping = function(expression, map) {
+  ns.RegExpMapping = function(expression, map) {
 
-		this.expression = expression;
-		this.map = map;
+    this.expression = expression;
+    this.map = map;
 
-	};
+  };
 
 })(use('spirit.model.vo'));

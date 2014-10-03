@@ -1,27 +1,27 @@
 (function(ns) {
 
-	'use strict';
+  'use strict';
 
-	ns.Timeline = ns.Abstract.extend({
+  ns.Timeline = ns.Abstract.extend({
 
-		defaults: {
-			el: null,
-			id: null,
-			transitions: 'spirit.collection.Transitions'
-		},
+    defaults: {
+      el: null,
+      id: null,
+      transitions: 'spirit.collection.Transitions'
+    },
 
     /**
      * Initialize
      * This model can be constructed by json data or by assigning real values.
      * @returns {ns.Timeline}
      */
-    initialize: function(){
+    initialize: function() {
       _.autoBind(this);
 
       if (this.get('el') instanceof $) {
         this.bindModelToElement();
         this.applyMappings();
-      }else{
+      } else {
         var selector = '[data-spirit-id=' + this.get('id') + ']',
             $el = $(selector);
 
@@ -29,7 +29,7 @@
           this.set({el: $($el.get(0))}, {silent: true});
           this.bindModelToElement();
           this.applyMappings();
-        }else{
+        } else {
           throw new Error('[spirit.model.Timeline] Can\'t apply timeline on element. Element: ' + selector + ' can\'t be found');
         }
       }
@@ -42,7 +42,7 @@
      * Retrieve this model by DOM element: $(..).data('spirit-model');
      * @returns {ns.Timeline}
      */
-    bindModelToElement: function(){
+    bindModelToElement: function() {
       this.get('el').data('spirit-model', this);
       return this;
     },
@@ -51,7 +51,7 @@
      * Apply mappings on transitions
      * @returns {ns.Timeline}
      */
-    applyMappings: function(){
+    applyMappings: function() {
       this.get('transitions').mappings.push(
         new (use('spirit.model.vo').RegExpMapping)(
           /\$this/g,
@@ -60,7 +60,7 @@
       );
     },
 
-    destroy: function(){
+    destroy: function() {
       this.get('transitions').mappings = [];
       if (this.get('el')) {
         this.get('el').data('spirit-model', null);
@@ -68,6 +68,6 @@
       this._super();
     }
 
-	});
+  });
 
 })(use('spirit.model'));

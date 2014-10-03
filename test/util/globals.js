@@ -1,5 +1,3 @@
-
-
 /**
  * Resolves namespace
  * @param {string} namespace
@@ -7,17 +5,17 @@
  */
 var use = function(namespace) {
 
-	var segments = namespace.split('.');
+  var segments = namespace.split('.');
 
-	for (var i = 0, len = segments.length, obj = window; i < len; ++i) {
-		var segment = segments[i];
-		if (!obj[segment]) {
-			obj[segment] = {};
-		}
-		obj = obj[segment];
-	}
+  for (var i = 0, len = segments.length, obj = window; i < len; ++i) {
+    var segment = segments[i];
+    if (!obj[segment]) {
+      obj[segment] = {};
+    }
+    obj = obj[segment];
+  }
 
-	return obj;
+  return obj;
 };
 
 
@@ -27,21 +25,21 @@ var use = function(namespace) {
  * @returns {Boolean}
  */
 var exist = function(namespace) {
-	if (typeof namespace !== 'string') {
-		return false;
-	}
-	var segments = namespace.split('.');
-	var doesExist = true;
+  if (typeof namespace !== 'string') {
+    return false;
+  }
+  var segments = namespace.split('.');
+  var doesExist = true;
 
-	for (var i = 0, len = segments.length, obj = window; i < len; ++i) {
-		var segment = segments[i];
+  for (var i = 0, len = segments.length, obj = window; i < len; ++i) {
+    var segment = segments[i];
 
-		if (!obj[segment]) {
-			doesExist = false;
-			break;
-		}
-		obj = obj[segment];
-	}
+    if (!obj[segment]) {
+      doesExist = false;
+      break;
+    }
+    obj = obj[segment];
+  }
 
-	return doesExist;
+  return doesExist;
 };

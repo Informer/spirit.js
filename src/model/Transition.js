@@ -1,15 +1,15 @@
 (function(ns) {
 
-	'use strict';
+  'use strict';
 
-	ns.Transition = ns.Abstract.extend({
+  ns.Transition = ns.Abstract.extend({
 
-		defaults: {
+    defaults: {
       frame: 0,
-			params: 'spirit.collection.TransitionParams',
-			ease: 'Linear.easeNone'
-		}
+      params: 'spirit.collection.TransitionParams',
+      ease: 'Linear.easeNone'
+    }
 
-	});
+  });
 
 })(use('spirit.model'));

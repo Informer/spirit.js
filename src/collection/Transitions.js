@@ -33,7 +33,7 @@
      * @param options
      * @returns {ns.Transitions}
      */
-    updateModel: function(m, coll, options){
+    updateModel: function(m, coll, options) {
       var index = this.indexOf(m),
           modelAbove;
 
@@ -51,7 +51,7 @@
      * @param options
      * @returns {ns.Transitions}
      */
-    updateAll: function(){
+    updateAll: function() {
       return this.each(this.updateModel);
     }
 
