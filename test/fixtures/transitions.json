@@ -5,25 +5,25 @@
 			"ease": "Linear.easeNone",
 			"params": [
 				{
-					"param": "translateX",
+					"param": "x",
 					"value": -50
 				},
 				{
-					"param": "translateY",
+					"param": "y",
 					"value": -400
 				}
 			]
 		},
 		{
 			"frame": 200,
-			"ease": "Cubic.easeOut",
+			"ease": "Linear.easeNone",
 			"params": [
 				{
-					"param": "translateX",
+					"param": "x",
 					"value": 100
 				},
 				{
-					"param": "translateY",
+					"param": "y",
 					"value": 400
 				}
 			]
