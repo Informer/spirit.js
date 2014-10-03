@@ -20,6 +20,7 @@
 
       if (this.get('el') instanceof $) {
         this.bindModelToElement();
+        this.applyMappings();
       }else{
         var selector = '[data-spirit-id=' + this.get('id') + ']',
             $el = $(selector);
@@ -27,10 +28,12 @@
         if ($el.length > 0) {
           this.set({el: $($el.get(0))}, {silent: true});
           this.bindModelToElement();
+          this.applyMappings();
         }else{
           throw new Error('[spirit.model.Timeline] Can\'t apply timeline on element. Element: ' + selector + ' can\'t be found');
         }
       }
+
       return this;
     },
 
@@ -44,7 +47,21 @@
       return this;
     },
 
+    /**
+     * Apply mappings on transitions
+     * @returns {ns.Timeline}
+     */
+    applyMappings: function(){
+      this.get('transitions').mappings.push(
+        new (use('spirit.model.vo').RegExpMapping)(
+          /\$this/g,
+          this.get('el')
+        )
+      );
+    },
+
     destroy: function(){
+      this.get('transitions').mappings = [];
       if (this.get('el')) {
         this.get('el').data('spirit-model', null);
       }

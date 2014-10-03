@@ -38,12 +38,30 @@
       $el.remove();
     });
 
-    it ('should throw an error if "id" in json does not match any element', function(){
+    xit ('should throw an error if "id" in json does not match any element', function(){
       var jsonData = _.loadFixture('timeline.json').elements[0];
       expect(function() {
         new spirit.model.Timeline(jsonData);
       }).toThrow('[spirit.model.Timeline] Can\'t apply timeline on element. Element: [data-spirit-id=' + jsonData.id + '] can\'t be found');
     });
+
+    it ('should apply mappings', function(){
+      var $el = $('<div data-spirit-id="awesome-element">').appendTo('body'),
+          id = $el.data('spirit-id'),
+          model = new spirit.model.Timeline({el: $el, id: id}),
+          transitions = model.get('transitions');
+
+      expect(transitions.mappings).not.toEqual([]);
+      expect(transitions.mappings.length).toBeGreaterThan(0);
+      expect(transitions.mappings[0] instanceof spirit.model.vo.RegExpMapping).toBeTruthy();
+      expect(transitions.mappings[0].map).toBe($el);
+
+      model.destroy();
+      $el.remove();
+
+      expect(transitions.mappings).toEqual([]);
+    });
+
 
   });
 
