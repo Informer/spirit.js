@@ -62,7 +62,6 @@
       expect(transitions.mappings).toEqual([]);
     });
 
-
   });
 
 })();

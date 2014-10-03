@@ -22,7 +22,7 @@
       this.mappings = [];
 
       // make sure each model has always a reference to it's previous one
-      this.on('add remove', this.updateAll);
+      this.on('reset add remove', this.updateAll);
       return this;
     },
 
