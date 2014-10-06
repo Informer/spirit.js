@@ -34,6 +34,11 @@
         }
       }
 
+      // apply bubbling events
+      this.get('transitions').on('change change:params', _.bind(function(e){
+        this.trigger('change:transitions', e);
+      }, this));
+
       return this;
     },
 

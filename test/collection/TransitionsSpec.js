@@ -14,6 +14,25 @@
       expect(coll instanceof spirit.collection.Transitions).toBeTruthy();
     });
 
+    it('should bubble change:params events', function() {
+      coll = new spirit.collection.Transitions([
+        {
+          "frame": 0,
+          "ease": "Linear.easeNone",
+          "params": [{ "param": "x", "value": -50 }]
+        }
+      ]);
+
+      var responder = { event: function(){} };
+
+      spyOn(responder, 'event').andCallThrough();
+      coll.on('change:params', responder.event);
+      coll.first().get('params').first().set('value', 100).set('value', 200);
+
+      expect(responder.event).toHaveBeenCalled();
+      expect(responder.event.callCount).toBe(2);
+    });
+
 
     describe('Create custom collection', function() {
 
