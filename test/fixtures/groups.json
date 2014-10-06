@@ -1,0 +1,127 @@
+{
+  "groups": [
+    {
+      "name": "puppet-animation",
+      "timelines": [
+        {
+          "id": "puppet-head",
+          "transitions": [
+            {
+              "frame": 0,
+              "ease": "Linear.easeNone",
+              "params": [
+                {
+                  "param": "x",
+                  "value": -50
+                },
+                {
+                  "param": "y",
+                  "value": -100
+                }
+              ]
+            },
+            {
+              "frame": 100,
+              "ease": "Quintic.easeOut",
+              "params": [
+                {
+                  "param": "x",
+                  "value": 500
+                },
+                {
+                  "param": "y",
+                  "value": 200
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "puppet-body",
+          "transitions": [
+            {
+              "frame": 0,
+              "ease": "Linear.easeNone",
+              "params": [
+                {
+                  "param": "alpha",
+                  "value": 0
+                }
+              ]
+            },
+            {
+              "frame": 150,
+              "ease": "Linear.easeNone",
+              "params": [
+                {
+                  "param": "alpha",
+                  "value": 0
+                }
+              ]
+            },
+            {
+              "frame": 550,
+              "ease": "Cubic.easeOut",
+              "params": [
+                {
+                  "param": "alpha",
+                  "value": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "puppet-hand-left",
+          "transitions": [
+            {
+              "frame": 0,
+              "ease": "Linear.easeNone",
+              "params": [
+                {
+                  "param": "rotateZ",
+                  "value": 0
+                }
+              ]
+            },
+            {
+              "frame": 550,
+              "ease": "Elastic.easeOut",
+              "params": [
+                {
+                  "param": "rotateZ",
+                  "value": 360
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "puppet-hand-right",
+          "transitions": [
+            {
+              "frame": 0,
+              "ease": "Linear.easeNone",
+              "params": [
+                {
+                  "param": "rotateZ",
+                  "value": 0
+                }
+              ]
+            },
+            {
+              "frame": 550,
+              "ease": "Elastic.easeOut",
+              "params": [
+                {
+                  "param": "rotateZ",
+                  "value": -360
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
