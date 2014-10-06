@@ -6,6 +6,8 @@
 
   describe('model.Timeline', function() {
 
+    var jsonData = _.loadFixture('timeline.json').timelines[0];
+
     it('should have attached a timeline model to an $element', function() {
       var $el = $('<div data-spirit-id="element1">'),
           id = $el.data('spirit-id');
@@ -17,8 +19,7 @@
     });
 
     it('should parse fixture and set data to model', function() {
-      var jsonData = _.loadFixture('timeline.json').elements[0],
-          $el = $('<div data-spirit-id="' + jsonData.id + '">').appendTo('body'),
+      var $el = $('<div data-spirit-id="' + jsonData.id + '">').appendTo('body'),
           model = new spirit.model.Timeline(jsonData);
 
       expect(model.get('el').get(0)).toBe($el.get(0));
@@ -39,7 +40,6 @@
     });
 
     it('should throw an error if "id" in json does not match any element', function() {
-      var jsonData = _.loadFixture('timeline.json').elements[0];
       expect(function() {
         new spirit.model.Timeline(jsonData);
       }).toThrow('[spirit.model.Timeline] Can\'t apply timeline on element. Element: [data-spirit-id=' + jsonData.id + '] can\'t be found');
