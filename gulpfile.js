@@ -79,7 +79,10 @@ var config = {
     'src/model/vo/*.js',
     'src/collection/Abstract.js',
     'src/collection/*.js',
-    'src/jquery/*.js'
+    'src/jquery/*.js',
+
+    // global api
+    'src/api.js'
   ],
 
   /**
@@ -242,6 +245,7 @@ gulp.task('test:browser', function(cb){
     files: config.testFiles(),
     browsers: ['Chrome'],
     autoWatch: true,
+    port: 9998,
     singleRun: false
   }, function(){
     cb();
