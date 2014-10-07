@@ -39,7 +39,24 @@
 			});
 
 			return constructed;
-		}
+		},
+
+    /**
+     * Export to valid JSON
+     * @returns {Array}
+     */
+    toJSON: function(){
+      var data = [];
+
+      this.each(function(param){
+        data.push({
+          param: param.get('param'),
+          value: param.get('value')
+        });
+      });
+
+      return data;
+    }
 
 	});
 

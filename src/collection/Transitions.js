@@ -53,6 +53,24 @@
      */
     updateAll: function() {
       return this.each(this.updateModel);
+    },
+
+    /**
+     * Export to valid JSON
+     * @returns {Array}
+     */
+    toJSON: function(){
+      var data = [];
+
+      this.each(function(transition){
+        data.push({
+          frame: transition.get('frame'),
+          ease: transition.get('ease'),
+          params: transition.get('params').toJSON()
+        });
+      });
+
+      return data;
     }
 
   });
