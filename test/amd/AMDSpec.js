@@ -12,10 +12,18 @@ define(['spirit.min'], function(spirit) {
       expect(window.spirit).toBeUndefined();
     });
 
-    it('should run a regular test (create empty collection)', function() {
-      var c = new spirit.collection.States();
-      expect(c.length).toBe(0);
-      expect(c.model).toBe(spirit.model.State);
+    it('should have API available', function() {
+      var data = [
+        { name: 'group 1', timelines: [] },
+        { name: 'group 2', timelines: [] },
+        { name: 'group 3', timelines: [] }
+      ];
+
+      spirit.load(data);
+
+      expect(spirit.groups.length).toBe(3);
+      expect(spirit.groups.get('group 2').timeline.duration()).toBe(0);
+      expect(spirit.toJSON()).toEqual(data);
     });
 
   });
