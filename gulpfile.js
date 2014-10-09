@@ -120,6 +120,7 @@ var config = {
     'src/model/**/*.js',
     'src/jquery/**/*.js',
     'src/event/**/*.js',
+    'src/api.js',
 
     // exclude
     '!src/collection/Abstract.js',

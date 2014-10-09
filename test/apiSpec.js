@@ -21,6 +21,15 @@
 
   describe('api', function() {
 
+    beforeEach(function(){
+    	spirit.reset();
+      addDOMElements();
+    });
+
+    afterEach(function(){
+      removeDOMElements();
+    });
+
     describe('groups', function() {
 
       it('shouldn\'t have any groups at start', function() {
@@ -28,8 +37,6 @@
       });
 
       it('should retrieve a group by name', function() {
-        addDOMElements();
-
         spirit.groups.add(groupsJson);
         var aap = spirit.groups.add({
           name: 'aap',
@@ -42,21 +49,15 @@
         var puppetAnimation = spirit.groups.get('puppet-animation');
         expect(puppetAnimation.timeline instanceof TimelineLite).toBeTruthy();
         expect(puppetAnimation.get('timelines').length).toBe(4);
+      });
 
-        removeDOMElements();
+      it ('should not return any group for invalid name', function(){
+        spirit.groups.add(groupsJson);
+        expect(spirit.groups.get('invalid')).toBe(null);
       });
     });
 
     describe('json', function() {
-
-      beforeEach(function() {
-        spirit.reset();
-        addDOMElements();
-      });
-
-      afterEach(function() {
-        removeDOMElements();
-      });
 
       it('should import json', function() {
         spirit.load(groupsJson);
@@ -85,6 +86,5 @@
     });
 
   });
-
 
 })();
