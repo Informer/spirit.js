@@ -81,4 +81,4 @@
     return groups.toJSON();
   };
 
-})(use('spirit'));
+})(use('spirit', true));

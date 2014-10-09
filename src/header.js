@@ -11,16 +11,24 @@
 		}
 	};
 
+  /**
+   * Do not expose this object publicly
+   * Only for internal use.
+   * @type {Object}
+   */
+  var contextInternally = {};
+
 	/**
 	 * Resolves namespace
-	 * @param {string} namespace
+	 * @param {String} namespace
+   * @param {Boolean} expose public
 	 * @returns {Object} recursive namespace
 	 */
-	var use = function(namespace) {
+	var use = function(namespace, exposePublic) {
 
 		var segments = namespace.split('.');
 
-		for (var i = 0, len = segments.length, obj = context; i < len; ++i) {
+		for (var i = 0, len = segments.length, obj = (exposePublic ? context : contextInternally); i < len; ++i) {
 			var segment = segments[i];
 			if (!obj[segment]) {
 				obj[segment] = {};
@@ -36,14 +44,14 @@
 	 * @param {String} namespace (example spirit.model.fixture)
 	 * @returns {Boolean}
 	 */
-	var exist = function(namespace) {
+	var exist = function(namespace, exposePublic) {
 		if (typeof namespace !== 'string') {
 			return false;
 		}
 		var segments = namespace.split('.');
 		var doesExist = true;
 
-		for (var i = 0, len = segments.length, obj = context; i < len; ++i) {
+		for (var i = 0, len = segments.length, obj = (exposePublic ? context : contextInternally); i < len; ++i) {
 			var segment = segments[i];
 
 			if (!obj[segment]) {
