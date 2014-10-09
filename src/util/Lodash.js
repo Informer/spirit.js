@@ -1,5 +1,4 @@
 /**
- * @license
  * Lo-Dash 2.2.1 (Custom Build) <http://lodash.com/>
  * Build: `lodash underscore exports="amd,commonjs,global,node" -o ./dist/lodash.underscore.js`
  * Copyright 2012-2013 The Dojo Foundation <http://dojofoundation.org/>

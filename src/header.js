@@ -1,3 +1,4 @@
+//{banner}
 (function(global){
 
 	/**

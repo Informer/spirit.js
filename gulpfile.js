@@ -22,6 +22,7 @@
  * @type {Gulp|exports}
  */
 var gulp = require('gulp');
+var gutil = require('gulp-util');
 var del = require('del');
 var plugins = require('gulp-load-plugins')();
 var pkg = require('./package.json');
@@ -57,7 +58,8 @@ var config = {
     ' * <%= pkg.title %> <%= pkg.version %> (<%= pkg.homepage %>)',
     ' * Copyright 2013 - ' + new Date().getFullYear() + ' Inlet.',
     ' * Licensed under Apache 2.0 (https://github.com/inlet/spirit.js/blob/master/LICENSE)',
-    ' */'
+    ' */',
+    ''
   ].join('\n'),
 
   /**
@@ -181,7 +183,7 @@ gulp.task('jshint:test', function(){
     .pipe(plugins.size({title: 'jshint:test'}));
 });
 
-// Uglify and concat to spirit.js and spirit.min.js
+// Uglify and concat to spirit.min.js
 gulp.task('uglify', function() {
   var files = []
     .concat('src/header.js')
@@ -190,9 +192,11 @@ gulp.task('uglify', function() {
 
   return gulp.src(files)
     .pipe(plugins.if('**/src/header.js', plugins.replace('{buildversion}', pkg.version)))
-    .pipe(plugins.concat('spirit.js'))
-    .pipe(plugins.uglifyjs('spirit.min.js', { outSourceMap: true }))
-    .pipe(plugins.header(config.banner, {pkg: pkg}))
+    .pipe(plugins.if('**/src/header.js', plugins.replace('//{banner}', _.template(config.banner)({pkg: pkg}))))
+    .pipe(plugins.sourcemaps.init())
+    .pipe(plugins.concat('spirit.min.js'))
+    .pipe(plugins.uglify({preserveComments: 'some'}))
+    .pipe(plugins.sourcemaps.write('.'))
     .pipe(gulp.dest('.'))
     .pipe(plugins.size({title: 'uglify'}));
 });
