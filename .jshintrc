@@ -42,6 +42,8 @@
 		"angular": false,
 		"before": false,
 		"beforeEach": false,
+		"runs": false,
+		"waitsFor": false,
 		"browser": false,
 		"describe": false,
 		"expect": false,
