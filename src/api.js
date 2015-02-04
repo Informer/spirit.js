@@ -19,6 +19,11 @@
   ns.groups = {
 
     /**
+     * Extension needs direct access to collection
+     */
+    __internals__: groups,
+
+    /**
      * Number of groups
      */
     length: 0,
