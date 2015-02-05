@@ -30,6 +30,10 @@
     "email": "patrick@inlet.nl",
     "url": "http://inlet.nl"
   },
+  "licenses": [{
+    "type": "Apache-2.0",
+    "url": "http://www.apache.org/licenses/LICENSE-2.0"
+  }],
   "engines": {
     "node": "0.8.x"
   },
