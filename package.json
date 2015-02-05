@@ -3,7 +3,7 @@
   "title": "SpiritJS",
   "description": "The animation toolkit",
   "homepage": "http://spiritjs.io/",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "repository": {
     "type": "git",
     "url": "git://github.com/inlet/spirit.js.git"
@@ -30,15 +30,20 @@
     "email": "patrick@inlet.nl",
     "url": "http://inlet.nl"
   },
-  "licenses": [{
-    "type": "Apache-2.0",
-    "url": "http://www.apache.org/licenses/LICENSE-2.0"
-  }],
+  "licenses": [
+    {
+      "type": "Apache-2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+  ],
   "engines": {
     "node": "0.8.x"
   },
   "main": "./spirit.min.js",
-  "dependencies": {},
+  "dependencies": {
+    "gsap": "^1.15.1",
+    "jquery": "^2.1.3"
+  },
   "devDependencies": {
     "del": "^0.1.3",
     "glob-expand": "0.0.2",
@@ -80,7 +85,6 @@
     "underscore": "^1.7.0"
   },
   "scripts": {
-    "test": "gulp test",
-    "postinstall": "bower install && gulp"
+    "test": "gulp test"
   }
 }
