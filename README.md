@@ -50,6 +50,7 @@ Once you have your environment setup just run
 
 ```bash
 npm install
+bower install
 ```
 
 This will install all dependencies and build the library using Gulp.
@@ -85,5 +86,8 @@ Lint source files and create a new build.
 gulp
 ```
 
+## Roadmap
 
+- Integrate this library with the SpiritJS Chrome Extension (still in development).
+- Get rid of internals, and have a better exposed API
 
