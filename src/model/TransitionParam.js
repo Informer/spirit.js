@@ -19,12 +19,11 @@
      * @returns {Boolean}
      */
     isCSSTransform: function() {
-      var p = ns.TransitionParam.params,
-          transforms = [
-            p.translateX, p.translateY, p.translateZ,
-            p.rotateX, p.rotateY, p.rotateZ,
-            p.skewX, p.skewY,
-            p.scaleX, p.scaleY
+      var transforms = [
+            'x', 'y', 'z',
+            'rotateX', 'rotateY', 'rotateZ',
+            'skewX', 'skewY',
+            'scaleX', 'scaleY', 'scale'
           ];
 
       return _.contains(transforms, this.get('param'));
@@ -83,69 +82,73 @@
 
   });
 
+  var min = -999999999;
+  var max = 999999999;
+
   /**
    * List of all possible CSS params
    * @type {Object}
    */
   ns.TransitionParam.params = {
-    autoAlpha: 'autoAlpha',
-    translateX: 'translateX',
-    translateY: 'translateY',
-    translateZ: 'translateZ',
+    autoAlpha:                { type: 'number', min: 0, max: 1, step: 0.005, default: 1 },
+    opacity:                  { type: 'number', min: 0, max: 1, step: 0.005 },
 
-    rotateX: 'rotateX',
-    rotateY: 'rotateY',
-    rotateZ: 'rotateZ',
+    x:                        { type: 'number', min: min, max: max, step: 1, default: 0 },
+    y:                        { type: 'number', min: min, max: max, step: 1, default: 0 },
+    z:                        { type: 'number', min: min, max: max, step: 1, default: 0 },
 
-    skewX: 'skewX',
-    skewY: 'skewY',
+    rotateX:                  { type: 'number', min: min, max: max, step: 1, default: 0 },
+    rotateY:                  { type: 'number', min: min, max: max, step: 1, default: 0 },
+    rotateZ:                  { type: 'number', min: min, max: max, step: 1, default: 0 },
 
-    scaleX: 'scaleX',
-    scaleY: 'scaleY',
+    skewX:                    { type: 'number', min: min, max: max, step: 1, default: 0 },
+    skewY:                    { type: 'number', min: min, max: max, step: 1, default: 0 },
 
-    opacity: 'opacity',
+    scale:                    { type: 'number', min: min, max: max, step: 0.5, default: 1 },
+    scaleX:                   { type: 'number', min: min, max: max, step: 0.5, default: 1 },
+    scaleY:                   { type: 'number', min: min, max: max, step: 0.5, default: 1 },
 
-    transformOrigin: 'transformOrigin',
-    perspective: 'perspective',
+    transformOrigin:          { type: 'string', default: '50% 50%' },
+    perspective:              { type: 'number', min: min, max: max, step: 1, default: 400 },
 
-    backgroundPositionX: 'backgroundPositionX',
-    backgroundPositionY: 'backgroundPositionY',
+    backgroundPositionX:      { type: 'number', min: min, max: max, step: 1, default: 0 },
+    backgroundPositionY:      { type: 'number', min: min, max: max, step: 1, default: 0 },
 
-    width: 'width',
-    height: 'height',
+    width:                    { type: 'number', min: min, max: max, step: 1, default: 0 },
+    height:                   { type: 'number', min: min, max: max, step: 1, default: 0 },
 
-    color: 'color',
-    backgroundColor: 'backgroundColor',
+    color:                    { type: 'string' },
+    backgroundColor:          { type: 'string' },
 
-    paddingTop: 'paddingTop',
-    paddingBottom: 'paddingBottom',
-    paddingLeft: 'paddingLeft',
-    paddingRight: 'paddingRight',
+    paddingTop:               { type: 'number', min: min, max: max, step: 1, default: 0 },
+    paddingBottom:            { type: 'number', min: min, max: max, step: 1, default: 0 },
+    paddingLeft:              { type: 'number', min: min, max: max, step: 1, default: 0 },
+    paddingRight:             { type: 'number', min: min, max: max, step: 1, default: 0 },
 
-    marginTop: 'marginTop',
-    marginBottom: 'marginBottom',
-    marginLeft: 'marginLeft',
-    marginRight: 'marginRight',
+    marginTop:                { type: 'number', min: min, max: max, step: 1, default: 0 },
+    marginBottom:             { type: 'number', min: min, max: max, step: 1, default: 0 },
+    marginLeft:               { type: 'number', min: min, max: max, step: 1, default: 0 },
+    marginRight:              { type: 'number', min: min, max: max, step: 1, default: 0 },
 
-    fontSize: 'fontSize',
+    fontSize:                 { type: 'number', min: min, max: max, step: 1, default: 0 },
 
-    borderWidth: 'borderWidth',
-    borderColor: 'borderColor',
+    borderWidth:              { type: 'number', min: min, max: max, step: 1, default: 0 },
+    borderColor:              { type: 'string' },
 
-    borderTopWidth: 'borderTopWidth',
-    borderBottomWidth: 'borderBottomWidth',
-    borderLeftWidth: 'borderLeftWidth',
-    borderRightWidth: 'borderRightWidth',
+    borderTopWidth:           { type: 'number', min: min, max: max, step: 1, default: 0 },
+    borderBottomWidth:        { type: 'number', min: min, max: max, step: 1, default: 0 },
+    borderLeftWidth:          { type: 'number', min: min, max: max, step: 1, default: 0 },
+    borderRightWidth:         { type: 'number', min: min, max: max, step: 1, default: 0 },
 
-    borderTopColor: 'borderTopColor',
-    borderBottomColor: 'borderBottomColor',
-    borderLeftColor: 'borderLeftColor',
-    borderRightColor: 'borderRightColor',
+    borderTopColor:           { type: 'string' },
+    borderBottomColor:        { type: 'string' },
+    borderLeftColor:          { type: 'string' },
+    borderRightColor:         { type: 'string' },
 
-    borderTopLeftRadius: 'borderTopLeftRadius',
-    borderTopRightRadius: 'borderTopRightRadius',
-    borderBottomRightRadius: 'borderBottomRightRadius',
-    borderBottomLeftRadius: 'borderBottomLeftRadius'
+    borderTopLeftRadius:      { type: 'number', min: min, max: max, step: 1, default: 0 },
+    borderTopRightRadius:     { type: 'number', min: min, max: max, step: 1, default: 0 },
+    borderBottomRightRadius:  { type: 'number', min: min, max: max, step: 1, default: 0 },
+    borderBottomLeftRadius:   { type: 'number', min: min, max: max, step: 1, default: 0 }
   };
 
 })(use('spirit.model'));
