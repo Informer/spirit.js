@@ -1,11 +1,11 @@
 {
 	"params": [
 		{
-			"param": "translateX",
+			"param": "x",
 			"value": -50
 		},
 		{
-			"param": "translateY",
+			"param": "y",
 			"value": -400
 		},
 		{

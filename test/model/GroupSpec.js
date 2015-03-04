@@ -66,19 +66,66 @@
       expect(group.timeline.clear.callCount).toBe(1);
     });
 
-    it ('should reconstruct timeline when a child property changes', function(){
-      var responder = { event: function(){} };
+    describe('constructTimeline', function(){
 
-      spyOn(responder, 'event').andCallThrough();
-      group.on('construct:timeline', responder.event);
+      var transitions;
+      var params;
+      var responder;
 
-      group.get('timelines').first().get('transitions').first().get('params').first()
-        .set('value', 100)
-        .set('value', 200)
-        .set('value', 300);
+      beforeEach(function(){
+        transitions = group.get('timelines').first().get('transitions');
+        params = transitions.first().get('params');
+        responder = { event: function(){} };
+        spyOn(responder, 'event').andCallThrough();
+        group.on('construct:timeline', responder.event);
+      });
 
-      expect(responder.event).toHaveBeenCalled();
-      expect(responder.event.callCount).toBe(3);
+      afterEach(function(){
+        this.removeAllSpies();
+      });
+
+      it ('should be called when a param gets removed', function(){
+        params.remove(params.first());
+
+        expect(responder.event).toHaveBeenCalled();
+        expect(responder.event.callCount).toBe(1);
+      });
+
+      it ('should be called when a param gets added', function(){
+      	params.add({param: 'z', value: '0'})
+      	params.add({param: 'y', value: '0'})
+
+        expect(responder.event).toHaveBeenCalled();
+        expect(responder.event.callCount).toBe(2);
+      });
+
+      it ('should be called when a param changes', function(){
+        params.first()
+          .set('value', 100)
+          .set('value', 200)
+          .set('value', 300);
+
+        expect(responder.event).toHaveBeenCalled();
+        expect(responder.event.callCount).toBe(3);
+      });
+
+      it ('should be called when a transition gets removed', function(){
+      	transitions.remove(transitions.first());
+
+        expect(responder.event).toHaveBeenCalled();
+        expect(responder.event.callCount).toBe(1);
+      });
+
+      it ('should be called when a transition gets added', function(){
+        transitions.add({frame: 1, ease: 'Linear.easeNone', params: [] });
+        expect(responder.event).toHaveBeenCalled();
+      });
+
+      it ('should be called when a transition changes', function(){
+        transitions.first().set('ease', 'Other Easing');
+        expect(responder.event).toHaveBeenCalled();
+      });
+
     });
 
   });

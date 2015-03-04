@@ -50,7 +50,7 @@
 				var el = document.createElement('div');
 
 				// adding rest css3 params
-				coll.add({"param": "translateZ", "value": -50});
+				coll.add({"param": "z", "value": -50});
 				coll.add({"param": "rotateX", "value": -50});
 				coll.add({"param": "rotateY", "value": -50});
 				coll.add({"param": "rotateZ", "value": -50});

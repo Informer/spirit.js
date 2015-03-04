@@ -3,6 +3,16 @@
   'use strict';
 
   /**
+   * Get default gsTransform object
+   */
+  var gsTransform = (function(){
+    var div = document.createElement('div');
+    new globalDefaults.tween(div, 0, {x: 0}).play();
+    return div._gsTransform;
+  })();
+
+
+  /**
    * Construct a GSAP timeline
    * @param $el element to apply on
    * @param transitions spirit.collection.Transitions
@@ -10,7 +20,21 @@
    */
   ns.Timeline = function Timeline($el, transitions){
     var timeline = new globalDefaults.timeline({ useFrames: true, paused: true }),
-        mappings = transitions.mappings;
+        mappings = transitions.mappings,
+        el = $el.get(0);
+
+    // sanitize all gstransforms for element
+    var allparams = {};
+    transitions.each(function(transition){
+      for (var i in transition.get('params').constructTweenObject(mappings)) {
+        allparams[i] = true;
+      }
+    });
+    for (var i in el._gsTransform) {
+      if (!allparams.hasOwnProperty(i)) {
+        el._gsTransform[i] = gsTransform[i];
+      }
+    }
 
     transitions.each(function(transition){
 
@@ -27,7 +51,7 @@
       }
 
       if (!_.isEmpty(params)) {
-        timeline.add(globalDefaults.tween.to($el, frame, params), prevFrame);
+        timeline.add(globalDefaults.tween.to($el, frame, params).play(), prevFrame);
       }
 
     }, this);
