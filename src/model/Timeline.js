@@ -35,7 +35,7 @@
       }
 
       // apply bubbling events
-      this.get('transitions').on('change change:params', _.bind(function(e){
+      this.get('transitions').on('add remove change change:params add:params remove:params', _.bind(function(e){
         this.trigger('change:transitions', e);
       }, this));
 
