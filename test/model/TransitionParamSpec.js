@@ -12,7 +12,7 @@
 		});
 
 		it('should validate on CSS Transforms', function() {
-			var yes = new spirit.model.TransitionParam({ param: 'translateX', value: 10 }),
+			var yes = new spirit.model.TransitionParam({ param: 'x', value: 10 }),
 				nope = new spirit.model.TransitionParam({ param: 'left', value: 10 });
 
 			expect(yes.isCSSTransform()).toBeTruthy();

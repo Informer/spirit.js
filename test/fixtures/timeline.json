@@ -8,11 +8,11 @@
 					"ease": "Linear.easeNone",
 					"params": [
 						{
-							"param": "translateX",
+							"param": "x",
 							"value": -50
 						},
 						{
-							"param": "translateY",
+							"param": "y",
 							"value": -400
 						}
 					]
@@ -22,11 +22,11 @@
 					"ease": "Cubic.easeOut",
 					"params": [
 						{
-							"param": "translateX",
+							"param": "x",
 							"value": 100
 						},
 						{
-							"param": "translateY",
+							"param": "y",
 							"value": 400
 						}
 					]
