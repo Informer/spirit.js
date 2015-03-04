@@ -12,6 +12,15 @@
   });
 
   /**
+   * Expose some internals used by the extension
+   * @type {Object}
+   * @private
+   */
+  ns.__internals__ = {
+    params: use('spirit.model').TransitionParam.params
+  };
+
+  /**
    * Groups API
    * @public
    * @type {Object}
@@ -20,6 +29,8 @@
 
     /**
      * Extension needs direct access to collection
+     * @type {Object}
+     * @private
      */
     __internals__: groups,
 

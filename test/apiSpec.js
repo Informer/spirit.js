@@ -57,6 +57,15 @@
       });
     });
 
+    describe('params', function(){
+
+      it ('should have a list with transitionparams', function(){
+        	expect(spirit.__internals__.params).toBeDefined();
+
+      });
+
+    });
+
     describe('json', function() {
 
       it('should import json', function() {
