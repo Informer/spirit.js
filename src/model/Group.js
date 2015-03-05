@@ -31,13 +31,15 @@
       this.timeline.kill();
       this.timeline.clear();
 
-      // get rid of existing styling and transforms
       this.get('timelines').each(function(tl){
-        globalDefaults.tween.killTweensOf(tl.get('el'));
-        //tl.get('el').attr('style', '');
-      });
 
-      this.get('timelines').each(function(tl){
+        // clear inline style and tweens for element
+        var $el = tl.get('el');
+        globalDefaults.tween.killTweensOf($el.get(0));
+        $el.get(0)._gsTweenID = undefined;
+        $el.get(0)._gsTransform = undefined;
+        $el.removeAttr('style');
+
         this.timeline.add(new (use('spirit.factory').Timeline)(tl.get('el'), tl.get('transitions')).play(), 0);
       }, this);
 

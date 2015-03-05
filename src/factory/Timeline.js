@@ -20,21 +20,7 @@
    */
   ns.Timeline = function Timeline($el, transitions){
     var timeline = new globalDefaults.timeline({ useFrames: true, paused: true }),
-        mappings = transitions.mappings,
-        el = $el.get(0);
-
-    // sanitize all gstransforms for element
-    var allparams = {};
-    transitions.each(function(transition){
-      for (var i in transition.get('params').constructTweenObject(mappings)) {
-        allparams[i] = true;
-      }
-    });
-    for (var i in el._gsTransform) {
-      if (!allparams.hasOwnProperty(i)) {
-        el._gsTransform[i] = gsTransform[i];
-      }
-    }
+        mappings = transitions.mappings;
 
     transitions.each(function(transition){
 
@@ -51,7 +37,7 @@
       }
 
       if (!_.isEmpty(params)) {
-        timeline.add(globalDefaults.tween.to($el, frame, params).play(), prevFrame);
+        timeline.add(globalDefaults.tween.to($el.get(0), frame, params).play(), prevFrame);
       }
 
     }, this);
