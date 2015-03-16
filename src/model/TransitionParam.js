@@ -134,6 +134,7 @@
 
     borderWidth:              { type: 'number', min: min, max: max, step: 1, default: 0 },
     borderColor:              { type: 'string' },
+    borderStyle:              { type: 'string', default: 'solid' },
 
     borderTopWidth:           { type: 'number', min: min, max: max, step: 1, default: 0 },
     borderBottomWidth:        { type: 'number', min: min, max: max, step: 1, default: 0 },
