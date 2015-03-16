@@ -47,29 +47,7 @@
       expect($el.height()).toBe(100);
       expect($el.get(0)._gsTransform.x).toBe(-200);
     });
-
-    it ('should sync _gsTransform with params', function(){
-      var $el = $('<div style="width: 100px; height: 100px" data-spirit-id="element1" />'),
-          model = new spirit.model.Timeline({
-            el: $el,
-            transitions: [{ frame: 5, ease: 'Linear.easeNone', params: [{param: 'rotateX', value: '45'}]}]
-          });
-
-      // this should apply _gsTransform with params
-      var timeline = new spirit.factory.Timeline(model.get('el'), model.get('transitions'));
-      timeline.seek(5);
-
-      expect($el.get(0)._gsTransform.rotationX).toBeGreaterThan(0);
-
-      // now reset transitions
-      model.get('transitions').first().get('params').set({param: 'x', value: 400});
-
-      timeline = new spirit.factory.Timeline(model.get('el'), model.get('transitions'));
-      timeline.seek(5);
-
-      expect($el.get(0)._gsTransform.rotationX).toBe(0);
-    });
-
+    
   });
 
 })();
