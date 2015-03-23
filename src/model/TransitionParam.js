@@ -110,6 +110,7 @@
 
     transformOrigin:          { type: 'string', default: '50% 50%' },
     perspective:              { type: 'number', min: min, max: max, step: 1, default: 400 },
+    perspectiveOrigin:       { type: 'string', default: '50% 50%' },
 
     backgroundPositionX:      { type: 'number', min: min, max: max, step: 1, default: 0 },
     backgroundPositionY:      { type: 'number', min: min, max: max, step: 1, default: 0 },
@@ -149,7 +150,9 @@
     borderTopLeftRadius:      { type: 'number', min: min, max: max, step: 1, default: 0 },
     borderTopRightRadius:     { type: 'number', min: min, max: max, step: 1, default: 0 },
     borderBottomRightRadius:  { type: 'number', min: min, max: max, step: 1, default: 0 },
-    borderBottomLeftRadius:   { type: 'number', min: min, max: max, step: 1, default: 0 }
+    borderBottomLeftRadius:   { type: 'number', min: min, max: max, step: 1, default: 0 },
+
+    zIndex:                   { type: 'number', min: min, max: max, step: 1, default: 1 },
   };
 
 })(use('spirit.model'));
