@@ -34,6 +34,9 @@
         }
       }
 
+      // update transitions linked list (previous models)
+      this.get('transitions').updateAll();
+
       // apply bubbling events
       this.get('transitions').on('add remove change change:params add:params remove:params', _.bind(function(e){
         this.trigger('change:transitions', e);

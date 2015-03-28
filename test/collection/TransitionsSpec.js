@@ -70,6 +70,19 @@
         expect(added instanceof m.constructor).toBeTruthy();
       });
 
+      it ('should apply previous model to each model', function(){
+        var m;
+
+        coll.updateAll();
+        coll.each(function(transition, i){
+          if (i > 0) {
+            expect(transition.get('previousModel')).toBeDefined();
+            expect(transition.get('previousModel')).toBe(m);
+          }
+          m = transition;
+        });
+      });
+
     });
 
     describe('Chaining models', function() {

@@ -62,6 +62,22 @@
       expect(transitions.mappings).toEqual([]);
     });
 
+    it ('should apply previous model to each model in transitions', function(){
+      var $el = $('<div data-spirit-id="' + jsonData.id + '">').appendTo('body');
+      var m;
+
+      new spirit.model.Timeline(jsonData).get('transitions').each(function(transition, i){
+        if (i > 0) {
+          expect(transition.get('previousModel')).toBeDefined();
+          expect(transition.get('previousModel')).toBe(m);
+        }
+        m = transition;
+      });
+
+      $el.remove();
+    });
+
+
   });
 
 })();

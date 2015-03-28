@@ -46,7 +46,7 @@
       expect(transformObj(puppet.$head).y).toBe(125);
 
       group.timeline.seek(250);
-      expect(parseFloat(cssProp(puppet.$body, 'opacity')).toFixed(2)).toBe('0.84');
+      expect(parseFloat(cssProp(puppet.$body, 'opacity')).toFixed(2)).toBe('0.58');
 
       group.timeline.seek(350);
       expect(transformObj(puppet.$handLeft).rotation.toFixed(2)).toBe('6.23');
@@ -113,7 +113,6 @@
       	transitions.remove(transitions.first());
 
         expect(responder.event).toHaveBeenCalled();
-        expect(responder.event.callCount).toBe(1);
       });
 
       it ('should be called when a transition gets added', function(){
@@ -124,6 +123,18 @@
       it ('should be called when a transition changes', function(){
         transitions.first().set('ease', 'Other Easing');
         expect(responder.event).toHaveBeenCalled();
+      });
+
+      it ('should reset element._gsTweenID with a different id', function(){
+        var head = puppet.$head.get(0);
+
+        group.constructTimeline();
+      	var first = head._gsTweenID;
+
+        group.constructTimeline();
+        var second = head._gsTweenID;
+
+        expect(first).not.toBe(second);
       });
 
     });
