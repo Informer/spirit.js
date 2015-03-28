@@ -36,11 +36,13 @@
       this.get('timelines').each(function(tl){
 
         // clear inline style and tweens for element
-        var $el = tl.get('el');
-        globalDefaults.tween.killTweensOf($el.get(0));
-        $el.get(0)._gsTweenID = undefined;
-        $el.get(0)._gsTransform = undefined;
-        $el.removeAttr('style');
+        var el = tl.get('el').get(0);
+        globalDefaults.tween.killTweensOf(el);
+
+        delete el._gsTransform;
+        delete el._gsTweenID;
+
+        tl.get('el').attr('style', '');
 
         this.timeline.add(new (use('spirit.factory').Timeline)(tl.get('el'), tl.get('transitions')).play(), 0);
       }, this);
