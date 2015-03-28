@@ -2,6 +2,8 @@
 
   'use strict';
 
+  var raf = _.raf();
+
   ns.Group = ns.Abstract.extend({
 
     defaults: {
@@ -54,34 +56,29 @@
      */
     play: function(from, to) {
       this.stop();
-      this._animateProps.frame = from || 1;
-      var toFrame = to || this.timeline.duration();
 
-      if (this._animateProps.frame >= toFrame) {
-        globalDefaults.tween.ticker.removeEventListener("tick", this.tick);
-      }else{
-        this._tween = globalDefaults.tween.to(this._animateProps, this.timeline.duration() / this.get('fps'), {frame: toFrame, onComplete: this.stop});
-        globalDefaults.tween.ticker.addEventListener("tick", this.tick);
-      }
+      from = from || 0;
+      to = to || this.timeline.duration();
+
+      var duration = (to - from) / this.get('fps');
+
+      globalDefaults.tween.fromTo(this._animateProps, duration, {frame: from}, {frame: to, ease: 'linear', onUpdate: this.onUpdate});
     },
 
-    tick: function(){
-      if (!this.timeline.paused()) {
-        this.timeline.pause();
-      }
-      this.timeline.seek(this._animateProps.frame);
+    onUpdate: function() {
+      raf(_.bind(function(){
+        this.timeline.seek(this._animateProps.frame);
+      }, this));
     },
 
     /**
      * Stop animation
      */
     stop: function(){
-      if (this._tween) {
-        this._tween.kill();
-        globalDefaults.tween.killTweensOf(this._animateProps);
+      globalDefaults.tween.killTweensOf(this._animateProps);
+      if (!this.timeline.paused()) {
         this.timeline.pause();
       }
-      globalDefaults.tween.ticker.removeEventListener("tick", this.tick);
     }
 
   });
