@@ -139,4 +139,31 @@
 		return !!(window.__karma__);
 	};
 
+  /**
+  * RAF Polyfill
+  * https://gist.github.com/paulirish/1579671
+  */
+  ns.raf = function() {
+    var lastTime = 0;
+    var vendors = ['webkit', 'moz'];
+
+    var raf = window.requestAnimationFrame;
+
+    for(var x = 0; x < vendors.length && !raf; ++x) {
+      raf = window[vendors[x]+'RequestAnimationFrame'];
+    }
+
+    if (!raf) {
+      return function(callback, element) {
+        var currTime = new Date().getTime();
+        var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+        var id = window.setTimeout(function() { callback(currTime + timeToCall); }, timeToCall);
+        lastTime = currTime + timeToCall;
+        return id;
+      };
+    }
+
+    return raf;
+  };
+
 })(use('spirit._helpers'));
