@@ -53,6 +53,13 @@
       expect(transformObj(puppet.$handRight).rotation.toFixed(2)).toBe('-6.23');
     });
 
+    it ('should have a unique timeline (not shared)', function(){
+    	var groupA = new spirit.model.Group({name: 'A'});
+      var groupB = new spirit.model.Group({name: 'B'});
+
+      expect(groupA.timeline).not.toBe(groupB.timeline);
+    });
+
     it ('should call kill and clear on timeline when reconstructed', function(){
     	spyOn(group.timeline, 'kill').andCallThrough();
     	spyOn(group.timeline, 'clear').andCallThrough();

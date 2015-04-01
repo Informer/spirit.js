@@ -12,11 +12,10 @@
       timelines: 'spirit.collection.Timelines'
     },
 
-    timeline: new globalDefaults.timeline({ useFrames: true, paused: true }),
-
     initialize: function(){
       _.autoBind(this);
 
+      this.timeline = new globalDefaults.timeline({ useFrames: true, paused: true });
       this.timeline.autoRemoveChildren = false;
       this._animateProps = { frame: 0 };
       this._tween = null;
@@ -63,7 +62,6 @@
       to = to || this.timeline.duration();
 
       var duration = (to - from) / this.get('fps');
-
       globalDefaults.tween.fromTo(this._animateProps, duration, {frame: from}, {frame: to, ease: 'linear', onUpdate: this.onUpdate});
     },
 
@@ -76,7 +74,7 @@
     /**
      * Stop animation
      */
-    stop: function(){
+    stop: function() {
       globalDefaults.tween.killTweensOf(this._animateProps);
       if (!this.timeline.paused()) {
         this.timeline.pause();

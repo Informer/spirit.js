@@ -2,6 +2,7 @@
   "groups": [
     {
       "name": "puppet-animation",
+      "fps": 30,
       "timelines": [
         {
           "id": "puppet-head",
