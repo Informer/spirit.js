@@ -83,6 +83,7 @@
 
         var newGroup = {
           name: 'dummy',
+          fps: 80,
           timelines: []
         };
 
