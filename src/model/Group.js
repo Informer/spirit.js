@@ -79,6 +79,16 @@
       if (!this.timeline.paused()) {
         this.timeline.pause();
       }
+    },
+
+    /**
+    * Export group to JSON
+    * @returns {Object}
+    */
+    toJSON: function() {
+      var jsonData = this._super();
+      jsonData.timelines = this.get('timelines').toJSON();
+      return jsonData;
     }
 
   });
